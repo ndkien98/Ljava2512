@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CopilotDiffPersistence">
+    <option name="pendingDiffs">
+      <map>
+        <entry key="$PROJECT_DIR$/buoi3/BinarySearch.java">
+          <value>
+            <PendingDiffInfo>
+              <option name="filePath" value="$PROJECT_DIR$/buoi3/BinarySearch.java" />
+              <option name="originalContent" value="package buoi3;&#10;&#10;public class BinarySearch {&#10;    /**&#10;     * Tìm kiếm nhị phân trên mảng đã sắp xếp tăng dần.&#10;     * @param arr mảng số nguyên đã sắp xếp&#10;     * @param key giá trị cần tìm&#10;     * @return chỉ số của phần tử nếu tìm thấy, -1 nếu không tìm thấy&#10;     */&#10;    public static int binarySearch(int[] arr, int key) {&#10;        int left = 0;&#10;        int right = arr.length - 1;&#10;        while (left &lt;= right) {&#10;            int mid = left + (right - left) / 2;&#10;            if (arr[mid] == key) {&#10;                return mid;&#10;            } else if (arr[mid] &lt; key) {&#10;                left = mid + 1;&#10;            } else {&#10;                right = mid - 1;&#10;            }&#10;        }&#10;        return -1;&#10;    }&#10;}&#10;&#10;" />
+              <option name="updatedContent" value="package buoi3;&#10;&#10;public class BinarySearch {&#10;    /**&#10;     * Tìm kiếm nhị phân trên mảng đã sắp xếp tăng dần.&#10;     * @param arr mảng số nguyên đã sắp xếp&#10;     * @param key giá trị cần tìm&#10;     * @return chỉ số của phần tử nếu tìm thấy, -1 nếu không tìm thấy&#10;     */&#10;    public static int binarySearch(int[] arr, int key) {&#10;        int left = 0;&#10;        int right = arr.length - 1;&#10;        while (left &lt;= right) {&#10;            int mid = left + (right - left) / 2;&#10;            if (arr[mid] == key) {&#10;                return mid;&#10;            } else if (arr[mid] &lt; key) {&#10;                left = mid + 1;&#10;            } else {&#10;                right = mid - 1;&#10;            }&#10;        }&#10;        return -1;&#10;    }&#10;}" />
+            </PendingDiffInfo>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/buoi3/Main.java">
+          <value>
+            <PendingDiffInfo>
+              <option name="filePath" value="$PROJECT_DIR$/buoi3/Main.java" />
+              <option name="originalContent" value="package buoi3;&#10;&#10;import java.util.Arrays;&#10;&#10;public class Main {&#10;    public static void main(String[] args) {&#10;        int[] arr = {1, 3, 5, 7, 9, 11, 15, 20};&#10;        int key = 7;&#10;        int result = BinarySearch.binarySearch(arr, key);&#10;&#10;        System.out.println(&quot;Mảng: &quot; + Arrays.toString(arr));&#10;        System.out.println(&quot;Tìm kiếm giá trị &quot; + key);&#10;        if (result != -1) {&#10;            System.out.println(&quot;Tìm thấy tại vị trí: &quot; + result);&#10;        } else {&#10;            System.out.println(&quot;Không tìm thấy giá trị &quot; + key);&#10;        }&#10;    }&#10;}&#10;&#10;" />
+              <option name="updatedContent" value="package buoi3;&#10;&#10;import java.util.Arrays;&#10;&#10;public class Main {&#10;    public static void main(String[] args) {&#10;        int[] arr = {1, 3, 5, 7, 9, 11, 15, 20};&#10;        int key = 7;&#10;        int result = BinarySearch.binarySearch(arr, key);&#10;&#10;        System.out.println(&quot;Mảng: &quot; + Arrays.toString(arr));&#10;        System.out.println(&quot;Tìm kiếm giá trị &quot; + key);&#10;        if (result != -1) {&#10;            System.out.println(&quot;Tìm thấy tại vị trí: &quot; + result);&#10;        } else {&#10;            System.out.println(&quot;Không tìm thấy giá trị &quot; + key);&#10;        }&#10;    }&#10;}" />
+            </PendingDiffInfo>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>

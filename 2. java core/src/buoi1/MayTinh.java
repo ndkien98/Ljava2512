@@ -6,8 +6,8 @@ import java.util.Scanner;
 public class MayTinh {
 
     // khai báo các thuộc tính của class, giá trị của thuộc tính biểu thị trạng thái của đối tưng
-    String ten;
-    Double giaCu;
+    public String ten;
+    public Double giaCu;
     Double giaMoi;
     String trangThai;
 
