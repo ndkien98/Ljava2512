@@ -1,7 +1,12 @@
 package buoi6;
 
-/**
+import buoi6.bai1.Employee;
+import buoi6.bai1.EmployeeOffice;
+import buoi6.bai1.EmployeeSales;
+import buoi6.bai1.EmployeeTechnical;
 
+/**
+I.
  Tính kế thừa trong Java
  Tại sao cần tính kế thừa:
     bài toán:
@@ -69,12 +74,51 @@ package buoi6;
         }
 
  4. Ghi đè phường thức
+    - La việc lớp con triển khai lại các phương thức của lớp cha để phù hợp với nghiệp vụ của lớp con
+    - Sử dụng tư khóa @Override để đánh dấu việc ghi đè phương thức, có thể sử dụng hoặc không sử dụng tư khóa này\
+    - Các method ghi đè có đặc điểm:
+        + có cùng tên phương thức với phương thức của lớp cha
+        + có cùng kiểu trả về với phương thức của lớp cha
+        + có cùng danh sách tham số với phương thức của lớp cha
+    - Sảy ra giữa 2 class có tính kế thừa với nhau
 
  5. Nạp chồng phương thức
+    - Là việc 1 class có thể có nhiều phương thức cùng tên nhưng khác nhau vê danh sách tham số truyền vào( số lươợng tham số hoặc kiểu dữ liệu tham số)
+    - Việc nạp chồng phương thức giúp tăng tính linh hoạt và khả năng mở
+    - Chỉ sảy ra trong cùng 1 class, không liên quan đến kế thừa giữa các class
 
+ II. Tính đa hinh
+
+    1. định nghĩa
+
+    2. Bản chất
+
+    3. Điều kiện để sử dụng
+
+    4. Các cách đa hình
  */
 
 
 
 public class Main {
+
+    public static void main(String[] args) {
+
+        Employee empOffice = new EmployeeOffice("E001", "Nguyen Van A", "123 Le Loi", "0123456789", 22);
+        empOffice.display();
+        System.out.println("Lương nhân viên văn phòng: " + empOffice.calculateSalary());
+        System.out.println("------------------------------");
+        Employee empTechnical = new EmployeeTechnical("E002", "Tran Thi B", "456 Tran Hung Dao", "0987654321", 5);
+        empTechnical.display();
+        System.out.println("Lương nhân viên kỹ thuật: " + empTechnical.calculateSalary());
+        System.out.println("------------------------------");
+        Employee empSales = new EmployeeSales("E003", "Le Van C", "789 Nguyen Trai", "0912345678", 50000000);
+        empSales.display();
+        System.out.println("Lương nhân viên bán hàng: " + empSales.calculateSalary());
+
+
+
+
+    }
+
 }

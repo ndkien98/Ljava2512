@@ -10,7 +10,7 @@ public class EmployeeOffice extends Employee{
         super();
     }
 
-    public EmployeeOffice(String employeeId, String fullName, String address, double phoneNumber, int workingDays) {
+    public EmployeeOffice(String employeeId, String fullName, String address, String phoneNumber, int workingDays) {
         // gọi constructor của lớp cha truyền vào các tham số
         super(employeeId, fullName, address, phoneNumber);
         this.workingDays = workingDays;
@@ -23,6 +23,7 @@ public class EmployeeOffice extends Employee{
      */
     @Override
     public int calculateSalary() {
+        System.out.println("Calculating salary for Office Employee...");
         return workingDays * 100000;
     }
 

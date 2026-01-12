@@ -5,9 +5,9 @@ public class Employee {
     private String employeeId;
     private String fullName;
     private String address;
-    private double phoneNumber;
+    private String phoneNumber;
 
-    public Employee(String employeeId, String fullName, String address, double phoneNumber) {
+    public Employee(String employeeId, String fullName, String address, String phoneNumber) {
         this.employeeId = employeeId;
         this.fullName = fullName;
         this.address = address;
@@ -29,6 +29,12 @@ public class Employee {
         System.out.println("Full Name: " + fullName);
         System.out.println("Address: " + address);
         System.out.println("Phone Number: " + phoneNumber);
+    }
+
+
+    public void display(String extraInfo){
+        display();
+        System.out.println("Extra Info: " + extraInfo);
     }
 
     public String getEmployeeId() {
@@ -55,11 +61,11 @@ public class Employee {
         this.address = address;
     }
 
-    public double getPhoneNumber() {
+    public String getPhoneNumber() {
         return phoneNumber;
     }
 
-    public void setPhoneNumber(double phoneNumber) {
+    public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 }
