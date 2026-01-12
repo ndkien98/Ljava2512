@@ -1,5 +1,8 @@
 package buoi3.baitap.bai5;
 
+import buoi7.baitap.Utils;
+import jdk.jshell.execution.Util;
+
 import java.util.Scanner;
 
 /**
@@ -36,7 +39,7 @@ public class Bai5 {
             System.out.println("3. Tính lãi suất kép");
             System.out.println("4. Thoát");
             System.out.print("Chọn chức năng (1-4): ");
-            int choice = new Scanner(System.in).nextInt();
+            int choice = Utils.scanNumber();
             switch (choice) {
                 case 1:
                     account.showInfo();
