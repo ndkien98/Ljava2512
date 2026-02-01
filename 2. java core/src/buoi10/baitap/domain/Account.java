@@ -1,15 +1,18 @@
-package buoi10.baitap;
+package buoi10.baitap.domain;
+
+import buoi10.baitap.service.IBankingAction;
 
 /**
 
 Account
  Chứa thông tin số tài khoản, chủ sở hữu, số dư
  */
-public abstract class Account implements IBankingAction{
+public abstract class Account implements IBankingAction {
 
     private String numberAccount;
     private String owner;
     private double balance;
+    private String citizenId; // Thêm citizenId
 
 
     public void input(){
@@ -49,5 +52,18 @@ public abstract class Account implements IBankingAction{
 
     public void setBalance(double balance) {
         this.balance = balance;
+    }
+
+    public String getCitizenId() {
+        return citizenId;
+    }
+
+    public void setCitizenId(String citizenId) {
+        this.citizenId = citizenId;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s - %s - Số dư: %.0f", numberAccount, owner, balance);
     }
 }

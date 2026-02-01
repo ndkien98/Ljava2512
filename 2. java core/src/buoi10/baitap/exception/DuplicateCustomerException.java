@@ -1,4 +1,4 @@
-package buoi10.baitap;
+package buoi10.baitap.exception;
 
 public class DuplicateCustomerException extends RuntimeException {
 

@@ -1,4 +1,4 @@
-package buoi10.baitap;
+package buoi10.baitap.service;
 /*
 Dùng Lambda để tính lãi suất tùy biến cho từng loại hạng thẻ (Gold, Platinum, Silver).
  */

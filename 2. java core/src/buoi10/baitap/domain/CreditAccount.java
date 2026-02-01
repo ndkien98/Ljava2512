@@ -1,4 +1,6 @@
-package buoi10.baitap;
+package buoi10.baitap.domain;
+
+import buoi10.baitap.exception.InsufficientFundsException;
 
 public class CreditAccount extends Account {
 
@@ -32,11 +34,14 @@ public class CreditAccount extends Account {
 
     @Override
     public void withdraw(double amount) {
-        if (super.getBalance() < 0 && Math.abs(super.getBalance() - amount) > limitCredit) {
-            System.out.println("Vượt quá hạn mức tín dụng!");
-            return;
+        double newBalance = super.getBalance() - amount;
+        if (newBalance < 0 && Math.abs(newBalance) > limitCredit) {
+            double over = Math.abs(newBalance) - limitCredit;
+            throw new InsufficientFundsException(
+                "Giao dịch thất bại: Vượt quá hạn mức tín dụng " + limitCredit + " (Vượt " + over + ")"
+            );
         }
-        super.setBalance(super.getBalance() - amount);
+        super.setBalance(newBalance);
     }
 
 
