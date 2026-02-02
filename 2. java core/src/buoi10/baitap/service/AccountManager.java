@@ -73,7 +73,7 @@ public class AccountManager {
             System.out.println("\n========== MỞ TÀI KHOẢN MỚI ==========");
             System.out.print("Nhập tên khách hàng: ");
             String name = scanner.nextLine();
-            
+
             System.out.print("Nhập mã định danh (Citizen ID): ");
             String citizenId = scanner.nextLine();
             

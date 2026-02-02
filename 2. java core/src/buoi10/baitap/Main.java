@@ -13,13 +13,13 @@ public class Main {
         accountManager.init();
 
         Scanner scanner = new Scanner(System.in);
-
+        
         while (true) {
             showMenu();
             System.out.print("Lựa chọn của bạn: ");
             int choice = scanner.nextInt();
             scanner.nextLine(); // consume newline
-
+            
             switch (choice) {
                 case 1:
                     accountManager.registerAccount();
@@ -46,12 +46,12 @@ public class Main {
                 default:
                     System.out.println("Lựa chọn không hợp lệ. Vui lòng thử lại.");
             }
-
+            
             System.out.println("\nNhấn Enter để tiếp tục...");
             scanner.nextLine();
         }
     }
-
+    
     public static void showMenu(){
         System.out.println("\n========== SMARTBANK PRO MENU ==========");
         System.out.println("1. Mở tài khoản mới (Check trùng ID)");
