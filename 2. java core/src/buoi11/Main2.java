@@ -69,7 +69,7 @@ public class Main2 {
             for (int i = 1; i <= 5; i++) {
                 System.out.println("Thread 1: " + i);
                 try {
-                    Thread.sleep(100); // Giả lập thời gian xử lý
+                    Thread.sleep(100); // Giả lập thời gian xử lý của method nào đó mất khoảng 100ms
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -80,7 +80,7 @@ public class Main2 {
             for (int i = 1; i <= 5; i++) {
                 System.out.println("Thread 2: " + i);
                 try {
-                    Thread.sleep(100); // Giả lập thời gian xử lý
+                    Thread.sleep(100); // Giả lập thời gian xử lý của method nào đó mất khoảng 100ms
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -90,7 +90,7 @@ public class Main2 {
             for (int i = 1; i <= 5; i++) {
                 System.out.println("Thread 3: " + i);
                 try {
-                    Thread.sleep(100); // Giả lập thời gian xử lý
+                    Thread.sleep(100); // Giả lập thời gian xử lý của method nào đó mất khoảng 100ms
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
