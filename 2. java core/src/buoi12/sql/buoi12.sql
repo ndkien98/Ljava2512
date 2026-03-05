@@ -91,6 +91,7 @@ select count(*), ma_lop from sinh_vien group by ma_lop having count(*) > 1; -- �
 -- các loại join: inner join, left join, right join, cross join, self join
 -- inner join: trả về dữ liệu của các bản ghi có cùng 1 giá trị khóa ngooại và khóa chính giữa 2 table
 -- ex: lấy thông tin sinh viên và tên lớp học của họ
+use quanlysinhvien;
 select * from sinh_vien inner join lop_hoc on sinh_vien.ma_lop = lop_hoc.ma_lop;
 -- câu lệnh này chỉ lấy ra các bản ghi thỏa mãn điều kiện ma_lop của bảng sinh viên và ma_lop của bảng lop_hoc phải bằng nhau, hay sẽ là tập trung hai table
 
@@ -100,3 +101,89 @@ select * from sinh_vien left join lop_hoc on sinh_vien.ma_lop = lop_hoc.ma_lop;
 
 -- right join: table trước right join gọi là A và table sau right join gọi là B, => right join sẽ trả về tất cả các bản ghi của table B và các bản ghi có giá trị khóa ngoại khớp với khóa chính của table A, nếu các bản ở table B không có bản ghi nào khớp với table A dữ liệu sẽ trả về null cho các cột của table A
 select * from sinh_vien right join lop_hoc on sinh_vien.ma_lop = lop_hoc.ma_lop;
+
+-- cross join: trả về tích Đề-các (Cartesian product) của hai bảng, nghĩa là kết hợp mỗi bản ghi của bảng A với mỗi bản ghi của bảng B, không cần điều kiện nào giữa hai bảng
+select * from sinh_vien cross join lop_hoc;
+
+select count(*) from sinh_vien;
+select count(*) from lop_hoc;
+
+-- self join: là một trường hợp đặc biệt của join, trong đó một bảng được kết nối với chính nó, thường được sử dụng để biểu diễn mối quan hệ phân cấp hoặc để so sánh các bản ghi trong cùng một bảng
+-- ex: bài toán lưu trữ các môn học. Các danh mục các loại môn học. Môn học tự nhiên, môn học xã hội, môn học năng khiếu
+-- Môn học tự nhiên: Toán, Lý, Hóa
+-- Môn học xã hội: Văn, Sử, Địa
+-- Môn học năng khiếu: Thể dục, Âm nhạc, Mỹ thuật
+-- Toán: Toán 10, Toán 11, Toán 12
+-- Lý: Lý 10, Lý 11, Lý 12
+-- Hóa: Hóa 10, Hóa 11, Hóa 12
+-- Văn: Văn 10, Văn 11, Văn 12
+-- Sử: Sử 10, Sử 11, Sử 12
+-- Thiết kế table lưu trữ danh mục lớp học. Trong đó các danh mục con sẽ tham triếu trực tiếp đến danh mục cha của nó
+create table danh_muc_mon_hoc (
+    id int primary key auto_increment,
+    ten_danh_muc nvarchar(50) not null,
+    parent_id int, -- parent_id là khóa ngoại tham chiếu đến id của chính bảng danh_muc_mon_hoc để biểu diễn mối quan hệ phân cấp giữa các danh mục môn học
+    foreign key (parent_id) references danh_muc_mon_hoc(id) -- foreign key (parent_id): cột khóa ngoại trong bảng danh_muc_mon_hoc, references danh_muc_mon_hoc(id): tham chiếu đến cột id của chính bảng danh_muc_mon_hoc
+);
+
+insert into danh_muc_mon_hoc(ten_danh_muc, parent_id) values
+('Môn học tự nhiên', null), -- null: danh mục cha không có parent_id nào vì nó là danh mục gốc
+('Môn học xã hội', null),
+('Môn học năng khiếu', null),
+('Toán', 1), -- 1: parent_id tham chiếu đến id của danh mục cha 'Môn học tự nhiên'
+('Lý', 1),
+('Hóa', 1),
+('Văn', 2), -- 2: parent_id tham chiếu đến id của danh mục cha 'Môn học xã hội'
+('Sử', 2),
+('Địa', 2),
+('Thể dục', 3), -- 3: parent_id tham chiếu đến id của danh mục cha 'Môn học năng khiếu'
+('Âm nhạc', 3),
+('Mỹ thuật', 3),
+('Toán 10', 4), -- 4: parent_id tham chiếu đến id của danh mục cha 'Toán');
+('Toán 11', 4),
+('Toán 12', 4),
+('Lý 10', 5), -- 5: parent_id tham chiếu đến id của danh mục cha 'Lý'
+('Lý 11', 5),
+('Lý 12', 5),
+('Hóa 10', 6), -- 6: parent_id tham chiếu đến id của danh mục cha 'Hóa'
+('Hóa 11', 6),
+('Hóa 12', 6),
+('Văn 10', 7), -- 7: parent_id tham chiếu đến id của danh mục cha 'Văn'
+('Văn 11', 7),
+('Văn 12', 7),
+('Sử 10', 8), -- 8: parent_id tham chiếu đến id của danh mục cha 'Sử'
+('Sử 11', 8),
+('Sử 12', 8);
+
+-- Lấy ra thông tin các môn học và tên danh mục cha của môn học đó
+select danh_muc_con.ten_danh_muc as ten_danh_muc_con,danh_muc_cha.ten_danh_muc as danh_muc_cha
+from danh_muc_mon_hoc danh_muc_con left join danh_muc_mon_hoc danh_muc_cha on danh_muc_con.parent_id = danh_muc_cha.id;
+
+-- Các mối quan hệ giữa các table:
+-- 1. Quan hệ một-nhiều (one-to-many): một bản ghi trong bảng cha có thể liên kết với nhau bản ghi trong bảng con, nhưng mỗi bản ghi trong bảng con chỉ liên kết với một bản ghi trong bảng cha.
+-- Ví dụ: một lớp học (bảng lop_hoc) có thể có nhiều sinh viên (bảng sinh_vien), nhưng mỗi sinh viên chỉ thuộc về một lớp học.
+-- cũng là nghịch đảo của many to one: nhiều bản ghi trong bảng con liên kết với một bản ghi trong bảng cha, nhưng một bản ghi trong bảng cha chỉ liên kết với một bản ghi trong bảng con
+
+-- 2. Mối quan hệ nhiều-nhiều (many-to-many): một bản ghi trong bảng A có thể liên kết với nhiều bản ghi trong bảng B,
+-- và ngược lại, một bản ghi trong bảng B cũng có thể liên kết với nhiều bản ghi trong bảng A.
+-- Để biểu diễn mối quan hệ này, chúng ta thường sử dụng một bảng trung gian (junction table) để lưu trữ các liên kết giữa hai bảng chính.
+-- ví dụ: một sinh viên có thể học nhiều môn học, mỗi môn học học sinh học sẽ có điểm riêng, một môn học có thể có nhiều học sinh học
+-- => Mối quan hệ giữa sinh_vien và danh_muc_mon_hoc là nhiều-nhiều,
+-- để biểu diễn mối quan hệ này chúng ta sẽ tạo một bảng trung gian có tên là bang_diem để lưu trữ các liên kết giữa sinh_vien và danh_muc_mon_hoc,
+
+create table bang_diem (
+    id int primary key auto_increment,
+    ma_sv int, -- ma_sv là khóa ngoại tham chiếu đến ma_sv của bảng sinh_vien
+    ma_mon_hoc int, -- ma_mon_hoc là khóa ngoại tham chiếu đến id của bảng danh_muc_mon_hoc
+    diem decimal(5, 2), -- điểm số của sinh viên trong môn học đó
+    foreign key (ma_sv) references sinh_vien(ma_sv), -- foreign key (ma_sv): cột khóa ngoại trong bảng bang_diem, references sinh_vien(ma_sv): tham chiếu đến cột ma_sv của bảng sinh_vien
+    foreign key (ma_mon_hoc) references danh_muc_mon_hoc(id) -- foreign key (ma_mon_hoc): cột khóa ngoại trong bảng bang_diem, references danh_muc_mon_hoc(id): tham chiếu đến cột id của bảng danh_muc_mon_hoc
+);
+
+insert bang_diem (ma_sv, ma_mon_hoc, diem) values
+(2, 13, 8.5), -- SV2 học môn Toán 10 được 8.5 điểm
+(2, 14, 9.0), -- SV2 học môn Toán 11 được 9.0 điểm
+(3, 13, 7.0), -- SV3 học môn Toán 10 được 7.0 điểm
+(3, 14, 7.5), -- SV3 học môn Toán 11 được 7.5 điểm
+(4, 15, 6.0), -- SV4 học môn Toán 12 được 6.0 điểm
+(4, 16, 6.5); -- SV4 học môn Lý 10 được 6.5 điểm
