@@ -187,3 +187,40 @@ insert bang_diem (ma_sv, ma_mon_hoc, diem) values
 (3, 14, 7.5), -- SV3 học môn Toán 11 được 7.5 điểm
 (4, 15, 6.0), -- SV4 học môn Toán 12 được 6.0 điểm
 (4, 16, 6.5); -- SV4 học môn Lý 10 được 6.5 điểm
+
+
+-- Chiến lược thực thi của 1 câu lệnh sql:
+-- 1. Từ khóa FROM: xác định bảng dữ liệu chính mà câu lệnh sẽ truy vấn, có thể bao gồm nhiều bảng nếu có sử dụng các loại join,
+-- 2. Từ khóa WHERE: lọc các bản ghi dựa trên điều kiện được chỉ định, chỉ những
+-- danh sách các bản ghi thỏa mãn điều kiện trong mệnh đề WHERE mới được đưa vào quá trình xử lý tiếp theo
+-- 3. Từ khóa GROUP BY: nếu có, sẽ nhóm các bản ghi lại với nhau dựa trên giá trị của một hoặc nhiều cột, mỗi nhóm sẽ được xử lý như một thực thể riêng biệt trong quá trình thực thi tiếp theo
+-- 4. Từ khóa HAVING: nếu có, sẽ lọc các nhóm được tạo bởi GROUP BY dựa trên điều kiện được chỉ định, chỉ những
+-- 5. Từ khóa SELECT: xác định các cột dữ liệu sẽ được trả về trong kết quả truy vấn, chỉ những cột được liệt kê trong mệnh đề SELECT mới được đưa vào kết quả cuối cùng
+-- 6. Từ khóa ORDER BY: nếu có, sẽ sắp xếp kết quả truy vấn dựa trên một hoặc nhiều cột, theo thứ tự tăng dần (ASC) hoặc giảm dần (DESC)
+
+-- Chiến lược thực thi quyest các bản ghi của câu sql trong bảng lưu trữ dữ liệu cụ thể:
+-- mysql thực hiện quyets toàn bộ dữ liệu được lưu trong bảng, sau đó áp dụng các điều kiện lọc được chỉ định từ mệnh đề để lọc bớt các dữ liệu
+-- Như vậy nếu dữ liệu trong table quá lớn sẽ làm cho quá trình thực thi câu lệnh cực kỳ chậm nếu kết hợp join hoặc sub query giữa các table còn làm cho số lượnc
+-- bản ghi cần được xử lý tăng lên rất nhiều lần làm cho query chạy chậm và có thể sẽ block lại các cụm dữ liệu cho đến toàn bộ table dữ liệu. làm cho các query \
+-- khác bị ảnh hưởng dẫn đến hệ thống chạy chậm hoặc bị treo
+-- => để giúp cơ sở dữ liệu tối ưu hiệu năng, tìm kiếm dữ liệu nhanh hơn database tạo ra cơ chế index cho các cột của table. Giúp database tìm kiếm dữ liệu 1 cách nhanh hơn
+
+-- index: là một cấu trúc dữ liệu đặc biệt được tạo ra để tăng tốc độ truy vấn dữ liệu trong một bảng,
+              -- nó hoạt động giống như một bảng tra cứu giúp cơ sở dữ liệu tìm kiếm dữ liệu nhanh hơn mà không cần phải quét toàn bộ bảng
+-- index được tạo trên một hoặc nhiều cột của bảng, khi một truy vấn được thực hiện với điều kiện lọc dựa trên các cột đã được đánh index
+-- các cấu trúc dữ liệu của index:
+-- 1. B-tree (Balanced Tree): là cấu trúc dữ liệu phổ biến nhất được sử dụng cho index trong các hệ quản trị cơ sở dữ liệu quan hệ, nó tổ chức dữ liệu theo dạng cây cân bằng, giúp tối ưu hóa việc tìm kiếm, chèn và xóa dữ liệu
+-- 2. hash map: cấu trúc dữ liệu giúp đánh chỉ mục dạng key trong 1 array các bucket, giúp cho việc tìm kiếm theo key trở lên nhanh hơn rất nhiều
+
+
+explain select * from sinh_vien;
+
+select * from sinh_vien;
+
+explain select * from sinh_vien where ma_sv = 1;
+
+explain select * from sinh_vien where ho_ten = 'Vu Hoang Yen';
+
+explain select * from sinh_vien where email = 'yenvh@gmail.com';
+
+-- Tại sao không đánh index cho tất cả các cột trong bảng?
