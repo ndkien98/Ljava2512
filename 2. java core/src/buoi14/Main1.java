@@ -1,6 +1,9 @@
 package buoi14;
 
-import buoi14.service.StudentService;
+import buoi14.service.ClassService;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
 
@@ -26,10 +29,21 @@ import buoi14.service.StudentService;
     service: package chuyên chứa các class xử lý logic nghiệp vụ, giao tiếp với dao để lấy dữ liệu và xử lý dữ liệu
     utils: package chuyên chứa các class tiện ích, ví dụ như class để kết nối đến cơ sở dữ liệu
  */
-public class Main {
+public class Main1 {
 
     public static void main(String[] args) {
-        StudentService studentService = new StudentService();
-        studentService.addStudent();
+        /**
+         Tạo 500 thread chạy đồng thời
+         mỗi thread gọi đến phương thức showAllClasses() để lấy ra danh sách tất cả các lớp học và hiển thị thông tin của chúng.
+            Mục đích mở thật nhiều 10000 * 500 = 5 triệu kết nối đến mysql để xem mysql có thể xử lý được khoogn ?
+         */
+        ClassService classService = new ClassService();
+        ExecutorService executor = Executors.newFixedThreadPool(500);
+        for (int i = 0; i < 10000; i++) {
+            executor.execute(() -> {
+                classService.showAllClasses();
+            });
+        }
+        executor.shutdown();
     }
 }
