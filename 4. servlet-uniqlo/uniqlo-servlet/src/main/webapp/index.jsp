@@ -9,5 +9,6 @@
 </h1>
 <br/>
 <a href="hello-servlet">Hello Servlet</a>
+<a href="/productions">Quản lý sản phẩm</a>
 </body>
 </html>

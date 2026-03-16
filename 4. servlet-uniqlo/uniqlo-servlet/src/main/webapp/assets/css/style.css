@@ -1,0 +1,54 @@
+body { background-color: #f4f6f9; }
+.product-card {
+    transition: transform 0.2s;
+    border: none;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    height: 100%;
+}
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+.product-img-wrapper {
+    height: 200px;
+    overflow: hidden;
+    background-color: #eee;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.product-img-wrapper img {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: cover;
+}
+.badge-category {
+    background-color: #e9ecef;
+    color: #495057;
+    font-size: 0.8em;
+}
+.price-tag {
+    color: #dc3545;
+    font-weight: bold;
+    font-size: 1.1em;
+}
+.pagination-container {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+}
+.page-link {
+    color: #0d6efd;
+    cursor: pointer;
+    user-select: none; /* Ngăn bôi đen text khi click nhanh */
+}
+.page-item.active .page-link {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    color: white;
+}
+.page-item.disabled .page-link {
+    cursor: not-allowed;
+    color: #6c757d;
+    pointer-events: none;
+}
