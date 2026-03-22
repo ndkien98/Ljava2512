@@ -208,3 +208,73 @@ create index user_id
 create index created_by
     on sizes (created_by);
 
+-- =====================================================
+-- AUTH: Thêm cột role, remember_token, avatar vào users
+-- =====================================================
+use uniqlo_education;
+-- MySQL does NOT support `ADD COLUMN IF NOT EXISTS`.
+-- Use metadata checks to add missing columns safely.
+DROP PROCEDURE IF EXISTS add_users_auth_columns;
+DELIMITER $$
+CREATE PROCEDURE add_users_auth_columns()
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+        WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'users' AND COLUMN_NAME = 'role'
+    ) THEN
+        ALTER TABLE users ADD COLUMN role VARCHAR(20) DEFAULT 'USER' AFTER gender;
+    END IF;
+
+    IF NOT EXISTS (
+        SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+        WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'users' AND COLUMN_NAME = 'remember_token'
+    ) THEN
+        ALTER TABLE users ADD COLUMN remember_token VARCHAR(255) NULL AFTER role;
+    END IF;
+
+    IF NOT EXISTS (
+        SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+        WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'users' AND COLUMN_NAME = 'avatar'
+    ) THEN
+        ALTER TABLE users ADD COLUMN avatar VARCHAR(500) NULL AFTER remember_token;
+    END IF;
+END$$
+DELIMITER ;
+CALL add_users_auth_columns();
+DROP PROCEDURE IF EXISTS add_users_auth_columns;
+
+-- =====================================================
+-- VISIT STATS: đếm lượt truy cập website
+-- =====================================================
+CREATE TABLE IF NOT EXISTS visit_stats
+(
+    id            INT AUTO_INCREMENT PRIMARY KEY,
+    visit_count   BIGINT    DEFAULT 0                 NOT NULL,
+    last_updated  TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP
+);
+INSERT INTO visit_stats (visit_count) VALUES (0);
+
+-- =====================================================
+-- SEED: Tạo tài khoản admin mặc định (password: admin123)
+-- =====================================================
+
+-- Some SQL linters cannot infer that procedure above adds `role`.
+-- Insert with role only if the column exists.
+DROP PROCEDURE IF EXISTS seed_admin_user;
+DELIMITER $$
+CREATE PROCEDURE seed_admin_user()
+BEGIN
+    IF EXISTS (
+        SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+        WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'users' AND COLUMN_NAME = 'role'
+    ) THEN
+        INSERT IGNORE INTO users (full_name, email, password_hash, role)
+        VALUES ('Admin Uniqlo', 'admin@uniqlo.com', MD5('admin123'), 'ADMIN');
+    ELSE
+        INSERT IGNORE INTO users (full_name, email, password_hash)
+        VALUES ('Admin Uniqlo', 'admin@uniqlo.com', MD5('admin123'));
+    END IF;
+END$$
+DELIMITER ;
+CALL seed_admin_user();
+DROP PROCEDURE IF EXISTS seed_admin_user;

@@ -4,15 +4,39 @@
          xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
          version="6.0">
 
+    <!-- ============================================================ -->
+    <!-- VisitCountFilter – XML Config (demo FilterConfig init-param) -->
+    <!-- ============================================================ -->
+    <filter>
+        <filter-name>visitCountFilter</filter-name>
+        <filter-class>com.t3h.uniqlo.filter.VisitCountFilter</filter-class>
+        <init-param>
+            <!-- Đọc bằng FilterConfig.getInitParameter("excludePrefix") trong Java -->
+            <param-name>excludePrefix</param-name>
+            <param-value>/assets</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>visitCountFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 
-<!--    <servlet-mapping>-->
-<!--        <servlet-name>productionServlet</servlet-name>-->
-<!--        <url-pattern>/productions</url-pattern>-->
-<!--    </servlet-mapping>-->
+    <!-- ============================================================ -->
+    <!-- ProductionsServlet – XML config (backup nếu annotation off)  -->
+    <!-- Unused vì đã dùng @WebServlet annotation                      -->
+    <!-- ============================================================ -->
 <!--    <servlet>-->
 <!--        <servlet-name>productionServlet</servlet-name>-->
 <!--        <servlet-class>com.t3h.uniqlo.controller.ProductionsServlet</servlet-class>-->
 <!--    </servlet>-->
+<!--    <servlet-mapping>-->
+<!--        <servlet-name>productionServlet</servlet-name>-->
+<!--        <url-pattern>/productions</url-pattern>-->
+<!--    </servlet-mapping>-->
 
+    <!-- Default welcome page -->
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
 
 </web-app>
