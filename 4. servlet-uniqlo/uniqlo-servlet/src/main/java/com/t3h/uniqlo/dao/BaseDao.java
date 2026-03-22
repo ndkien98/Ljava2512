@@ -2,6 +2,7 @@ package com.t3h.uniqlo.dao;
 
 import com.t3h.uniqlo.config.DatabaseConnection;
 import com.t3h.uniqlo.mapper.RowMapper;
+import com.t3h.uniqlo.utils.StringUtils;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -33,6 +34,22 @@ public abstract class BaseDao<T> {
             e.printStackTrace();
         }
         return result;
+    }
+
+    protected Integer count(String sql,Object... params) {
+        Integer count = 0;
+        try (Connection connection = DatabaseConnection.getConnection();
+             var ps = connection.prepareStatement(sql)) {
+            setParams(params, ps);
+            var resultSet = ps.executeQuery();
+            while (resultSet.next()) {
+                count = StringUtils.getInteger(resultSet.getString("total"));
+            }
+            return count;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return count;
     }
 
     protected int update(String sql, Object... params) {

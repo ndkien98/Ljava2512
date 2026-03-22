@@ -1,4 +1,4 @@
-package com.t3h.uniqlo.model;
+package com.t3h.uniqlo.model.dto;
 
 import lombok.Builder;
 import lombok.Data;

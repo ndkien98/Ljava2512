@@ -6,6 +6,8 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%--sử dụng for trên jsp hoặc các toán tử switch case, if else--%>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -61,160 +63,57 @@
 
     <!-- Danh sách sản phẩm -->
     <div class="row g-4" id="productList">
-        <div class="col-md-6 col-lg-4">
-            <div class="card product-card">
-                <div class="product-img-wrapper">
-                    <img src="https://picsum.photos/seed/1/300/200" alt="Sản Phẩm Demo Số 1">
-                </div>
-                <div class="card-body d-flex flex-column">
-                    <span class="badge badge-category mb-2 align-self-start">Quần Jeans</span>
-                    <h5 class="card-title text-truncate">Sản Phẩm Demo Số 1</h5>
-                    <p class="card-text text-muted small flex-grow-1">Đây là mô tả ngắn gọn cho sản phẩm số 1. Chất lượng cao cấp.</p>
-                    <div class="d-flex justify-content-between align-items-center mt-3">
-                        <span class="price-tag">110.000 ₫</span>
-                        <div>
-                            <button class="btn btn-sm btn-outline-primary me-1" title="Sửa" onclick="openEditModal(101)">
-                                <i class="fas fa-pen"></i>
-                            </button>
-                            <button class="btn btn-sm btn-outline-danger" title="Xóa" onclick="deleteProduct(101)">
-                                <i class="fas fa-trash"></i>
-                            </button>
+        <c:forEach var="p" items="${productions}">
+            <div class="col-md-6 col-lg-4">
+                <div class="card product-card">
+                    <div class="product-img-wrapper">
+                        <img src="${p.imageUrl}" alt="${p.description}">
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <span class="badge badge-category mb-2 align-self-start">${p.categoryName}</span>
+                        <h5 class="card-title text-truncate">${p.name}</h5>
+                        <p class="card-text text-muted small flex-grow-1">${p.description}</p>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <span class="price-tag">${p.salePrice}</span>
+                            <div>
+                                <button class="btn btn-sm btn-outline-primary me-1" title="Sửa" onclick="openEditModal(${p.id})">
+                                    <i class="fas fa-pen"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger" title="Xóa" onclick="deleteProduct(${p.id})">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </c:forEach>
 
-        <div class="col-md-6 col-lg-4">
-            <div class="card product-card">
-                <div class="product-img-wrapper">
-                    <img src="https://picsum.photos/seed/2/300/200" alt="Sản Phẩm Demo Số 2">
-                </div>
-                <div class="card-body d-flex flex-column">
-                    <span class="badge badge-category mb-2 align-self-start">Giày Sneaker</span>
-                    <h5 class="card-title text-truncate">Sản Phẩm Demo Số 2</h5>
-                    <p class="card-text text-muted small flex-grow-1">Đây là mô tả ngắn gọn cho sản phẩm số 2. Chất lượng cao cấp.</p>
-                    <div class="d-flex justify-content-between align-items-center mt-3">
-                        <span class="price-tag">120.000 ₫</span>
-                        <div>
-                            <button class="btn btn-sm btn-outline-primary me-1" title="Sửa" onclick="openEditModal(102)">
-                                <i class="fas fa-pen"></i>
-                            </button>
-                            <button class="btn btn-sm btn-outline-danger" title="Xóa" onclick="deleteProduct(102)">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
+        <c:if test="${empty productions}">
+            <div id="noResult" class="text-center py-5 d-none">
+                <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                <h4 class="text-muted">Không tìm thấy sản phẩm nào</h4>
             </div>
-        </div>
-
-        <div class="col-md-6 col-lg-4">
-            <div class="card product-card">
-                <div class="product-img-wrapper">
-                    <img src="https://picsum.photos/seed/3/300/200" alt="Sản Phẩm Demo Số 3">
-                </div>
-                <div class="card-body d-flex flex-column">
-                    <span class="badge badge-category mb-2 align-self-start">Phụ Kiện</span>
-                    <h5 class="card-title text-truncate">Sản Phẩm Demo Số 3</h5>
-                    <p class="card-text text-muted small flex-grow-1">Đây là mô tả ngắn gọn cho sản phẩm số 3. Chất lượng cao cấp.</p>
-                    <div class="d-flex justify-content-between align-items-center mt-3">
-                        <span class="price-tag">130.000 ₫</span>
-                        <div>
-                            <button class="btn btn-sm btn-outline-primary me-1" title="Sửa" onclick="openEditModal(103)">
-                                <i class="fas fa-pen"></i>
-                            </button>
-                            <button class="btn btn-sm btn-outline-danger" title="Xóa" onclick="deleteProduct(103)">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6 col-lg-4">
-            <div class="card product-card">
-                <div class="product-img-wrapper">
-                    <img src="https://picsum.photos/seed/4/300/200" alt="Sản Phẩm Demo Số 4">
-                </div>
-                <div class="card-body d-flex flex-column">
-                    <span class="badge badge-category mb-2 align-self-start">Áo Thun</span>
-                    <h5 class="card-title text-truncate">Sản Phẩm Demo Số 4</h5>
-                    <p class="card-text text-muted small flex-grow-1">Đây là mô tả ngắn gọn cho sản phẩm số 4. Chất lượng cao cấp.</p>
-                    <div class="d-flex justify-content-between align-items-center mt-3">
-                        <span class="price-tag">140.000 ₫</span>
-                        <div>
-                            <button class="btn btn-sm btn-outline-primary me-1" title="Sửa" onclick="openEditModal(104)">
-                                <i class="fas fa-pen"></i>
-                            </button>
-                            <button class="btn btn-sm btn-outline-danger" title="Xóa" onclick="deleteProduct(104)">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6 col-lg-4">
-            <div class="card product-card">
-                <div class="product-img-wrapper">
-                    <img src="https://picsum.photos/seed/5/300/200" alt="Sản Phẩm Demo Số 5">
-                </div>
-                <div class="card-body d-flex flex-column">
-                    <span class="badge badge-category mb-2 align-self-start">Quần Jeans</span>
-                    <h5 class="card-title text-truncate">Sản Phẩm Demo Số 5</h5>
-                    <p class="card-text text-muted small flex-grow-1">Đây là mô tả ngắn gọn cho sản phẩm số 5. Chất lượng cao cấp.</p>
-                    <div class="d-flex justify-content-between align-items-center mt-3">
-                        <span class="price-tag">150.000 ₫</span>
-                        <div>
-                            <button class="btn btn-sm btn-outline-primary me-1" title="Sửa" onclick="openEditModal(105)">
-                                <i class="fas fa-pen"></i>
-                            </button>
-                            <button class="btn btn-sm btn-outline-danger" title="Xóa" onclick="deleteProduct(105)">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6 col-lg-4">
-            <div class="card product-card">
-                <div class="product-img-wrapper">
-                    <img src="https://picsum.photos/seed/6/300/200" alt="Sản Phẩm Demo Số 6">
-                </div>
-                <div class="card-body d-flex flex-column">
-                    <span class="badge badge-category mb-2 align-self-start">Giày Sneaker</span>
-                    <h5 class="card-title text-truncate">Sản Phẩm Demo Số 6</h5>
-                    <p class="card-text text-muted small flex-grow-1">Đây là mô tả ngắn gọn cho sản phẩm số 6. Chất lượng cao cấp.</p>
-                    <div class="d-flex justify-content-between align-items-center mt-3">
-                        <span class="price-tag">160.000 ₫</span>
-                        <div>
-                            <button class="btn btn-sm btn-outline-primary me-1" title="Sửa" onclick="openEditModal(106)">
-                                <i class="fas fa-pen"></i>
-                            </button>
-                            <button class="btn btn-sm btn-outline-danger" title="Xóa" onclick="deleteProduct(106)">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        </c:if>
     </div>
-
-    <div id="noResult" class="text-center py-5 d-none">
-        <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
-        <h4 class="text-muted">Không tìm thấy sản phẩm nào</h4>
-    </div>
-
     <!-- Khu vực Phân Trang -->
-    <nav aria-label="Page navigation" class="pagination-container">
-        <ul class="pagination" id="paginationControl"><li class="page-item disabled"><a class="page-link" onclick="handlePageChange(0)">Previous</a></li><li class="page-item active"><a class="page-link" onclick="handlePageChange(1)">1</a></li><li class="page-item "><a class="page-link" onclick="handlePageChange(2)">2</a></li><li class="page-item "><a class="page-link" onclick="handlePageChange(3)">3</a></li><li class="page-item "><a class="page-link" onclick="handlePageChange(4)">4</a></li><li class="page-item "><a class="page-link" onclick="handlePageChange(5)">5</a></li><li class="page-item "><a class="page-link" onclick="handlePageChange(2)">Next</a></li></ul>
-    </nav>
+    <c:if test="${totalPages > 1}">
+        <nav aria-label="Page navigation" class="pagination-container">
+            <ul class="pagination" id="paginationControl">
+                <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
+                    <a class="page-link" href="?currentPage=${currentPage - 1}&keySearch=${keySearch}&categoryId=${categoryId}&colorId=${colorId}">Previous</a>
+                </li>
+                <c:forEach var="i" begin="1" end="totalPages">
+                    <li class="page-item ${currentPage == i ? 'active' : ''}">
+                        <a class="page-link" href="?currentPage=${i}&keySearch=${keySearch}&categoryId=${categoryId}&colorId=${color}">${i}</a>
+                    </li>
+                </c:forEach>
+                <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
+                    <a class="page-link" href="?currentPage=${currentPage + 1}&keySearch=${keySearch}&categoryId=${categoryId}&colorId=${colorId}">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </c:if>
 </div>
 
 <!-- ================= MODAL THÊM SẢN PHẨM ================= -->
