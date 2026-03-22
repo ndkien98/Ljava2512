@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
+         version="6.0">
+
+
+<!--    <servlet-mapping>-->
+<!--        <servlet-name>productionServlet</servlet-name>-->
+<!--        <url-pattern>/productions</url-pattern>-->
+<!--    </servlet-mapping>-->
+<!--    <servlet>-->
+<!--        <servlet-name>productionServlet</servlet-name>-->
+<!--        <servlet-class>com.t3h.uniqlo.controller.ProductionsServlet</servlet-class>-->
+<!--    </servlet>-->
+
+
+</web-app>
