@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -417,7 +418,12 @@
         </div>
         <div class="stat-card green">
             <div class="stat-icon">🍪</div>
-<%--            <div class="stat-value">${empty cookies ? 0 : cookies.length}</div>--%>
+            <div class="stat-value">
+                <c:choose>
+                    <c:when test="${empty cookies}">0</c:when>
+                    <c:otherwise>${fn:length(cookies)}</c:otherwise>
+                </c:choose>
+            </div>
             <div class="stat-label">Cookies hiện tại</div>
         </div>
         <div class="stat-card yellow">
