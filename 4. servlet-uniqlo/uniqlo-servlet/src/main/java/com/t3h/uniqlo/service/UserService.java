@@ -68,4 +68,8 @@ public class UserService {
     public void clearRememberToken(int userId) {
         userDao.clearRememberToken(userId);
     }
+
+    public static void main(String[] args) {
+        System.out.println(md5("admin")); // e10adc3949ba59abbe56e057f20f883e
+    }
 }
