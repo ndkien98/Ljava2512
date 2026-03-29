@@ -7,11 +7,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản Lý Sản Phẩm - Uniqlo Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer"/>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/style.css">
+
     <style>
-        body { background: #f4f6fb; }
+        body { background: #f4f6fb; font-family: 'Inter', sans-serif; }
+
+        /* Page-specific styles (header styles moved to assets/css/style.css) */
         .page-header { background: linear-gradient(135deg,#1a1a2e 0%,#16213e 60%,#0f3460 100%); color:#fff; border-radius:16px; padding:28px 32px; margin-bottom:28px; }
         .page-header h2 { font-weight:700; font-size:1.7rem; margin:0; }
         .filter-card { border:none; border-radius:14px; box-shadow:0 2px 12px rgba(0,0,0,.08); }

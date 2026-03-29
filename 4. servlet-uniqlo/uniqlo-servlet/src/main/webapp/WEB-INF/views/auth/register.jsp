@@ -8,6 +8,7 @@
     <title>Đăng ký – Uniqlo</title>
     <link rel="preconnect" href="https://fonts.googleapis.com"/>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer"/>
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -165,6 +166,10 @@
             color: var(--text-muted);
             font-size: 0.95rem;
             pointer-events: none;
+            width: 18px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
         .form-control {
             width: 100%;
@@ -308,7 +313,7 @@
     <p class="subtitle">Đã có tài khoản? <a href="${pageContext.request.contextPath}/login">Đăng nhập</a></p>
 
     <c:if test="${not empty errorMsg}">
-        <div class="alert alert-error">⚠ ${errorMsg}</div>
+        <div class="alert alert-error"><i class="fa-solid fa-triangle-exclamation"></i> ${errorMsg}</div>
     </c:if>
 
     <form method="post" action="${pageContext.request.contextPath}/register" id="regForm" novalidate>
@@ -317,7 +322,7 @@
             <div class="form-group full">
                 <label for="fullName">Họ và tên</label>
                 <div class="input-wrapper">
-                    <span class="input-icon">👤</span>
+                    <span class="input-icon"><i class="fa-regular fa-user"></i></span>
                     <input type="text" id="fullName" name="fullName" class="form-control"
                            placeholder="Nguyễn Văn A"
                            value="${not empty fullName ? fullName : ''}" required/>
@@ -329,7 +334,7 @@
             <div class="form-group full">
                 <label for="email">Email</label>
                 <div class="input-wrapper">
-                    <span class="input-icon">✉</span>
+                    <span class="input-icon"><i class="fa-regular fa-envelope"></i></span>
                     <input type="email" id="email" name="email" class="form-control"
                            placeholder="example@email.com"
                            value="${not empty email ? email : ''}" required/>
@@ -341,10 +346,12 @@
             <div class="form-group">
                 <label for="password">Mật khẩu</label>
                 <div class="input-wrapper">
-                    <span class="input-icon">🔒</span>
+                    <span class="input-icon"><i class="fa-solid fa-lock"></i></span>
                     <input type="password" id="password" name="password" class="form-control"
                            placeholder="Tối thiểu 6 ký tự" required/>
-                    <button type="button" class="toggle-pw" onclick="togglePw('password')">👁</button>
+                    <button type="button" class="toggle-pw" onclick="togglePw('password')" aria-label="Hiện/ẩn mật khẩu">
+                        <i class="fa-regular fa-eye"></i>
+                    </button>
                 </div>
                 <div class="pw-strength">
                     <div class="pw-bar" id="bar1"></div>
@@ -358,10 +365,12 @@
             <div class="form-group">
                 <label for="confirmPassword">Xác nhận mật khẩu</label>
                 <div class="input-wrapper">
-                    <span class="input-icon">🔑</span>
+                    <span class="input-icon"><i class="fa-solid fa-key"></i></span>
                     <input type="password" id="confirmPassword" name="confirmPassword" class="form-control"
                            placeholder="Nhập lại mật khẩu" required/>
-                    <button type="button" class="toggle-pw" onclick="togglePw('confirmPassword')">👁</button>
+                    <button type="button" class="toggle-pw" onclick="togglePw('confirmPassword')" aria-label="Hiện/ẩn xác nhận mật khẩu">
+                        <i class="fa-regular fa-eye"></i>
+                    </button>
                 </div>
                 <div class="field-feedback" id="fb-confirm"></div>
             </div>
@@ -370,7 +379,7 @@
             <div class="form-group full">
                 <label for="gender">Giới tính</label>
                 <div class="input-wrapper">
-                    <span class="input-icon">⚡</span>
+                    <span class="input-icon"><i class="fa-solid fa-venus-mars"></i></span>
                     <select id="gender" name="gender" class="form-control">
                         <option value="">-- Chọn giới tính --</option>
                         <option value="Male"            ${gender eq 'Male'            ? 'selected' : ''}>Nam</option>
@@ -392,7 +401,7 @@
             </label>
         </div>
 
-        <button type="submit" class="btn-primary" id="regBtn">Tạo tài khoản →</button>
+        <button type="submit" class="btn-primary" id="regBtn">Tạo tài khoản <i class="fa-solid fa-arrow-right"></i></button>
     </form>
 </div>
 
@@ -400,6 +409,10 @@
     function togglePw(id) {
         const el = document.getElementById(id);
         el.type = el.type === 'password' ? 'text' : 'password';
+
+        // toggle icon
+        const btn = el.parentElement.querySelector('.toggle-pw i');
+        if (btn) btn.className = (el.type === 'password') ? 'fa-regular fa-eye' : 'fa-regular fa-eye-slash';
     }
 
     // Password strength
@@ -412,18 +425,18 @@
         bars.forEach(b => { b.className = 'pw-bar'; });
 
         if (v.length === 0) { label.textContent = 'Độ mạnh mật khẩu'; return; }
-        if (v.length < 4)  { bars[0].classList.add('weak');   label.textContent = '⚡ Yếu'; return; }
+        if (v.length < 4)  { bars[0].classList.add('weak');   label.textContent = 'Yếu'; return; }
         if (v.length < 8)  {
             bars[0].classList.add('medium'); bars[1].classList.add('medium');
-            label.textContent = '💪 Trung bình'; return;
+            label.textContent = 'Trung bình'; return;
         }
         const strong = /[A-Z]/.test(v) && /[0-9]/.test(v) && /[^A-Za-z0-9]/.test(v);
         if (strong) {
             bars.forEach(b => b.classList.add('strong'));
-            label.textContent = '🔥 Mạnh';
+            label.textContent = 'Mạnh';
         } else {
             bars[0].classList.add('medium'); bars[1].classList.add('medium');
-            label.textContent = '💪 Khá tốt';
+            label.textContent = 'Khá tốt';
         }
         checkConfirm();
     });
@@ -433,16 +446,15 @@
         const cpw = document.getElementById('confirmPassword').value;
         const fb  = document.getElementById('fb-confirm');
         if (!cpw) { fb.textContent = ''; return; }
-        if (pw === cpw) { fb.textContent = '✓ Mật khẩu khớp'; fb.className='field-feedback ok'; }
-        else            { fb.textContent = '✗ Mật khẩu không khớp'; fb.className='field-feedback err'; }
+        if (pw === cpw) { fb.textContent = 'Mật khẩu khớp'; fb.className='field-feedback ok'; }
+        else            { fb.textContent = 'Mật khẩu không khớp'; fb.className='field-feedback err'; }
     }
-    document.getElementById('confirmPassword').addEventListener('input', checkConfirm);
 
     // Full name feedback
     document.getElementById('fullName').addEventListener('input', function() {
         const fb = document.getElementById('fb-name');
         if (this.value.trim().length < 2) { fb.textContent = 'Họ tên quá ngắn'; fb.className='field-feedback err'; }
-        else { fb.textContent = '✓ Hợp lệ'; fb.className='field-feedback ok'; }
+        else { fb.textContent = 'Hợp lệ'; fb.className='field-feedback ok'; }
     });
 
     // Email live check
@@ -450,7 +462,7 @@
         const fb = document.getElementById('fb-email');
         const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.value);
         if (!this.value) { fb.textContent = ''; return; }
-        fb.textContent = valid ? '✓ Email hợp lệ' : '✗ Email không hợp lệ';
+        fb.textContent = valid ? 'Email hợp lệ' : 'Email không hợp lệ';
         fb.className = 'field-feedback ' + (valid ? 'ok' : 'err');
     });
 

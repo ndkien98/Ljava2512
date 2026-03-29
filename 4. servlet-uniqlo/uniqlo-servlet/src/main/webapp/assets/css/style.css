@@ -52,3 +52,132 @@ body { background-color: #f4f6f9; }
     color: #6c757d;
     pointer-events: none;
 }
+
+/* =====================
+   Shared Header (common/header.jspf)
+   Keep stable across pages to avoid style overriding.
+   ===================== */
+:root {
+    --hdr-bg: #16162a;
+    --hdr-glass: rgba(255,255,255,0.05);
+    --hdr-glass-b: rgba(255,255,255,0.10);
+    --hdr-text: #e8e8f0;
+    --hdr-muted: #a8a8c8;
+    --hdr-primary: #6c63ff;
+    --hdr-accent: #ff6584;
+}
+
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 32px;
+    height: 64px;
+    background: var(--hdr-bg);
+    border-bottom: 1px solid var(--hdr-glass-b);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(10px);
+}
+
+.navbar-brand {
+    font-size: 1.3rem;
+    font-weight: 800;
+    letter-spacing: 3px;
+    background: linear-gradient(135deg, var(--hdr-primary), var(--hdr-accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-decoration: none;
+    line-height: 1;
+}
+
+.navbar-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    color: var(--hdr-text);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    background: var(--hdr-glass);
+    border: 1px solid var(--hdr-glass-b);
+    transition: transform 0.15s, opacity 0.2s;
+}
+.nav-link:hover { opacity: 0.9; transform: translateY(-1px); }
+.nav-link span { display: none; }
+@media (min-width: 520px) { .nav-link span { display: inline; } }
+
+.avatar-chip {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 14px 6px 6px;
+    background: var(--hdr-glass);
+    border: 1px solid var(--hdr-glass-b);
+    border-radius: 999px;
+    color: var(--hdr-text);
+}
+
+.avatar-img {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--hdr-primary), var(--hdr-accent));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: 700;
+    overflow: hidden;
+    flex: 0 0 34px;
+}
+
+.avatar-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--hdr-text);
+    white-space: nowrap;
+}
+
+.badge-role {
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 999px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+.badge-admin  { background: rgba(108,99,255,0.25); color: #a99eff; border: 1px solid rgba(108,99,255,0.4); }
+.badge-user   { background: rgba(80,232,150,0.15); color: #50e896; border: 1px solid rgba(80,232,150,0.3); }
+
+.btn-logout {
+    padding: 8px 18px;
+    background: linear-gradient(135deg, var(--hdr-accent), #ff4466);
+    border: none;
+    border-radius: 999px;
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: opacity 0.2s, transform 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    line-height: 1;
+}
+.btn-logout:hover { opacity: 0.85; transform: translateY(-1px); }
+
+@media (max-width: 576px) {
+    .navbar { padding: 0 16px; }
+    .avatar-name, .badge-role, .nav-link span { display: none; }
+}

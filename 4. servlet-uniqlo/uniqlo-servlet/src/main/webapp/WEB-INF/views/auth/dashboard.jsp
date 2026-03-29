@@ -9,6 +9,8 @@
     <title>Dashboard – Uniqlo</title>
     <link rel="preconnect" href="https://fonts.googleapis.com"/>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer"/>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/style.css"/>
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -55,6 +57,7 @@
             background: linear-gradient(135deg, var(--primary), var(--accent));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            text-decoration: none;
         }
         .navbar-right { display: flex; align-items: center; gap: 16px; }
         .avatar-chip {
@@ -197,7 +200,7 @@
         .stat-card.pink::before   { background: linear-gradient(90deg, var(--accent), #ff9aae); }
         .stat-card.green::before  { background: linear-gradient(90deg, var(--success), #00ffaa); }
         .stat-card.yellow::before { background: linear-gradient(90deg, var(--warning), #ffaa00); }
-        .stat-icon { font-size: 1.8rem; margin-bottom: 10px; }
+        .stat-icon { font-size: 1.4rem; margin-bottom: 10px; }
         .stat-value {
             font-size: 1.8rem;
             font-weight: 800;
@@ -392,14 +395,14 @@
 
     <!-- Hero greeting -->
     <div class="hero">
-        <div class="hero-greeting">Chào mừng trở lại 👋</div>
+        <div class="hero-greeting">Chào mừng trở lại</div>
         <div class="hero-name">Xin chào, <span>${not empty user.fullName ? user.fullName : 'Người dùng'}</span>!</div>
         <div class="hero-meta">
-            <span>📧 ${user.email}</span>
-            <span>⚡ ${user.role}</span>
-            <c:if test="${not empty user.gender}"><span>👤 ${user.gender}</span></c:if>
+            <span><i class="fa-regular fa-envelope"></i> ${user.email}</span>
+            <span><i class="fa-solid fa-shield-halved"></i> ${user.role}</span>
+            <c:if test="${not empty user.gender}"><span><i class="fa-regular fa-user"></i> ${user.gender}</span></c:if>
             <c:if test="${not empty createdAtStr}">
-                <span>📅 Tham gia: ${createdAtStr}</span>
+                <span><i class="fa-regular fa-calendar"></i> Tham gia: ${createdAtStr}</span>
             </c:if>
         </div>
     </div>
@@ -407,17 +410,17 @@
     <!-- Stats row -->
     <div class="stats-grid">
         <div class="stat-card purple">
-            <div class="stat-icon">🌐</div>
+            <div class="stat-icon"><i class="fa-solid fa-globe"></i></div>
             <div class="stat-value">${visitCount}</div>
             <div class="stat-label">Lượt truy cập</div>
         </div>
         <div class="stat-card pink">
-            <div class="stat-icon">⏱</div>
+            <div class="stat-icon"><i class="fa-regular fa-clock"></i></div>
             <div class="stat-value">${sessionTimeout}<span style="font-size:1rem;font-weight:400"> ph</span></div>
             <div class="stat-label">Session timeout</div>
         </div>
         <div class="stat-card green">
-            <div class="stat-icon">🍪</div>
+            <div class="stat-icon"><i class="fa-solid fa-cookie-bite"></i></div>
             <div class="stat-value">
                 <c:choose>
                     <c:when test="${empty cookies}">0</c:when>
@@ -427,7 +430,7 @@
             <div class="stat-label">Cookies hiện tại</div>
         </div>
         <div class="stat-card yellow">
-            <div class="stat-icon">🔑</div>
+            <div class="stat-icon"><i class="fa-solid fa-fingerprint"></i></div>
             <div class="stat-value" style="font-size:1rem;word-break:break-all;font-weight:600">
                 ${not empty sessionId ? sessionId.substring(0, 8) : '–'}...
             </div>
@@ -441,7 +444,7 @@
         <!-- SESSION INFO -->
         <div class="card">
             <div class="card-header">
-                <div class="card-header-icon purple">🖥</div>
+                <div class="card-header-icon purple"><i class="fa-solid fa-display"></i></div>
                 <div class="card-title">Thông tin Session</div>
             </div>
             <div class="card-body">
@@ -482,7 +485,7 @@
         <!-- COOKIES -->
         <div class="card">
             <div class="card-header">
-                <div class="card-header-icon yellow">🍪</div>
+                <div class="card-header-icon yellow"><i class="fa-solid fa-cookie-bite"></i></div>
                 <div class="card-title">Browser Cookies</div>
             </div>
             <div class="card-body">
@@ -514,7 +517,7 @@
         <!-- VISIT COUNTER -->
         <div class="card">
             <div class="card-header">
-                <div class="card-header-icon pink">📊</div>
+                <div class="card-header-icon pink"><i class="fa-solid fa-chart-line"></i></div>
                 <div class="card-title">Lượt truy cập Website</div>
             </div>
             <div class="card-body">
@@ -543,37 +546,37 @@
         <!-- QUICK ACTIONS -->
         <div class="card">
             <div class="card-header">
-                <div class="card-header-icon green">⚡</div>
+                <div class="card-header-icon green"><i class="fa-solid fa-bolt"></i></div>
                 <div class="card-title">Điều hướng nhanh</div>
             </div>
             <div class="card-body">
                 <div class="action-grid">
                     <a href="${pageContext.request.contextPath}/productions" class="action-btn">
-                        <span class="icon">📦</span>
+                        <span class="icon"><i class="fa-solid fa-box"></i></span>
                         <span>Sản phẩm</span>
                     </a>
                     <a href="${pageContext.request.contextPath}/logout" class="action-btn">
-                        <span class="icon">🚪</span>
+                        <span class="icon"><i class="fa-solid fa-right-from-bracket"></i></span>
                         <span>Đăng xuất</span>
                     </a>
-                    <div class="action-btn" onclick="location.reload()">
-                        <span class="icon">🔄</span>
+                    <button type="button" class="action-btn" onclick="location.reload()" style="appearance:none">
+                        <span class="icon"><i class="fa-solid fa-rotate"></i></span>
                         <span>Làm mới</span>
-                    </div>
-                    <div class="action-btn" onclick="showInfo()">
-                        <span class="icon">ℹ️</span>
+                    </button>
+                    <button type="button" class="action-btn" onclick="showInfo()" style="appearance:none">
+                        <span class="icon"><i class="fa-solid fa-circle-info"></i></span>
                         <span>Về app</span>
-                    </div>
+                    </button>
                 </div>
 
                 <div style="margin-top:20px;padding:14px;background:var(--surface-2);border-radius:10px;font-size:0.78rem;color:var(--text-muted);line-height:1.7">
-                    <div style="font-weight:700;color:var(--text);margin-bottom:6px">🎓 Kỹ thuật đã áp dụng</div>
-                    <div>✅ <strong>Cookie</strong> – Remember Me 7 ngày</div>
-                    <div>✅ <strong>Session</strong> – Quản lý phiên đăng nhập</div>
-                    <div>✅ <strong>AuthFilter</strong> – Annotation config</div>
-                    <div>✅ <strong>VisitCountFilter</strong> – XML config + FilterConfig</div>
-                    <div>✅ <strong>EncodingFilter</strong> – UTF-8 annotation</div>
-                    <div>✅ <strong>JSP Cookie/Session</strong> – Hiển thị ở dashboard</div>
+                    <div style="font-weight:700;color:var(--text);margin-bottom:6px"><i class="fa-solid fa-graduation-cap"></i> Kỹ thuật đã áp dụng</div>
+                    <div><i class="fa-solid fa-check" style="color:#50e896"></i> <strong>Cookie</strong> – Remember Me 7 ngày</div>
+                    <div><i class="fa-solid fa-check" style="color:#50e896"></i> <strong>Session</strong> – Quản lý phiên đăng nhập</div>
+                    <div><i class="fa-solid fa-check" style="color:#50e896"></i> <strong>AuthFilter</strong> – Annotation config</div>
+                    <div><i class="fa-solid fa-check" style="color:#50e896"></i> <strong>VisitCountFilter</strong> – XML config + FilterConfig</div>
+                    <div><i class="fa-solid fa-check" style="color:#50e896"></i> <strong>EncodingFilter</strong> – UTF-8 annotation</div>
+                    <div><i class="fa-solid fa-check" style="color:#50e896"></i> <strong>JSP Cookie/Session</strong> – Hiển thị ở dashboard</div>
                 </div>
             </div>
         </div>
