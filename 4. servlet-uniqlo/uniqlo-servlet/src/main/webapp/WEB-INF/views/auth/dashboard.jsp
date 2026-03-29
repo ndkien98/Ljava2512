@@ -417,7 +417,7 @@
         </div>
         <div class="stat-card green">
             <div class="stat-icon">🍪</div>
-            <div class="stat-value">${empty cookies ? 0 : cookies.length}</div>
+<%--            <div class="stat-value">${empty cookies ? 0 : cookies.length}</div>--%>
             <div class="stat-label">Cookies hiện tại</div>
         </div>
         <div class="stat-card yellow">
