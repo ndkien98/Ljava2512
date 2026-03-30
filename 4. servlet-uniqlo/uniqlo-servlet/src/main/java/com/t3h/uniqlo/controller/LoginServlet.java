@@ -38,7 +38,7 @@ public class LoginServlet extends HttpServlet {
             throws ServletException, IOException {
         String email       = req.getParameter("email");
         String password    = req.getParameter("password");
-        String rememberMe  = req.getParameter("rememberMe"); // "on" nếu checked
+        String rememberMe  = req.getParameter("rememberMe"); // mã xác định có ghi nhớ đăng nhập hay không, nếu có tích -> xác định có ghi nhớ đăng nhập, tạo ra cookie lưu token để auto-login lần sau, nếu không tích -> không tạo cookie
         String redirectUrl = req.getParameter("redirect");
 
         UserDTO user = userService.login(email, password);
@@ -53,7 +53,7 @@ public class LoginServlet extends HttpServlet {
         }
 
         // Tạo session
-        HttpSession session = req.getSession(true);
+        HttpSession session = req.getSession(true);// lấy ra session hiện tại, nếu chưa có session nào thì tạo mới
         session.setAttribute("loggedUser", user);
         session.setMaxInactiveInterval(30 * 60); // 30 phút
 

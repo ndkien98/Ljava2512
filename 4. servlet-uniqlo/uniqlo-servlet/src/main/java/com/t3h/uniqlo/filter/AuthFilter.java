@@ -27,13 +27,13 @@ public class AuthFilter implements Filter {
 
         HttpServletRequest  req  = (HttpServletRequest)  request;
         HttpServletResponse resp = (HttpServletResponse) response;
-        HttpSession session = req.getSession(false);
+        HttpSession session = req.getSession(false);// false tức là nếu trừờng hợp chưa có session nào thì trả về null, không tạo mới session
 
         UserDTO loggedUser = (session != null) ? (UserDTO) session.getAttribute("loggedUser") : null;
 
         // Đã login → cho qua
         if (loggedUser != null) {
-            chain.doFilter(request, response);
+            chain.doFilter(request, response); // tiếp tục chuỗi filter → đến servlet bình thường cho request đã login
             return;
         }
 

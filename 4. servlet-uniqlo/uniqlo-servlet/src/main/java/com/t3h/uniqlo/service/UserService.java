@@ -70,6 +70,6 @@ public class UserService {
     }
 
     public static void main(String[] args) {
-        System.out.println(md5("admin")); // e10adc3949ba59abbe56e057f20f883e
+        System.out.println(md5("admin")); // 21232f297a57a5a743894a0e4a801fc3
     }
 }
