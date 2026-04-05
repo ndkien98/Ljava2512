@@ -8,7 +8,6 @@
     <title>Đăng nhập – Uniqlo</title>
     <link rel="preconnect" href="https://fonts.googleapis.com"/>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer"/>
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -180,10 +179,6 @@
             font-size: 1rem;
             pointer-events: none;
             transition: color 0.2s;
-            width: 18px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
         }
         .form-control {
             width: 100%;
@@ -356,13 +351,13 @@
 
         <!-- Error / Success alerts -->
         <c:if test="${not empty errorMsg}">
-            <div class="alert alert-error"><i class="fa-solid fa-triangle-exclamation"></i> ${errorMsg}</div>
+            <div class="alert alert-error">⚠ ${errorMsg}</div>
         </c:if>
         <c:if test="${param.success eq 'registered'}">
-            <div class="alert alert-success"><i class="fa-solid fa-circle-check"></i> Đăng ký thành công! Vui lòng đăng nhập.</div>
+            <div class="alert alert-success">✓ Đăng ký thành công! Vui lòng đăng nhập.</div>
         </c:if>
         <c:if test="${param.success eq 'loggedout'}">
-            <div class="alert alert-success"><i class="fa-solid fa-circle-check"></i> Bạn đã đăng xuất thành công.</div>
+            <div class="alert alert-success">✓ Bạn đã đăng xuất thành công.</div>
         </c:if>
 
         <form method="post" action="${pageContext.request.contextPath}/login" id="loginForm" novalidate>
@@ -374,7 +369,7 @@
             <div class="form-group">
                 <label for="email">Email</label>
                 <div class="input-wrapper">
-                    <span class="input-icon"><i class="fa-regular fa-envelope"></i></span>
+                    <span class="input-icon">✉</span>
                     <input type="email" id="email" name="email" class="form-control"
                            placeholder="example@email.com"
                            value="${not empty email ? email : cookie['saved_email'].value}"
@@ -386,12 +381,10 @@
             <div class="form-group">
                 <label for="password">Mật khẩu</label>
                 <div class="input-wrapper">
-                    <span class="input-icon"><i class="fa-solid fa-lock"></i></span>
+                    <span class="input-icon"></span>
                     <input type="password" id="password" name="password" class="form-control"
                            placeholder="Nhập mật khẩu" required/>
-                    <button type="button" class="toggle-pw" onclick="togglePw()" title="Hiện/ẩn mật khẩu" aria-label="Hiện/ẩn mật khẩu">
-                        <i class="fa-regular fa-eye" id="pwEye"></i>
-                    </button>
+                    <button type="button" class="toggle-pw" onclick="togglePw()" title="Hiện/ẩn mật khẩu"></button>
                 </div>
             </div>
 
@@ -405,13 +398,13 @@
                 <a href="#" class="forgot-link">Quên mật khẩu?</a>
             </div>
 
-            <button type="submit" class="btn-primary" id="loginBtn">Đăng nhập <i class="fa-solid fa-arrow-right"></i></button>
+            <button type="submit" class="btn-primary" id="loginBtn">Đăng nhập →</button>
         </form>
 
         <div class="divider">hoặc đăng nhập bằng</div>
         <div class="social-row">
-            <button type="button" class="btn-social"><i class="fa-brands fa-google"></i> Google</button>
-            <button type="button" class="btn-social"><i class="fa-brands fa-facebook"></i> Facebook</button>
+            <button class="btn-social"> Google</button>
+            <button class="btn-social"> Facebook</button>
         </div>
     </div>
 </div>
@@ -419,10 +412,7 @@
 <script>
     function togglePw() {
         const pw = document.getElementById('password');
-        const eye = document.getElementById('pwEye');
-        const isHidden = pw.type === 'password';
-        pw.type = isHidden ? 'text' : 'password';
-        if (eye) eye.className = isHidden ? 'fa-regular fa-eye-slash' : 'fa-regular fa-eye';
+        pw.type = pw.type === 'password' ? 'text' : 'password';
     }
 
     // Client-side validation
@@ -432,10 +422,9 @@
         if (!email || !password) {
             e.preventDefault();
             alert('Vui lòng nhập đầy đủ email và mật khẩu!');
-            return;
         }
         const btn = document.getElementById('loginBtn');
-        btn.innerHTML = 'Đang đăng nhập...';
+        btn.textContent = 'Đang đăng nhập...';
         btn.style.opacity = '0.7';
     });
 </script>

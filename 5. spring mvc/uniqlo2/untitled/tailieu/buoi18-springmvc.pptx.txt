@@ -1,0 +1,123 @@
+Lập trình Java
+GV Nguyễn Đắc Kiên
+Spring MVC
+
+Nội dung bài học
+Giới thiệu về Spring và Spring MVC
+Bean trong Spring
+Dispatcher-servlet trong spring
+Resolving Views trong Spring MVC
+Controller trong Spring MVC
+© Copyright 2023 GV Nguyễn Đắc Kiên
+
+1) Giới thiệu về Spring và Spring MVC
+1.1 Giới thiệu về Spring và hệ sinh thái Spring
+1.2 Luồng xử lý MVC trong Spring MVC
+© Copyright 2023 GV Nguyễn Đắc Kiên
+
+1.1 Giới thiệu về Spring và hệ sinh thái Spring
+Spring là một framework mã nguồn mở rất phổ biến, được thiết kế để giúp phát triển ứng dụng Java dễ dàng và linh hoạt. Các tính năng chính của Spring bao gồm:
+
+© Copyright 2023 GV Nguyễn Đắc Kiên
+
+1.1 Giới thiệu về Spring và hệ sinh thái Spring
+• Dependency Injection (DI): Giúp tiêm phụ thuộc vào các lớp mà không cần phải tạo đối tượng trực tiếp trong lớp đó, giúp giảm sự phụ thuộc và tăng tính tái sử dụng của mã nguồn.
+• Inversion of Control (IoC): Spring quản lý vòng đời của các đối tượng (beans), giúp bạn chỉ cần khai báo và Spring lo việc khởi tạo và quản lý chúng.
+•Aspect-Oriented Programming (AOP): Giúp tách các phần chức năng cross-cutting (ví dụ như logging, transaction management) khỏi các lớp nghiệp vụ chính.
+
+© Copyright 2023 GV Nguyễn Đắc Kiên
+
+Lý do cần Spring thay vì chỉ sử dụng Servlet
+• Spring cung cấp một môi trường quản lý các đối tượng (bean) và tiêm phụ thuộc, làm giảm mã lặp lại và dễ bảo trì.
+• Spring MVC hỗ trợ mô hình MVC, giúp tách biệt rõ ràng giữa các tầng của ứng dụng (Model, View, Controller).
+
+© Copyright 2023 GV Nguyễn Đắc Kiên
+
+1.2 Luồng xử lý MVC trong Spring MVC
+Spring MVC sử dụng mô hình Model-View-Controller (MVC), giúp phân tách rõ ràng các thành phần trong ứng dụng:
+• Model: Đại diện cho dữ liệu của ứng dụng.
+• View: Là phần giao diện người dùng (thường là JSP, Thymeleaf, v.v.).
+• Controller: Xử lý các yêu cầu HTTP từ người dùng, thực hiện các logic nghiệp vụ và trả về kết quả.
+
+© Copyright 2023 GV Nguyễn Đắc Kiên
+
+1.2 Luồng xử lý MVC trong Spring MVC
+Luồng xử lý trong Spring MVC:
+1.	DispatcherServlet nhận yêu cầu HTTP từ người dùng.
+2.	Controller xử lý yêu cầu và trả về model dữ liệu.
+3.	ViewResolver xác định và trả về view tương ứng.
+4.	View (thường là JSP) hiển thị kết quả cho người dùng.
+
+© Copyright 2023 GV Nguyễn Đắc Kiên
+
+II) Bean trong Spring
+2.1 Định nghĩa Bean và cách config
+2.2 context:component-scan
+© Copyright 2023 GV Nguyễn Đắc Kiên
+
+2.1 Định nghĩa Bean và cách config
+Bean trong Spring là các đối tượng mà Spring Container quản lý. Bạn có thể khai báo các bean trong dispatcher-servlet.xml để Spring tự động khởi tạo và quản lý.
+© Copyright 2023 GV Nguyễn Đắc Kiên
+
+2.1 Định nghĩa Bean và cách config
+Cách config bean
+id="studentService": Tên của bean.
+class="vn.com.t3h.service.impl.BookServiceImpl": Lớp Java mà Spring sẽ tạo ra và quản lý.
+
+© Copyright 2023 GV Nguyễn Đắc Kiên
+
+2.2 context:component-scan
+Để tự động phát hiện các lớp như @Controller, @Service, bạn có thể cấu hình component-scan trong dispatcher-servlet.xml như sau:
+
+
+
+
+
+
+Điều này giúp Spring tự động quét các lớp trong package vn.com.t3h.controller và đăng ký chúng như là các bean.
+© Copyright 2023 GV Nguyễn Đắc Kiên
+
+III) Dispatcher-servlet trong spring
+DispatcherServlet là thành phần trung tâm trong Spring MVC. Nó nhận tất cả các yêu cầu HTTP và phân phối chúng đến các Controller thích hợp để xử lý. Sau khi Controller xử lý xong, DispatcherServlet sẽ quyết định view nào sẽ hiển thị kết quả.
+© Copyright 2023 GV Nguyễn Đắc Kiên
+
+III) Dispatcher-servlet trong spring
+Cấu hình trong web.xml
+Khi người dùng gửi yêu cầu HTTP, DispatcherServlet sẽ nhận yêu cầu và tìm kiếm Controller thích hợp để xử lý.
+© Copyright 2023 GV Nguyễn Đắc Kiên
+
+III) Dispatcher-servlet trong spring
+Cấu hình trong dispatcher-servlet.xml
+File dispatcher-servlet.xml là nơi cấu hình các thành phần quan trọng trong ứng dụng Spring MVC, bao gồm component-scan và view resolver.
+© Copyright 2023 GV Nguyễn Đắc Kiên
+
+III) Dispatcher-servlet trong spring
+Giải thích cấu hình trong dispatcher-servlet.xml:
+1.component-scan:
+Cấu hình này giúp Spring quét package vn.com.t3h.controller để tìm các lớp có annotation @Controller. Spring sẽ tự động đăng ký các lớp này như là các bean và cho phép chúng xử lý yêu cầu HTTP.
+Ví dụ về controller
+
+© Copyright 2023 GV Nguyễn Đắc Kiên
+
+III) Dispatcher-servlet trong spring
+2. InternalResourceViewResolver:
+Cấu hình ViewResolver cho phép Spring xác định cách tìm kiếm các trang JSP sau khi Controller xử lý xong yêu cầu.
+prefix: Phần đầu của đường dẫn đến JSP.
+suffix: Phần đuôi của file JSP (ở đây là .jsp).
+Khi Controller trả về tên view là “hello", Spring sẽ tìm kiếm file JSP tại đường dẫn /WEB-INF/views/hello.jsp.
+
+© Copyright 2023 GV Nguyễn Đắc Kiên
+
+IV) Controller trong Spring MVC
+Controller trong Spring MVC giúp xử lý các yêu cầu HTTP và trả về dữ liệu hoặc view. Các phương thức trong Controller có thể được ánh xạ với các yêu cầu HTTP qua annotation @RequestMapping.
+© Copyright 2023 GV Nguyễn Đắc Kiên
+
+Tổng kết
+1.component-scan tự động quét các lớp Controller và đăng ký chúng vào Spring Container.
+2. InternalResourceViewResolver cấu hình cách thức Spring tìm và trả về các trang JSP sau khi Controller trả về tên view.
+3. Các bean có thể được định nghĩa trong dispatcher-servlet.xml để Spring quản lý và tiêm phụ thuộc.
+4.Controller là nơi xử lý các yêu cầu HTTP và trả về dữ liệu cho View.
+
+© Copyright 2023 GV Nguyễn Đắc Kiên
+
+© Copyright 2023 GV Nguyễn Đắc Kiên
