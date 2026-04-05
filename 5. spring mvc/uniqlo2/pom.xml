@@ -9,29 +9,34 @@
   <url>http://maven.apache.org</url>
 
   <properties>
-    <java.version>1.8</java.version>
-    <spring.version>5.3.31</spring.version>
+    <java.version>17</java.version>
+    <spring.version>6.1.14</spring.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
   <dependencies>
-    <!-- Servlets -->
+    <!-- Servlets / JSP (Jakarta EE 10 - Tomcat 10.1.x) -->
     <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>javax.servlet-api</artifactId>
-      <version>4.0.1</version>
+      <groupId>jakarta.servlet</groupId>
+      <artifactId>jakarta.servlet-api</artifactId>
+      <version>6.0.0</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>javax.servlet.jsp</groupId>
-      <artifactId>javax.servlet.jsp-api</artifactId>
-      <version>2.3.3</version>
+      <groupId>jakarta.servlet.jsp</groupId>
+      <artifactId>jakarta.servlet.jsp-api</artifactId>
+      <version>3.1.1</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>jstl</groupId>
-      <artifactId>jstl</artifactId>
-      <version>1.2</version>
+      <groupId>jakarta.servlet.jsp.jstl</groupId>
+      <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
+      <version>3.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.web</groupId>
+      <artifactId>jakarta.servlet.jsp.jstl</artifactId>
+      <version>3.0.1</version>
     </dependency>
 
     <!-- Spring Framework -->
@@ -63,23 +68,23 @@
 
     <!-- Database -->
     <dependency>
-      <groupId>mysql</groupId>
-      <artifactId>mysql-connector-java</artifactId>
-      <version>8.0.33</version>
+      <groupId>com.mysql</groupId>
+      <artifactId>mysql-connector-j</artifactId>
+      <version>9.0.0</version>
     </dependency>
-    
-    <!-- HikariCP Connection Pool -->
+
+    <!-- HikariCP Connection Pool (Java 17 compatible) -->
     <dependency>
       <groupId>com.zaxxer</groupId>
       <artifactId>HikariCP</artifactId>
-      <version>4.0.3</version>
+      <version>5.1.0</version>
     </dependency>
 
-    <!-- Lombok -->
+    <!-- Lombok (Java 17 compatible) -->
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
-      <version>1.18.30</version>
+      <version>1.18.36</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
@@ -90,22 +95,14 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.11.0</version>
+        <version>3.13.0</version>
         <configuration>
-          <source>${java.version}</source>
-          <target>${java.version}</target>
+          <release>${java.version}</release>
         </configuration>
       </plugin>
-      <!-- Tomcat 7 plugin for easy execution -->
-      <plugin>
-        <groupId>org.apache.tomcat.maven</groupId>
-        <artifactId>tomcat7-maven-plugin</artifactId>
-        <version>2.2</version>
-        <configuration>
-          <path>/untitled</path>
-          <port>8080</port>
-        </configuration>
-      </plugin>
+
+      <!-- NOTE: tomcat7-maven-plugin is obsolete and not compatible with Tomcat 10.x.
+           Deploy the generated WAR to an external Tomcat 10.1.x instead. -->
     </plugins>
   </build>
 </project>
