@@ -51,7 +51,7 @@ public class AuthFilter implements Filter {
         }
 
         // Không có quyền → redirect về trang login
-        String loginUrl = req.getContextPath() + "/login";
+        String loginUrl = req.getContextPath() + "/login"; // localhost:8080/login
         resp.sendRedirect(loginUrl + "?redirect=" + req.getServletPath());
     }
 

@@ -25,14 +25,14 @@
     <!-- ProductionsServlet – XML config (backup nếu annotation off)  -->
     <!-- Unused vì đã dùng @WebServlet annotation                      -->
     <!-- ============================================================ -->
-<!--    <servlet>-->
-<!--        <servlet-name>productionServlet</servlet-name>-->
-<!--        <servlet-class>com.t3h.uniqlo.controller.ProductionsServlet</servlet-class>-->
-<!--    </servlet>-->
-<!--    <servlet-mapping>-->
-<!--        <servlet-name>productionServlet</servlet-name>-->
-<!--        <url-pattern>/productions</url-pattern>-->
-<!--    </servlet-mapping>-->
+    <servlet>
+        <servlet-name>productionServlet</servlet-name>
+        <servlet-class>com.t3h.uniqlo.controller.ProductionsServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>productionServlet</servlet-name>
+        <url-pattern>/productions</url-pattern>
+    </servlet-mapping>
 
     <!-- Default welcome page -->
     <welcome-file-list>

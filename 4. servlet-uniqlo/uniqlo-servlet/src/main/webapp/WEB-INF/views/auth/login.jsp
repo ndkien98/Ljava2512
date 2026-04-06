@@ -359,7 +359,7 @@
         <c:if test="${param.success eq 'loggedout'}">
             <div class="alert alert-success">✓ Bạn đã đăng xuất thành công.</div>
         </c:if>
-
+<%--        ${pageContext.request.contextPath}: localhost:8080/login -> method post --%>
         <form method="post" action="${pageContext.request.contextPath}/login" id="loginForm" novalidate>
             <c:if test="${not empty param.redirect}">
                 <input type="hidden" name="redirect" value="${param.redirect}"/>
