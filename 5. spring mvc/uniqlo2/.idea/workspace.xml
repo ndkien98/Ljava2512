@@ -10,52 +10,32 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f6d7f152-99f7-425d-baae-28c1c472c0cd" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../../4. servlet-uniqlo/uniqlo-servlet/src/main/webapp/assets/css/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/../../4. servlet-uniqlo/uniqlo-servlet/src/main/webapp/assets/css/style.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../uniqlo/uniqlo/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../uniqlo/uniqlo/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../uniqlo/uniqlo/.idea/copilot.data.migration.ask2agent.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../uniqlo/uniqlo/.idea/encodings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../uniqlo/uniqlo/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../uniqlo/uniqlo/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../uniqlo/uniqlo/.mvn/wrapper/maven-wrapper.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../uniqlo/uniqlo/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../uniqlo/uniqlo/mvnw" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../uniqlo/uniqlo/mvnw.cmd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../uniqlo/uniqlo/pom.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../uniqlo/uniqlo/src/main/java/vn/edu/t3h/App.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../uniqlo/uniqlo/src/main/java/vn/edu/t3h/Greeting.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../uniqlo/uniqlo/src/main/java/vn/edu/t3h/GreetingController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../uniqlo/uniqlo/src/main/resources/META-INF/native-image/vn.edu.t3h/uniqlo/jni-config.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../uniqlo/uniqlo/src/main/resources/META-INF/native-image/vn.edu.t3h/uniqlo/native-image.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../uniqlo/uniqlo/src/main/resources/META-INF/native-image/vn.edu.t3h/uniqlo/reflect-config.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../uniqlo/uniqlo/src/main/resources/META-INF/native-image/vn.edu.t3h/uniqlo/resource-config.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../uniqlo/uniqlo/src/main/resources/application.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../uniqlo/uniqlo/src/test/java/vn/edu/t3h/AppTest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../uniqlo/uniqlo/src/test/java/vn/edu/t3h/GreetingControllerTest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../uniqlo/uniqlo/src/test/resources/junit-platform.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/untitled/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/untitled/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/untitled/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/untitled/compile_cmd.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/untitled/compile_output.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/untitled/pom.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/untitled/src/main/java/vn/edu/t3h/controller/ProductController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/untitled/src/main/java/vn/edu/t3h/mapper/ProductRowMapper.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/untitled/src/main/java/vn/edu/t3h/model/Category.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/untitled/src/main/java/vn/edu/t3h/model/Product.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/untitled/src/main/java/vn/edu/t3h/repository/ProductRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/untitled/src/main/java/vn/edu/t3h/service/ProductService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/untitled/src/main/resources/application.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/untitled/src/main/resources/database/database.sql" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/untitled/src/main/resources/database/database_authen.sql" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/untitled/src/main/resources/database/database_backup.sql" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/untitled/src/main/webapp/WEB-INF/dispatcher-servlet.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/untitled/src/main/webapp/WEB-INF/views/product_detail.jsp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/untitled/src/main/webapp/WEB-INF/views/product_list.jsp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/untitled/src/main/webapp/WEB-INF/web.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/untitled/src/main/webapp/index.jsp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/untitled/tailieu/buoi18-springmvc.pptx.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/untitled/tailieu/buoi19.pptx.txt" beforeDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../4. servlet-uniqlo/uniqlo-servlet/src/main/java/com/t3h/uniqlo/dao/IProductionDao.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../4. servlet-uniqlo/uniqlo-servlet/src/main/java/com/t3h/uniqlo/dao/impl/ProductionDaoMysqlImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../4. servlet-uniqlo/uniqlo-servlet/src/main/java/com/t3h/uniqlo/dao/impl/ProductionDaoPosgreSqlImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../uniqlo-spring-mvc/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../uniqlo-spring-mvc/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../uniqlo-spring-mvc/.idea/encodings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../uniqlo-spring-mvc/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../uniqlo-spring-mvc/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../uniqlo-spring-mvc/pom.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../uniqlo-spring-mvc/src/main/java/vn/edu/t3h/controller/ProductController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../uniqlo-spring-mvc/src/main/java/vn/edu/t3h/mapper/ProductRowMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../uniqlo-spring-mvc/src/main/java/vn/edu/t3h/model/Category.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../uniqlo-spring-mvc/src/main/java/vn/edu/t3h/model/Product.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../uniqlo-spring-mvc/src/main/java/vn/edu/t3h/repository/ProductRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../uniqlo-spring-mvc/src/main/java/vn/edu/t3h/service/ProductService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../uniqlo-spring-mvc/src/main/resources/application.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../uniqlo-spring-mvc/src/main/webapp/WEB-INF/dispatcher-servlet.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../uniqlo-spring-mvc/src/main/webapp/WEB-INF/views/product_detail.jsp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../uniqlo-spring-mvc/src/main/webapp/WEB-INF/views/product_list.jsp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../uniqlo-spring-mvc/src/main/webapp/WEB-INF/web.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../uniqlo-spring-mvc/src/main/webapp/index.jsp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../4. servlet-uniqlo/uniqlo-servlet/.idea/copilotDiffState.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../4. servlet-uniqlo/uniqlo-servlet/src/main/java/com/t3h/uniqlo/controller/ProductionsServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../4. servlet-uniqlo/uniqlo-servlet/src/main/java/com/t3h/uniqlo/controller/ProductionsServlet.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../4. servlet-uniqlo/uniqlo-servlet/src/main/java/com/t3h/uniqlo/service/ProductionService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../4. servlet-uniqlo/uniqlo-servlet/src/main/java/com/t3h/uniqlo/service/ProductionService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/copilotDiffState.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -99,28 +79,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.go.formatter.settings.were.checked": "true",
-    "RunOnceActivity.go.migrated.go.modules.settings": "true",
-    "Tomcat Server.Tomcat 10.1.52.executor": "Debug",
-    "git-widget-placeholder": "main",
-    "go.import.settings.migrated": "true",
-    "ignore.virus.scanning.warn.message": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Artifacts",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.0",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
+    &quot;Tomcat Server.Tomcat 10.1.52.executor&quot;: &quot;Debug&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Artifacts&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="Tomcat 10.1.52" type="#com.intellij.j2ee.web.tomcat.TomcatRunConfigurationFactory" factoryName="Local" APPLICATION_SERVER_NAME="Tomcat 10.1.52" ALTERNATIVE_JRE_ENABLED="false" nameIsGenerated="true">
       <option name="UPDATING_POLICY" value="restart-server" />
@@ -238,6 +218,7 @@
       <workItem from="1775395506233" duration="549000" />
       <workItem from="1775396069447" duration="1000" />
       <workItem from="1775396087605" duration="311000" />
+      <workItem from="1775479014554" duration="2162000" />
     </task>
     <servers />
   </component>

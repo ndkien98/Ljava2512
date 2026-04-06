@@ -1,5 +1,7 @@
 package com.t3h.uniqlo.controller;
 
+import com.t3h.uniqlo.dao.impl.ProductionDaoMysqlImpl;
+import com.t3h.uniqlo.dao.impl.ProductionDaoPosgreSqlImpl;
 import com.t3h.uniqlo.model.dto.ProductionDTO;
 import com.t3h.uniqlo.model.response.ProductionResponse;
 import com.t3h.uniqlo.service.ProductionService;
@@ -19,7 +21,7 @@ import java.io.IOException;
 @WebServlet(name = "ProductionsServlet", urlPatterns = "/productions")
 public class ProductionsServlet extends HttpServlet {
 
-    private final ProductionService productionService = new ProductionService();
+    private final ProductionService productionService = new ProductionService(new ProductionDaoPosgreSqlImpl());
 
     // ===================== GET: hiển thị danh sách / form sửa =====================
     @Override

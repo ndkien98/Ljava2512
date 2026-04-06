@@ -2,6 +2,7 @@ package com.t3h.uniqlo.service;
 
 import com.t3h.uniqlo.dao.CategoryDao;
 import com.t3h.uniqlo.dao.ColorDao;
+import com.t3h.uniqlo.dao.IProductionDao;
 import com.t3h.uniqlo.dao.ProductionsDao;
 import com.t3h.uniqlo.model.dto.CategoryDTO;
 import com.t3h.uniqlo.model.dto.ColorDTO;
@@ -12,14 +13,19 @@ import java.util.List;
 
 public class ProductionService {
 
-    private final ProductionsDao productionsDao = new ProductionsDao();
+    private final ProductionsDao productionsDao = new ProductionsDao(); // spring coi các object này là các bean -> spring sẽ quản lý vòng đời các object này sau khi được khởi tạo
+    private final IProductionDao productionsDao2;
+    public ProductionService(IProductionDao productionsDao) {
+        this.productionsDao2 = productionsDao;
+    }
+
     private final CategoryDao categoryDao = new CategoryDao();
     private final ColorDao colorDao = new ColorDao();
 
     public ProductionResponse findByCondition(int pageSize, int pageIndex, String keySearch, Integer colorId, Integer categoryId) {
         ProductionResponse response = new ProductionResponse();
 
-        Integer totalElements = productionsDao.countProductions(keySearch, colorId, categoryId);
+        Integer totalElements = productionsDao2.countProductions(keySearch, colorId, categoryId);
         int totalPages = totalElements / pageSize;
         if (totalElements % pageSize != 0) {
             totalPages++;
