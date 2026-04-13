@@ -10,31 +10,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f6d7f152-99f7-425d-baae-28c1c472c0cd" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/../../4. servlet-uniqlo/uniqlo-servlet/src/main/java/com/t3h/uniqlo/dao/IProductionDao.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../4. servlet-uniqlo/uniqlo-servlet/src/main/java/com/t3h/uniqlo/dao/impl/ProductionDaoMysqlImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../4. servlet-uniqlo/uniqlo-servlet/src/main/java/com/t3h/uniqlo/dao/impl/ProductionDaoPosgreSqlImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../uniqlo-spring-mvc/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../uniqlo-spring-mvc/.idea/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../uniqlo-spring-mvc/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../uniqlo-spring-mvc/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../uniqlo-spring-mvc/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../uniqlo-spring-mvc/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../uniqlo-spring-mvc/src/main/java/vn/edu/t3h/controller/ProductController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../uniqlo-spring-mvc/src/main/java/vn/edu/t3h/mapper/ProductRowMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../uniqlo-spring-mvc/src/main/java/vn/edu/t3h/model/Category.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../uniqlo-spring-mvc/src/main/java/vn/edu/t3h/model/Product.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../uniqlo-spring-mvc/src/main/java/vn/edu/t3h/repository/ProductRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../uniqlo-spring-mvc/src/main/java/vn/edu/t3h/service/ProductService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../uniqlo-spring-mvc/src/main/resources/application.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../uniqlo-spring-mvc/src/main/webapp/WEB-INF/dispatcher-servlet.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../uniqlo-spring-mvc/src/main/webapp/WEB-INF/views/product_detail.jsp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../uniqlo-spring-mvc/src/main/webapp/WEB-INF/views/product_list.jsp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../uniqlo-spring-mvc/src/main/webapp/WEB-INF/web.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../uniqlo-spring-mvc/src/main/webapp/index.jsp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../4. servlet-uniqlo/uniqlo-servlet/.idea/copilotDiffState.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../4. servlet-uniqlo/uniqlo-servlet/src/main/java/com/t3h/uniqlo/controller/ProductionsServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../4. servlet-uniqlo/uniqlo-servlet/src/main/java/com/t3h/uniqlo/controller/ProductionsServlet.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../4. servlet-uniqlo/uniqlo-servlet/src/main/java/com/t3h/uniqlo/service/ProductionService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../4. servlet-uniqlo/uniqlo-servlet/src/main/java/com/t3h/uniqlo/service/ProductionService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/copilotDiffState.xml" beforeDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../6. Spring boot/uniqlo/src/main/resources/db/database.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../6. Spring boot/uniqlo/src/main/resources/db/database_authen.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../6. Spring boot/uniqlo/src/main/resources/db/database_backup.sql" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -90,6 +68,7 @@
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/t3h/java2512/core/java2512/5. spring mvc/uniqlo2&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -219,6 +198,10 @@
       <workItem from="1775396069447" duration="1000" />
       <workItem from="1775396087605" duration="311000" />
       <workItem from="1775479014554" duration="2162000" />
+      <workItem from="1775655741769" duration="798000" />
+      <workItem from="1775656750616" duration="51000" />
+      <workItem from="1775656990021" duration="32000" />
+      <workItem from="1775657164827" duration="683000" />
     </task>
     <servers />
   </component>

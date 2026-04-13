@@ -16,13 +16,13 @@ import java.util.List;
 @RequestMapping("/products") // Config đường dẫn gốc mà controller sẽ tiếp nhận xử lý
 public class ProductController {
 
-    // @Autowired// là 1 annnotation của spring được sử dụng để spring tự động tìm kiếm các bean và inject vào field này.
+    @Autowired// là 1 annnotation của spring được sử dụng để spring tự động tìm kiếm các bean và inject vào field này.
     private ProductService productService;
 
     // tiêm sử dụng constructor để tiêm dependency, cách này được khuyến khích hơn vì giúp code dễ test hơn
-    public ProductController(ProductService productService) {
-        this.productService = productService;
-    }
+//    public ProductController(ProductService productService) {
+//        this.productService = productService;
+//    }
 
     @GetMapping// khai báo phương thức xử lý GET của HTTP, tương tự doGet trong servlet
     public String listProducts(Model model) {

@@ -1,5 +1,6 @@
 package com.t3h.uniqlo.controller;
 
+import com.t3h.uniqlo.dao.ProductionsDao;
 import com.t3h.uniqlo.dao.impl.ProductionDaoMysqlImpl;
 import com.t3h.uniqlo.dao.impl.ProductionDaoPosgreSqlImpl;
 import com.t3h.uniqlo.model.dto.ProductionDTO;
@@ -21,11 +22,18 @@ import java.io.IOException;
 @WebServlet(name = "ProductionsServlet", urlPatterns = "/productions")
 public class ProductionsServlet extends HttpServlet {
 
-    private final ProductionService productionService = new ProductionService(new ProductionDaoPosgreSqlImpl());
+    private final ProductionService productionService;
+
+    public ProductionsServlet() {
+        productionService = ProductionService.getInstance(ProductionsDao.getInstance());
+    }
+
 
     // ===================== GET: hiển thị danh sách / form sửa =====================
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+
         req.setCharacterEncoding("UTF-8");
 
         String action = req.getParameter("action");

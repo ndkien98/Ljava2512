@@ -33,7 +33,10 @@
     <!-- Load properties file -->
     <context:property-placeholder location="classpath:application.properties" />
 
-    <!-- Configure the DataSource using HikariCP -->
+    <!-- Configure the DataSource using HikariCP
+
+    1. Tạo ra đối tượng dataSource từ các config trong application.properties, sau đó sẽ được inject vào jdbcTemplate, rồi tiếp tục được inject vào productRepository, và cuối cùng là productService
+    -->
     <bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
         <property name="driverClassName" value="${db.driver}" />
         <property name="jdbcUrl" value="${db.url}" />
@@ -51,7 +54,28 @@
         <property name="dataSource" ref="dataSource" />
     </bean>
 
-    <!-- Define Beans Manually -->
+    <!-- Define Beans Manually
+    Spring sẽ sử dụng cơ chế IOC để đọc file config này và lần lượt tạo ra các đối tượng như mô tả trong file config
+    1. Tạo ra đối tượng dataSource từ các config trong application.properties,
+    2 Sau đó sẽ được inject(Sử dụng cơ chế DI) vào jdbcTemplate
+    3 Rồi tiếp tục được inject vào productRepository, và cuối cùng là productService
+    => tất cả các cơ chế inject này đều sử dụng DI để inject các dependencies vào nhau, giúp cho code trở nên dễ quản lý và test hơn, đồng thời cũng giúp giảm sự phụ thuộc giữa các lớp trong ứng dụng
+
+    Nhng trong thực tế có rất nhiêu class trong các layer controller, dao, service...
+    không thể config tay cho tất cả được
+    => giải pháp sử dụng thẻ <context:component-scan /> vaf annotation và chỉ định package mà chứa các class cần spring quản bean
+    hộ => spring sẽ tự động phát hiện và tạo bean cho, không cần phải config tay
+
+    @Autowired:
+        - thông thường sẽ phải sử dụng getter hoặc setter, constructor để inject dependencies vào nhau,
+        nhưng với @Autowired thì có thể inject trực tiếp vào field mà không cần phải viết getter hoặc setter,
+        giúp code trở nên ngắn gọn và dễ đọc hơn.
+
+        - sử dụng cơ chế reflection để inject dependencies vào field,
+        nên có thể inject vào các field private mà không cần phải viết getter hoặc setter.
+        khi sử dụng cơ chế này sẽ có thể gây ra chậm hơn so với việc sử dụng constructor hoặc setter, vì phải sử dụng reflection để inject dependencies vào field,
+        - reflection: là cơ chế coi toan bộ class là 1 đố tượng và có thể duyệt qua toàn bộ các feld của 1 class
+    -->
     <bean id="productRepository" class="vn.edu.t3h.repository.ProductRepository">
         <property name="jdbcTemplate" ref="jdbcTemplate" />
     </bean>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uniqlo Admin CMS</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Alpine.js for lightweight UI interactions -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        [x-cloak] { display: none !important; }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden text-slate-800">
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-slate-900 text-white flex flex-col shadow-2xl transition-all duration-300">
+        <!-- Logo -->
+        <div class="h-16 flex items-center justify-center border-b border-slate-800">
+            <span class="text-xl font-bold tracking-wider rounded bg-red-600 px-3 py-1 text-white">UNIQLO<span class="font-light text-slate-200">CMS</span></span>
+        </div>
+        
+        <!-- Navigation -->
+        <nav class="flex-1 overflow-y-auto py-4">
+            <ul class="space-y-1">
+                <li>
+                    <a th:href="@{/admin/categories}" class="flex items-center px-6 py-3 text-sm font-medium hover:bg-slate-800 hover:text-white transition-colors"
+                       th:classappend="${requestURI != null and requestURI.startsWith('/admin/categories')} ? 'bg-slate-800 border-l-4 border-red-500 text-white' : 'text-slate-400 border-l-4 border-transparent'">
+                        <i class="fa-solid fa-layer-group w-6"></i>
+                        Categories
+                    </a>
+                </li>
+                <li>
+                    <a th:href="@{/admin/users}" class="flex items-center px-6 py-3 text-sm font-medium hover:bg-slate-800 hover:text-white transition-colors"
+                       th:classappend="${requestURI != null and requestURI.startsWith('/admin/users')} ? 'bg-slate-800 border-l-4 border-red-500 text-white' : 'text-slate-400 border-l-4 border-transparent'">
+                        <i class="fa-solid fa-users w-6"></i>
+                        Users (JS API)
+                    </a>
+                </li>
+                <!-- Future link for products -->
+                <li>
+                    <a href="#" class="flex items-center px-6 py-3 text-sm font-medium text-slate-500 cursor-not-allowed">
+                        <i class="fa-solid fa-box w-6"></i>
+                        Products (Coming soon)
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        
+        <!-- User Profile (Bottom) -->
+        <div class="border-t border-slate-800 p-4">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center flex-shrink-0">
+                    <i class="fa-solid fa-user text-sm"></i>
+                </div>
+                <div class="overflow-hidden">
+                    <p class="text-sm font-medium text-white truncate">Admin User</p>
+                    <p class="text-xs text-slate-400 truncate">admin@uniqlo.com</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col min-w-0 bg-slate-50">
+        <!-- Top Header -->
+        <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 shadow-sm">
+            <h1 class="text-lg font-semibold text-slate-800" layout:fragment="page-header">Dashboard</h1>
+            <div class="flex items-center gap-4">
+                <button class="text-slate-400 hover:text-slate-600 focus:outline-none">
+                    <i class="fa-regular fa-bell"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Workspace -->
+        <main class="flex-1 overflow-auto p-6">
+            <!-- Alert Messages Fragment -->
+            <div th:if="${successMessage}" class="mb-4 bg-teal-50 border-l-4 border-teal-500 p-4 rounded shadow-sm">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-check-circle text-teal-500 mr-3 text-lg"></i>
+                    <p class="text-teal-800 text-sm font-medium" th:text="${successMessage}"></p>
+                </div>
+            </div>
+            <div th:if="${errorMessage}" class="mb-4 bg-red-50 border-l-4 border-red-500 p-4 rounded shadow-sm">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-triangle-exclamation text-red-500 mr-3 text-lg"></i>
+                    <p class="text-red-800 text-sm font-medium" th:text="${errorMessage}"></p>
+                </div>
+            </div>
+
+            <!-- Content injected here -->
+            <div layout:fragment="content"></div>
+        </main>
+    </div>
+
+</body>
+</html>

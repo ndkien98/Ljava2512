@@ -7,6 +7,18 @@ import java.util.List;
 
 public class ProductionsDao extends BaseDao<ProductionDTO> {
 
+    public static ProductionsDao productionsDao;
+
+    private ProductionsDao() {
+    }
+
+    public static ProductionsDao getInstance() {
+        if (productionsDao == null) {
+            productionsDao = new ProductionsDao();
+        }
+        return productionsDao;
+    }
+
     private final RowMapper<ProductionDTO> productionMapper = rs -> ProductionDTO.builder()
             .id(rs.getString("id"))
             .name(rs.getString("name"))

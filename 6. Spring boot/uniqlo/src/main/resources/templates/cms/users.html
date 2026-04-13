@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{cms/layout}">
+<head>
+    <title>Manage Users</title>
+</head>
+<body>
+    <h1 layout:fragment="page-header">User Management</h1>
+
+    <div layout:fragment="content" x-data="userManagement()" x-init="fetchUsers()">
+        
+        <!-- Top Actions -->
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-bold">List of Users</h2>
+            <button @click="openModal('create')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded shadow text-sm font-medium transition flex items-center">
+                <i class="fa-solid fa-plus mr-2"></i> Add New User
+            </button>
+        </div>
+
+        <!-- Notification Toast -->
+        <div x-show="toast.show" x-transition class="fixed top-4 right-4 z-50 rounded shadow-lg p-4 max-w-sm flex items-start"
+             :class="toast.type === 'success' ? 'bg-green-100 border-l-4 border-green-500 text-green-800' : 'bg-red-100 border-l-4 border-red-500 text-red-800'" style="display: none;">
+            <div class="flex-1">
+                <span class="font-medium" x-text="toast.message"></span>
+            </div>
+            <button @click="toast.show = false" class="text-current focus:outline-none ml-3"><i class="fa-solid fa-times"></i></button>
+        </div>
+
+        <!-- Table -->
+        <div class="bg-white rounded shadow-sm border border-slate-200 overflow-hidden">
+            <table class="min-w-full divide-y divide-slate-200">
+                <thead class="bg-slate-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">ID</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Name / Roles</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Email</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Gender</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-slate-200" id="user-table-body">
+                    <!-- Loading state -->
+                    <tr x-show="loading">
+                        <td colspan="5" class="px-6 py-8 text-center text-slate-400">
+                            <i class="fa-solid fa-spinner fa-spin text-2xl"></i><br>Loading users...
+                        </td>
+                    </tr>
+                    
+                    <!-- Data rendering -->
+                    <template x-for="usr in users" :key="usr.id">
+                        <tr class="hover:bg-slate-50 transition">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500" x-text="usr.id"></td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm font-medium text-slate-900" x-text="usr.fullName"></div>
+                                <div class="text-xs text-slate-500" x-text="usr.role"></div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500" x-text="usr.email"></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-slate-100 text-slate-800" x-text="usr.gender || 'N/A'"></span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <button @click="openModal('edit', usr)" class="text-indigo-600 hover:text-indigo-900 mr-3" title="Edit">
+                                    <i class="fa-regular fa-pen-to-square"></i>
+                                </button>
+                                <button @click="deleteUser(usr.id)" class="text-red-500 hover:text-red-700" title="Delete">
+                                    <i class="fa-regular fa-trash-can"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </template>
+                    
+                    <!-- Empty state -->
+                    <tr x-show="!loading && users.length === 0">
+                        <td colspan="5" class="px-6 py-8 text-center text-slate-400">No users found.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Modal (Create / Edit) -->
+        <div x-show="modal.isOpen" class="fixed inset-0 z-40 overflow-y-auto" style="display: none;">
+            <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
+                <div x-show="modal.isOpen" x-transition.opacity class="fixed inset-0 transition-opacity bg-slate-900 bg-opacity-75" @click="closeModal()"></div>
+
+                <div x-show="modal.isOpen" x-transition class="relative inline-block px-4 pt-5 pb-4 overflow-hidden text-left align-bottom transition-all transform bg-white rounded-lg shadow-xl sm:my-8 sm:align-middle sm:max-w-lg w-full sm:p-6 z-50">
+                    <div class="flex justify-between items-center mb-5 pb-3 border-b border-slate-100">
+                        <h3 class="text-lg leading-6 font-semibold text-slate-900" x-text="modal.isEditing ? 'Edit User' : 'Create New User'"></h3>
+                        <button @click="closeModal()" class="text-slate-400 hover:text-slate-500 focus:outline-none">
+                            <i class="fa-solid fa-times"></i>
+                        </button>
+                    </div>
+
+                    <!-- Form -->
+                    <form @submit.prevent="saveUser">
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Full Name*</label>
+                                <input type="text" x-model="form.fullName" required class="w-full px-3 py-2 border border-slate-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Email*</label>
+                                <input type="email" x-model="form.email" :disabled="modal.isEditing" required class="w-full px-3 py-2 border border-slate-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm disabled:bg-slate-100">
+                                <p x-show="modal.isEditing" class="text-xs text-slate-500 mt-1">Email cannot be changed later.</p>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-1">Gender</label>
+                                    <select x-model="form.gender" class="w-full px-3 py-2 border border-slate-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm bg-white">
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                        <option value="Decline to state">Other / Decline</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-1">Role</label>
+                                    <select x-model="form.role" class="w-full px-3 py-2 border border-slate-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm bg-white">
+                                        <option value="USER">USER</option>
+                                        <option value="ADMIN">ADMIN</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Birthday</label>
+                                <input type="date" x-model="form.birthday" class="w-full px-3 py-2 border border-slate-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">
+                                    <span x-text="modal.isEditing ? 'New Password (Leave blank to keep current)' : 'Password*'"></span>
+                                </label>
+                                <input type="password" x-model="form.password" :required="!modal.isEditing" class="w-full px-3 py-2 border border-slate-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                            </div>
+                        </div>
+
+                        <div class="mt-6 flex justify-end gap-3 pt-4 border-t border-slate-100">
+                            <button type="button" @click="closeModal()" class="px-4 py-2 bg-white border border-slate-300 rounded text-sm font-medium text-slate-700 hover:bg-slate-50 focus:outline-none transition">Cancel</button>
+                            <button type="submit" class="px-4 py-2 bg-indigo-600 border border-transparent rounded text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none transition flex items-center" :disabled="submitting">
+                                <i x-show="submitting" class="fa-solid fa-spinner fa-spin mr-2"></i>
+                                Save
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- End Modal -->
+    </div>
+
+    <!-- Script that uses JS Fetch API -->
+    <script layout:fragment="page-scripts">
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('userManagement', () => ({
+                users: [],
+                loading: false,
+                submitting: false,
+                toast: { show: false, message: '', type: 'success' },
+                modal: { isOpen: false, isEditing: false, userId: null },
+                form: {
+                    fullName: '',
+                    email: '',
+                    password: '',
+                    gender: 'Male',
+                    role: 'USER',
+                    birthday: ''
+                },
+
+                showToast(msg, type = 'success') {
+                    this.toast = { show: true, message: msg, type: type };
+                    setTimeout(() => { this.toast.show = false; }, 3000);
+                },
+
+                // 1. GET API
+                async fetchUsers() {
+                    this.loading = true;
+                    try {
+                        const response = await fetch('/api/v1/users');
+                        const result = await response.json();
+                        if(result.statusCode === 200) {
+                            this.users = result.data;
+                        } else {
+                            this.showToast(result.message, 'error');
+                        }
+                    } catch (error) {
+                        this.showToast('Failed to load users', 'error');
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+
+                openModal(mode, user = null) {
+                    this.modal.isEditing = (mode === 'edit');
+                    this.modal.isOpen = true;
+                    if(user) {
+                        this.modal.userId = user.id;
+                        this.form = {
+                            fullName: user.fullName,
+                            email: user.email,
+                            password: '', // blank intentionally
+                            gender: user.gender || 'Male',
+                            role: user.role || 'USER',
+                            birthday: user.birthday || ''
+                        };
+                    } else {
+                        this.modal.userId = null;
+                        this.form = { fullName: '', email: '', password: '', gender: 'Male', role: 'USER', birthday: '' };
+                    }
+                },
+
+                closeModal() {
+                    this.modal.isOpen = false;
+                },
+
+                // 2 & 3. POST/PUT API
+                async saveUser() {
+                    this.submitting = true;
+                    const isEdit = this.modal.isEditing;
+                    const url = isEdit ? `/api/v1/users/${this.modal.userId}` : '/api/v1/users';
+                    const method = isEdit ? 'PUT' : 'POST';
+
+                    try {
+                        const response = await fetch(url, {
+                            method: method,
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(this.form)
+                        });
+                        
+                        const result = await response.json();
+                        
+                        if(response.ok && result.statusCode === 200 || result.statusCode === 201) {
+                            this.showToast(result.message || 'Saved successfully');
+                            this.closeModal();
+                            this.fetchUsers(); // Refresh list
+                        } else {
+                            this.showToast(result.message || 'Validation error', 'error');
+                        }
+                    } catch (error) {
+                        this.showToast('Network error', 'error');
+                    } finally {
+                        this.submitting = false;
+                    }
+                },
+
+                // 4. DELETE API
+                async deleteUser(id) {
+                    if(!confirm('Are you sure you want to delete this user?')) return;
+                    
+                    try {
+                        const response = await fetch(`/api/v1/users/${id}`, { method: 'DELETE' });
+                        const result = await response.json();
+                        if(response.ok) {
+                            this.showToast('User deleted successfully');
+                            this.fetchUsers();
+                        } else {
+                            this.showToast(result.message, 'error');
+                        }
+                    } catch (error) {
+                        this.showToast('Failed to delete user', 'error');
+                    }
+                }
+            }));
+        });
+    </script>
+</body>
+</html>
