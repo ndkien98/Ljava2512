@@ -16,7 +16,7 @@
      có thể mở rộng package ra bằng vn.edu.t3h -> tất cả các class trong package vn.edu.t3h sẽ được phát hiện, và tạo bean thay vì chỉ trong
      package controller
      -->
-    <context:component-scan base-package="vn.edu.t3h.controller" />
+    <context:component-scan base-package="vn.edu.t3h" />
 
     <!-- Enables the Spring MVC @Controller programming model -->
     <mvc:annotation-driven />
@@ -82,6 +82,15 @@
 
     <bean id="productService" class="vn.edu.t3h.service.ProductService">
         <property name="productRepository" ref="productRepository" />
+    </bean>
+
+    <!-- Users module beans (Repository -> Service) -->
+    <bean id="userRepository" class="vn.edu.t3h.repository.impl.UserRepositoryImpl">
+        <property name="jdbcTemplate" ref="jdbcTemplate" />
+    </bean>
+
+    <bean id="userService" class="vn.edu.t3h.service.impl.UserServiceImpl">
+        <property name="userRepository" ref="userRepository" />
     </bean>
 
 

@@ -26,8 +26,73 @@ Mục tiêu bài tập: **CRUD users** + giao diện quản trị đẹp bằng 
 
 ---
 
-## 2) Yêu cầu chức năng
-### 2.1. Danh sách User
+## 2) Yêu cầu kiến trúc (bắt buộc) — theo rule 3-layer
+Bài này phải tuân theo mô hình 3-layer rõ ràng:
+- **Controller layer**: chỉ nhận request/response, validate input, gọi Service; **không viết business logic**
+- **Service layer**: chứa business logic (validate, hash password, rule edit/create...), gọi Repository
+- **Repository layer**: thao tác DB bằng `JdbcTemplate` (query/insert/update/delete)
+
+Ngoài ra tạo thêm package hỗ trợ (cùng tinh thần rule):
+- `dto` (request/response)
+- `mapper` (convert DTO ↔ Model)
+- `exception` (custom exception, xử lý lỗi/validation)
+- `util` (hash, helper)
+
+> Lưu ý: project hiện tại là **Spring MVC XML + JdbcTemplate**, không phải Spring Boot/JPA. Tuy nhiên cấu trúc package + nguyên tắc phân lớp **vẫn áp dụng tương tự**.
+
+---
+
+## 3) Cấu trúc thư mục/package yêu cầu
+Tạo các file theo cấu trúc sau (dùng base package của project: `vn.edu.t3h`):
+
+```
+src/main/java/vn/edu/t3h
+│
+├── controller
+│   └── AdminUserController.java
+│
+├── service
+│   ├── UserService.java
+│   └── impl
+│       └── UserServiceImpl.java
+│
+├── repository
+│   ├── UserRepository.java
+│   └── impl
+│       └── UserRepositoryImpl.java
+│
+├── model
+│   └── User.java
+│
+├── dto
+│   ├── request
+│   │   ├── UserCreateRequest.java
+│   │   └── UserUpdateRequest.java
+│   └── response
+│       └── UserListItemResponse.java
+│
+├── mapper
+│   └── UserMapper.java
+│
+├── exception
+│   ├── NotFoundException.java
+│   └── ValidationException.java
+│
+└── util
+    └── PasswordUtil.java
+```
+
+### Quy tắc đặt tên (bắt buộc)
+- Controller: `XxxController`
+- Service: `XxxService` + `impl/XxxServiceImpl`
+- Repository: `XxxRepository` + `impl/XxxRepositoryImpl`
+- DTO: `XxxRequest` / `XxxResponse`
+- Mapper: `XxxMapper`
+
+---
+
+## 4) Yêu cầu chức năng
+### 4.1. Danh sách User
 - URL gợi ý: `GET /admin/users`
 - Hiển thị bảng dữ liệu:
   - Avatar, Full name, Email, Gender, Birthday, Role, Created At
@@ -36,7 +101,7 @@ Mục tiêu bài tập: **CRUD users** + giao diện quản trị đẹp bằng 
   - Lọc theo role (ALL/USER/ADMIN)
   - Phân trang (bonus)
 
-### 2.2. Tạo User
+### 4.2. Tạo User
 - URL gợi ý:
   - `GET /admin/users/create` (mở form)
   - `POST /admin/users/create` (submit)
@@ -45,7 +110,7 @@ Mục tiêu bài tập: **CRUD users** + giao diện quản trị đẹp bằng 
   - fullName bắt buộc
   - password bắt buộc (khi tạo)
 
-### 2.3. Sửa User
+### 4.3. Sửa User
 - URL gợi ý:
   - `GET /admin/users/{id}/edit`
   - `POST /admin/users/{id}/edit`
@@ -53,32 +118,60 @@ Mục tiêu bài tập: **CRUD users** + giao diện quản trị đẹp bằng 
   - fullName, birthday, gender, role, avatar
   - password: tùy chọn (nếu nhập mới thì cập nhật hash)
 
-### 2.4. Xoá User
+### 4.4. Xoá User
 - URL gợi ý: `POST /admin/users/{id}/delete`
 - Yêu cầu xác nhận trước khi xoá (UI)
 
 ---
 
-## 3) Ràng buộc kỹ thuật (để học viên tự làm)
-### 3.1. Model đề xuất
-Tạo class `vn.edu.t3h.model.User` tương ứng bảng `users`.
+## 5) Ràng buộc kỹ thuật chi tiết theo từng layer
+### 5.1. Model
+Tạo `vn.edu.t3h.model.User` map theo bảng `users`.
+- Không expose `password_hash` ra UI.
 
-### 3.2. Repository/Service
-- `UserRepository`: dùng `JdbcTemplate` (tương tự `ProductRepository`)
-- `UserService`: gom logic validate/hash/CRUD
+### 5.2. Repository layer (JdbcTemplate)
+- `UserRepository` (interface): khai báo các hàm CRUD + search/filter
+- `UserRepositoryImpl` (class): inject `JdbcTemplate`, viết SQL.
 
-### 3.3. Controller
-- `UserController` trong package `vn.edu.t3h.controller` (để component-scan thấy)
-- Return view JSP theo danh sách bên dưới.
+Gợi ý các hàm:
+- `List<User> findAll(String keyword, String role)`
+- `User findById(int id)`
+- `User findByEmail(String email)`
+- `int insert(User user)`
+- `int update(User user)`
+- `int deleteById(int id)`
 
-### 3.4. Hash password
-- Không lưu password plain text.
-- Có thể hash bằng **MD5** (đang dùng trong seed admin của project) hoặc nâng cao hơn (BCrypt) tuỳ lớp học.
+> Query phức tạp/search/filter đặt ở RepositoryImpl.
+
+### 5.3. Service layer
+- `UserService` (interface)
+- `UserServiceImpl` (implementation)
+
+Nhiệm vụ service:
+- Validate business (email unique, required fields...)
+- Hash password khi create / khi update có nhập password mới
+- Decide rule edit (password bỏ trống → giữ nguyên)
+- Throw `NotFoundException` / `ValidationException` khi sai
+
+### 5.4. Controller layer
+Tạo `AdminUserController` trong `vn.edu.t3h.controller`.
+- Chỉ:
+  - nhận params/modelAttribute
+  - gọi `UserService`
+  - return view/redirect
+- Không viết SQL/không hash password trong controller.
 
 ---
 
-## 4) UI mẫu (HTML có sẵn) → học viên tự chuyển sang JSP
-### 4.1. Vị trí UI HTML template
+## 6) Hash password
+- Không lưu password plain text.
+- Có thể hash bằng **MD5** (đang dùng trong seed admin của project) hoặc nâng cao hơn (BCrypt nếu tự tích hợp).
+- Đặt logic hash trong `util/PasswordUtil` và chỉ gọi từ Service.
+
+---
+
+## 7) UI mẫu (HTML có sẵn) → học viên tự chuyển sang JSP
+### 7.1. Vị trí UI HTML template
 UI mẫu đã được chuẩn bị sẵn dưới dạng HTML tĩnh (để copy/paste sang JSP):
 
 - `src/main/webapp/ui-assignment/admin/user_list.html`
@@ -88,62 +181,61 @@ Bạn có thể mở trực tiếp trên server:
 - `/ui-assignment/admin/user_list.html`
 - `/ui-assignment/admin/user_form.html`
 
-### 4.2. Nhiệm vụ của học viên
-1) Tạo JSP thật cho chức năng admin user:
+### 7.2. Hướng dẫn học viên dùng HTML để làm JSP (bắt buộc)
+1) Tạo JSP thật:
 - `src/main/webapp/WEB-INF/views/admin/user_list.jsp`
 - `src/main/webapp/WEB-INF/views/admin/user_form.jsp`
 
-2) Copy UI từ HTML template vào JSP, sau đó thay data tĩnh bằng JSTL:
-- Thay các dòng sample như “8 users”, các `<tr>` mẫu… bằng:
-  - `<c:forEach ...>` để render danh sách
-  - `<c:out ...>` để in dữ liệu an toàn
-  - `<c:if ...>` / `<c:choose ...>` để xử lý hiển thị có điều kiện
+2) Copy toàn bộ HTML từ template vào JSP.
 
-3) Nối form action/URL thật (Spring MVC):
+3) Sửa đường dẫn asset trong JSP (nếu có) theo contextPath:
+- Dùng: `${pageContext.request.contextPath}`
+
+4) Thay dữ liệu tĩnh bằng JSTL/EL:
+- Bảng list:
+  - `<c:forEach ...>` render danh sách
+  - `<c:out ...>` in dữ liệu an toàn
+  - Empty state: `<c:if test="${empty users}">...`
+- Form:
+  - set value từ `${user.fullName}`, `${user.email}`...
+  - hiển thị lỗi validate (nếu có) từ attribute `errors`
+
+5) Nối URL thật theo mapping controller:
 - List: `GET /admin/users`
 - Create: `GET|POST /admin/users/create`
 - Edit: `GET|POST /admin/users/{id}/edit`
-- Delete: `POST /admin/users/{id}/delete` (gợi ý: dùng modal confirm)
+- Delete: `POST /admin/users/{id}/delete`
 
-### 4.3. Model attributes gợi ý để truyền sang JSP
+### 7.3. Model attributes gợi ý
 #### user_list.jsp
-- `users`: `List<User>`
+- `users`: `List<UserListItemResponse>` hoặc `List<User>`
 - `keyword`: `String` (optional)
 - `role`: `String` (optional)
 - `successMessage` / `errorMessage`: `String` (optional)
 
 #### user_form.jsp
 - `mode`: `"create" | "edit"`
-- `user`: `User` (khi edit)
+- `user`: `User` hoặc DTO response
 - `errors`: `Map<String,String>` (optional)
 
-> Lưu ý: file JSP hiện tại trong project có thể đang là placeholder. Học viên cần **tự thay bằng JSP thật** dựa trên HTML template.
-
 ---
 
-## 5) Tiêu chí chấm điểm (gợi ý)
-- (2đ) Render được danh sách users
-- (2đ) Tạo user + validate cơ bản
-- (2đ) Sửa user
-- (2đ) Xoá user
+## 8) Tiêu chí chấm điểm (gợi ý)
+- (2đ) Render được danh sách users (JSTL)
+- (2đ) Tạo user + validate cơ bản + hash password
+- (2đ) Sửa user đúng rule (password optional)
+- (2đ) Xoá user + confirm UI
 - (1đ) Search + filter
-- (1đ) UI/UX đẹp (responsive, có empty state, confirm delete)
+- (1đ) Tuân thủ đúng 3-layer + interface/impl + DTO/Mapper
 
 ---
 
-## 6) Gợi ý cấu trúc URL/View
-| Action | Method | URL | View |
-|---|---|---|---|
-| List | GET | `/admin/users` | `admin/user_list` |
-| Create form | GET | `/admin/users/create` | `admin/user_form` |
-| Create submit | POST | `/admin/users/create` | redirect list |
-| Edit form | GET | `/admin/users/{id}/edit` | `admin/user_form` |
-| Edit submit | POST | `/admin/users/{id}/edit` | redirect list |
-| Delete | POST | `/admin/users/{id}/delete` | redirect list |
-
----
-
-## 7) Lưu ý
-- Không để lộ `password_hash` ra UI.
-- Khi edit: password là tuỳ chọn; nếu để trống thì giữ nguyên password_hash cũ.
-- Nên validate serverside 100% (không chỉ dựa vào HTML required).
+## 9) Checklist nộp bài
+- [ ] Có đủ package theo mục (3)
+- [ ] Controller không chứa SQL/hash
+- [ ] Service có interface + impl
+- [ ] Repository có interface + impl
+- [ ] Có DTO request/response và mapper
+- [ ] Có `PasswordUtil`
+- [ ] JSP được dựng từ HTML template và thay data bằng JSTL
+- [ ] Không render `password_hash` ra UI
