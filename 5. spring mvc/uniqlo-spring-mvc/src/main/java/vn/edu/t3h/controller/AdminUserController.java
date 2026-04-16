@@ -21,7 +21,7 @@ public class AdminUserController {
 
     @GetMapping
     public String list(
-            @RequestParam(value = "keyword", required = false) String keyword,
+            @RequestParam(value = "keyword", required = false) String keyword,// required = false: tham số này không bắt buộc truyền nên server
             @RequestParam(value = "role", required = false) String role,
             Model model
     ) {
@@ -95,4 +95,3 @@ public class AdminUserController {
         return "redirect:/admin/users";
     }
 }
-

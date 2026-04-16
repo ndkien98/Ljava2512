@@ -24,7 +24,14 @@
     <!-- Handle static resources -->
     <mvc:resources mapping="/resources/**" location="/resources/" />
 
-    <!-- View Resolver -->
+    <!-- View Resolver
+     Config bean để spring biết các file view sẽ nằm taj
+     root folder nào,
+     ở đây nó đang được chỉ định tại thư mục /WEB-INF/views/ và có đuôi là .jsp
+     => tất cả các file trong folder view có đuổi jsp được hiểu la view,
+     vậy trong controller chỉ cần return về đường dẫn có tên file bắt đầu từ folder views
+     -> spring có thể tự tim đuược các file view để render ra cho client
+     -->
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/WEB-INF/views/" />
         <property name="suffix" value=".jsp" />
