@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Uniqlo CMS - Login</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+
+  <style>
+    :root{
+      --brand:#e50012;
+      --ink:#0b1220;
+      --muted:#6b7280;
+      --bg:#f7f8fc;
+      --card:#ffffff;
+      --line: rgba(17,24,39,.08);
+      --ring: rgba(229,0,18,.18);
+      --bs-body-font-family:'Outfit',system-ui,-apple-system,"Segoe UI",Roboto,Arial,"Noto Sans","Liberation Sans",sans-serif;
+      --bs-body-color: var(--ink);
+      --bs-border-radius: 1rem;
+    }
+
+    html,body{height:100%;}
+
+    body{
+      background:
+        radial-gradient(1200px 520px at 18% -10%, rgba(229,0,18,.14), transparent 60%),
+        radial-gradient(900px 520px at 95% 8%, rgba(17,24,39,.08), transparent 68%),
+        var(--bg);
+    }
+
+    .topbar{
+      position: sticky;
+      top:0;
+      z-index: 100;
+      background: rgba(255,255,255,.78);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand{ font-weight: 1000; letter-spacing: -0.8px; }
+    .brand .dot{ color: var(--brand); }
+
+    .card-elev{
+      background: rgba(255,255,255,.82);
+      border: 1px solid rgba(17,24,39,.06);
+      border-radius: 20px;
+      box-shadow: 0 26px 70px rgba(17,24,39,.10);
+      overflow:hidden;
+      position: relative;
+    }
+
+    .card-elev::after{
+      content:"";
+      position:absolute;
+      inset:-120px;
+      background:
+        radial-gradient(540px 260px at 18% 10%, rgba(229,0,18,.18), transparent 60%),
+        radial-gradient(520px 300px at 90% 70%, rgba(17,24,39,.12), transparent 60%);
+      pointer-events:none;
+    }
+
+    .inner{ position: relative; z-index: 1; }
+
+    .btn-brand{
+      background: var(--brand);
+      border-color: var(--brand);
+      border-radius: 14px;
+      font-weight: 900;
+      padding: 12px 14px;
+    }
+
+    .btn-brand:hover{ background: #c80010; border-color:#c80010; }
+
+    .field{
+      border-radius: 14px;
+      border: 1px solid rgba(17,24,39,.12);
+      padding: 12px 12px;
+      background: rgba(255,255,255,.92);
+    }
+
+    .field:focus{ box-shadow: 0 0 0 .25rem var(--ring); border-color: rgba(229,0,18,.35); }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(17,24,39,.10);
+      background: rgba(255,255,255,.75);
+      font-weight: 900;
+      font-size: .88rem;
+    }
+
+    .muted{ color: var(--muted); }
+
+    .side{
+      border-left: 1px solid rgba(17,24,39,.06);
+      background: linear-gradient(180deg, rgba(255,255,255,.2), rgba(255,255,255,.0));
+    }
+
+    .mini{
+      border-radius: 16px;
+      border: 1px solid rgba(17,24,39,.06);
+      background: rgba(255,255,255,.78);
+      padding: 12px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="container py-3 d-flex align-items-center justify-content-between">
+      <a class="text-decoration-none text-dark" th:href="@{/}">
+        <div class="brand fs-4">Uniqlo<span class="dot">.</span>CMS</div>
+      </a>
+      <div class="d-flex align-items-center gap-2">
+        <a class="btn btn-outline-dark btn-sm" th:href="@{/}"><i class="bi bi-house me-1"></i>Home</a>
+        <a class="btn btn-outline-dark btn-sm" th:href="@{/cms}"><i class="bi bi-grid-1x2 me-1"></i>Dashboard</a>
+      </div>
+    </div>
+  </div>
+
+  <main class="container my-4 my-lg-5" style="max-width: 1100px;">
+    <div class="card-elev">
+      <div class="inner">
+        <div class="row g-0">
+          <div class="col-12 col-lg-6 p-4 p-lg-5">
+            <div class="d-flex align-items-center justify-content-between">
+              <span class="pill"><i class="bi bi-shield-check"></i> Admin access</span>
+              <span class="pill"><i class="bi bi-info-circle"></i> UI only</span>
+            </div>
+
+            <h1 class="mt-4 mb-2" style="font-weight:1000; letter-spacing:-1px;">Đăng nhập</h1>
+            <div class="muted mb-4">Không có backend. Nút đăng nhập sẽ chuyển thẳng vào dashboard.</div>
+
+            <form class="row g-3" th:action="@{/fake-login}" method="get">
+              <div class="col-12">
+                <label class="form-label fw-bold" for="email">Email</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-white" style="border-radius:14px 0 0 14px; border:1px solid rgba(17,24,39,.12)"><i class="bi bi-envelope"></i></span>
+                  <input id="email" class="form-control field" type="email" value="admin@uniqlo.com" placeholder="admin@uniqlo.com" />
+                </div>
+              </div>
+              <div class="col-12">
+                <label class="form-label fw-bold" for="password">Password</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-white" style="border-radius:14px 0 0 14px; border:1px solid rgba(17,24,39,.12)"><i class="bi bi-lock"></i></span>
+                  <input id="password" class="form-control field" type="password" value="admin123" placeholder="••••••••" />
+                </div>
+              </div>
+              <div class="col-12 d-flex align-items-center justify-content-between">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="remember" checked />
+                  <label class="form-check-label" for="remember">Remember me</label>
+                </div>
+                <a class="small text-decoration-none" href="#">Forgot password?</a>
+              </div>
+
+              <div class="col-12 d-grid">
+                <button class="btn btn-brand text-white" type="submit"><i class="bi bi-box-arrow-in-right me-1"></i>Login (fake)</button>
+              </div>
+
+              <div class="col-12 text-center small muted">
+                Tip: sau khi login, vào <span class="fw-bold">/cms</span>.
+              </div>
+            </form>
+          </div>
+
+          <div class="col-12 col-lg-6 p-4 p-lg-5 side">
+            <div class="d-flex justify-content-between align-items-center">
+              <div class="fw-bold">Quick preview</div>
+              <div class="small muted">mock</div>
+            </div>
+
+            <div class="row g-3 mt-2">
+              <div class="col-12">
+                <div class="mini">
+                  <div class="d-flex justify-content-between">
+                    <div>
+                      <div class="muted fw-bold">Admin user</div>
+                      <div class="h5 mb-1" style="font-weight:1000;">Admin Uniqlo</div>
+                      <div class="small muted">role: ADMIN</div>
+                    </div>
+                    <div class="d-flex align-items-center justify-content-center" style="width:54px;height:54px;border-radius:18px;border:1px solid rgba(229,0,18,.18);background:rgba(229,0,18,.08);color:#b1000d;font-size:22px;">
+                      <i class="bi bi-person-badge"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-6">
+                <div class="mini">
+                  <div class="muted fw-bold">Products</div>
+                  <div class="h3 mb-0" style="font-weight:1000;">15</div>
+                  <div class="small muted">in database_authen.sql</div>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="mini">
+                  <div class="muted fw-bold">SKUs</div>
+                  <div class="h3 mb-0" style="font-weight:1000;">46</div>
+                  <div class="small muted">stock tracked</div>
+                </div>
+              </div>
+
+              <div class="col-12">
+                <div class="mini">
+                  <div class="fw-bold mb-2">Where to go</div>
+                  <div class="d-flex flex-wrap gap-2">
+                    <a class="btn btn-outline-dark btn-sm" th:href="@{/cms/categories}"><i class="bi bi-diagram-3 me-1"></i>Categories</a>
+                    <a class="btn btn-outline-dark btn-sm" th:href="@{/cms/products}"><i class="bi bi-bag me-1"></i>Products</a>
+                    <a class="btn btn-outline-dark btn-sm" th:href="@{/cms/skus}"><i class="bi bi-upc-scan me-1"></i>SKUs</a>
+                    <a class="btn btn-outline-dark btn-sm" th:href="@{/cms/reviews}"><i class="bi bi-chat-square-quote me-1"></i>Reviews</a>
+                    <a class="btn btn-outline-dark btn-sm" th:href="@{/users}"><i class="bi bi-people me-1"></i>Users</a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12 small muted">Không lưu session/cookie. Trang chỉ để demo UI flow.</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+

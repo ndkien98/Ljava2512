@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Uniqlo CMS - Visit Stats</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+
+  <style>
+    :root{
+      --brand:#e50012;
+      --ink:#111827;
+      --muted:#6b7280;
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --ring: rgba(229,0,18,.18);
+      --line: rgba(17,24,39,.08);
+      --bs-border-radius: 0.95rem;
+      --bs-border-radius-lg: 1.1rem;
+      --bs-body-color: var(--ink);
+      --bs-body-font-family:'Outfit',system-ui,-apple-system,"Segoe UI",Roboto,Arial,"Noto Sans","Liberation Sans",sans-serif;
+    }
+    body{
+      background:
+        radial-gradient(1200px 520px at 18% -10%, rgba(229,0,18,.10), transparent 60%),
+        radial-gradient(900px 520px at 95% 8%, rgba(17,24,39,.08), transparent 68%),
+        var(--bg);
+      color:var(--ink);
+    }
+    .topbar{
+      position: sticky;
+      top:0;
+      z-index: 1020;
+      background: rgba(255,255,255,.85);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 10px 35px rgba(17,24,39,.06);
+    }
+    .shell{max-width:1100px;}
+    .card-elev{
+      background: var(--card);
+      border: 1px solid rgba(17,24,39,.06);
+      border-radius: 16px;
+      box-shadow: 0 18px 45px rgba(17,24,39,.08);
+    }
+    .kpi{
+      border-radius: 16px;
+      border: 1px solid rgba(17,24,39,.06);
+      background: linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.78));
+      box-shadow: 0 16px 40px rgba(17,24,39,.07);
+      overflow:hidden;
+      position:relative;
+    }
+    .kpi::after{
+      content:"";
+      position:absolute;
+      inset: -60px;
+      background: radial-gradient(250px 160px at 10% 20%, rgba(229,0,18,.12), transparent 60%),
+                  radial-gradient(220px 160px at 85% 10%, rgba(17,24,39,.10), transparent 60%);
+      pointer-events:none;
+    }
+    .kpi .inner{position:relative; z-index:1;}
+    .value{font-weight:900; letter-spacing:-0.8px; font-size: 2.4rem;}
+    .muted{color:var(--muted);}
+    .btn-brand{ background: var(--brand); border-color: var(--brand); border-radius: 12px; font-weight: 900; }
+    .btn-brand:hover{ background:#c80010; border-color:#c80010; }
+    .bar{
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(17,24,39,.06);
+      overflow:hidden;
+    }
+    .bar>div{height:100%; width:45%; background: linear-gradient(90deg, rgba(229,0,18,.95), rgba(229,0,18,.40));}
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="container shell py-3 d-flex flex-wrap align-items-center justify-content-between gap-2">
+      <div>
+        <div class="h4 mb-0" style="font-weight:900; letter-spacing:-0.6px;">Visit Stats</div>
+        <div class="small muted">UI mẫu cho bảng <span class="fw-bold">visit_stats</span> (visit_count, last_updated)</div>
+      </div>
+      <div class="d-flex align-items-center gap-2">
+        <a class="btn btn-outline-dark" th:href="@{/cms}"><i class="bi bi-grid-1x2 me-1"></i> Dashboard</a>
+        <button class="btn btn-brand text-white" type="button"><i class="bi bi-arrow-repeat me-1"></i> Refresh (mock)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="container shell my-4">
+    <div class="row g-3">
+      <div class="col-12 col-lg-7">
+        <div class="kpi p-4">
+          <div class="inner">
+            <div class="d-flex align-items-start justify-content-between gap-3">
+              <div>
+                <div class="muted fw-bold">Total visits</div>
+                <div class="value">25</div>
+                <div class="small muted">last_updated: 22/03/2026 15:48</div>
+              </div>
+              <div class="p-3" style="border-radius:16px; border:1px solid rgba(17,24,39,.08); background: rgba(255,255,255,.75)">
+                <div class="fw-bold">Health</div>
+                <div class="small muted">Tracker is enabled</div>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <div class="d-flex justify-content-between small muted mb-2">
+                <div>Today (mock)</div>
+                <div>45%</div>
+              </div>
+              <div class="bar"><div></div></div>
+            </div>
+
+            <div class="mt-4 small muted">
+              Gợi ý BE: tăng visit_count khi có request vào web, update last_updated.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-5">
+        <div class="card-elev p-4">
+          <div class="h5 mb-1" style="font-weight:900; letter-spacing:-0.4px;">Notes</div>
+          <div class="small muted mb-3">UI only</div>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item">Table: <span class="fw-bold">visit_stats</span></li>
+            <li class="list-group-item">Columns: visit_count, last_updated</li>
+            <li class="list-group-item">Typical use: website analytics basic counter</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-4 small muted">© Uniqlo CMS (education) — Thymeleaf view only.</div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+

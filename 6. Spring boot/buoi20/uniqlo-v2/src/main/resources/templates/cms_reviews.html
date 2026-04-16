@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Uniqlo CMS - Reviews</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+
+  <style type="text/css">
+    :root{
+      --brand:#e50012;
+      --ink:#111827;
+      --muted:#6b7280;
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --ring: rgba(229,0,18,.18);
+      --line: rgba(17,24,39,.08);
+      --bs-border-radius: 0.95rem;
+      --bs-border-radius-lg: 1.1rem;
+      --bs-body-color: var(--ink);
+      --bs-body-font-family:'Outfit',system-ui,-apple-system,"Segoe UI",Roboto,Arial,"Noto Sans","Liberation Sans",sans-serif;
+    }
+    body{
+      background:
+        radial-gradient(1200px 520px at 18% -10%, rgba(229,0,18,.10), transparent 60%),
+        radial-gradient(900px 520px at 95% 8%, rgba(17,24,39,.08), transparent 68%),
+        var(--bg);
+      color:var(--ink);
+    }
+    .topbar{
+      position: sticky;
+      top:0;
+      z-index: 1020;
+      background: rgba(255,255,255,.85);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 10px 35px rgba(17,24,39,.06);
+    }
+    .shell{max-width:1200px;}
+    .card-elev{
+      background: var(--card);
+      border: 1px solid rgba(17,24,39,.06);
+      border-radius: 16px;
+      box-shadow: 0 18px 45px rgba(17,24,39,.08);
+    }
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:6px 12px; border-radius:999px;
+      font-weight:800; font-size:.85rem;
+      border:1px solid rgba(17,24,39,.10);
+      background: rgba(255,255,255,.7);
+      white-space: nowrap;
+    }
+    .btn-brand{ background: var(--brand); border-color: var(--brand); border-radius: 12px; font-weight: 900; }
+    .btn-brand:hover{ background:#c80010; border-color:#c80010; }
+    .searchbox{
+      border-radius: 12px;
+      border: 1px solid rgba(17,24,39,.11);
+      padding: 10px 12px;
+      background: rgba(255,255,255,.9);
+    }
+    .searchbox:focus{ box-shadow: 0 0 0 .25rem var(--ring); border-color: rgba(229,0,18,.35); }
+    .table thead th{
+      font-size: .8rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+      border-bottom: 1px solid rgba(17,24,39,.08);
+      white-space: nowrap;
+    }
+    .table tbody tr:hover{ background: rgba(17,24,39,.02); }
+    .stars{ letter-spacing: 1px; }
+    .muted{ color: var(--muted); }
+    .quote{
+      border-left: 3px solid rgba(229,0,18,.28);
+      padding-left: 12px;
+      color: rgba(17,24,39,.88);
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="container shell py-3 d-flex flex-wrap align-items-center justify-content-between gap-2">
+      <div>
+        <div class="h4 mb-0" style="font-weight:900; letter-spacing:-0.6px;">Reviews</div>
+        <div class="small muted">UI mẫu cho bảng <span class="fw-bold">reviews</span> (rating 1..5, comment, fit_status...)</div>
+      </div>
+      <div class="d-flex align-items-center gap-2">
+        <a class="btn btn-outline-dark" th:href="@{/cms}"><i class="bi bi-grid-1x2 me-1"></i> Dashboard</a>
+        <a class="btn btn-brand text-white" href="#"><i class="bi bi-download me-1"></i> Export</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="container shell my-4">
+    <div class="card-elev p-4 mb-4">
+      <div class="d-flex flex-wrap align-items-end justify-content-between gap-3">
+        <div>
+          <div class="h5 mb-1" style="font-weight:900; letter-spacing:-0.4px;">Filters</div>
+          <div class="small muted">Chỉ UI: lọc theo rating / product_id / user_id</div>
+        </div>
+        <span class="pill"><i class="bi bi-chat-square-quote"></i> 10 reviews (mock)</span>
+      </div>
+      <hr class="my-4" />
+      <form class="row g-2 align-items-end">
+        <div class="col-12 col-lg-5">
+          <label class="form-label fw-semibold" for="keyword">Keyword</label>
+          <div class="input-group">
+            <span class="input-group-text bg-white" style="border-radius:12px 0 0 12px; border:1px solid rgba(17,24,39,.11)"><i class="bi bi-search"></i></span>
+            <input id="keyword" class="form-control searchbox" placeholder="Search comment / fit_status..." />
+          </div>
+        </div>
+        <div class="col-6 col-lg-2">
+          <label class="form-label fw-semibold" for="rating">Rating</label>
+          <select id="rating" class="form-select searchbox">
+            <option selected>All</option>
+            <option>5</option>
+            <option>4</option>
+            <option>3</option>
+            <option>2</option>
+            <option>1</option>
+          </select>
+        </div>
+        <div class="col-6 col-lg-2">
+          <label class="form-label fw-semibold" for="productId">Product</label>
+          <input id="productId" class="form-control searchbox" placeholder="product_id" />
+        </div>
+        <div class="col-12 col-lg-3 d-grid">
+          <button type="button" class="btn btn-outline-dark" style="border-radius:12px; font-weight:800;"><i class="bi bi-funnel me-1"></i> Apply</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="card-elev overflow-hidden">
+      <div class="p-3 d-flex align-items-center justify-content-between">
+        <div class="fw-bold">Review list</div>
+        <div class="small muted">HTML template</div>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead>
+          <tr>
+            <th>ID</th>
+            <th>Product</th>
+            <th>User</th>
+            <th>SKU</th>
+            <th>Rating</th>
+            <th>Comment</th>
+            <th>Fit</th>
+            <th>Created</th>
+          </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="pill"><i class="bi bi-hash"></i> 1</span></td>
+              <td><span class="pill"><i class="bi bi-bag"></i> 482557</span></td>
+              <td><span class="pill"><i class="bi bi-person"></i> user_id=2</span></td>
+              <td><span class="pill"><i class="bi bi-upc-scan"></i> sku_id=1</span></td>
+              <td class="fw-bold"><span class="stars">★★★★★</span> <span class="muted">(5)</span></td>
+              <td style="min-width: 280px;"><div class="quote">Áo thun chất lượng tuyệt vời, rất thoải mái!</div></td>
+              <td><span class="pill"><i class="bi bi-aspect-ratio"></i> True to size</span></td>
+              <td>11/03/2026</td>
+            </tr>
+            <tr>
+              <td><span class="pill"><i class="bi bi-hash"></i> 4</span></td>
+              <td><span class="pill"><i class="bi bi-bag"></i> 482559</span></td>
+              <td><span class="pill"><i class="bi bi-person"></i> user_id=4</span></td>
+              <td><span class="pill"><i class="bi bi-upc-scan"></i> sku_id=7</span></td>
+              <td class="fw-bold"><span class="stars">★★★★★</span> <span class="muted">(5)</span></td>
+              <td style="min-width: 280px;"><div class="quote">Quần jean tốt nhất tôi từng mua!</div></td>
+              <td><span class="pill"><i class="bi bi-aspect-ratio"></i> Runs small</span></td>
+              <td>11/03/2026</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="p-3 d-flex flex-wrap justify-content-between align-items-center gap-2 border-top">
+        <div class="small muted">Rule (DB): rating between 1 and 5.</div>
+        <nav aria-label="Pagination" class="ms-auto">
+          <ul class="pagination pagination-sm mb-0">
+            <li class="page-item disabled"><a class="page-link" href="#">Prev</a></li>
+            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
