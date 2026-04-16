@@ -1,0 +1,12 @@
+/* Global font override for all UI pages (Home/Login/CMS).
+   Using Montserrat for a clean, modern admin UI typography.
+*/
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap');
+
+:root{
+  --bs-body-font-family: 'Montserrat', system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Noto Sans", "Liberation Sans", sans-serif;
+}
+
+html, body {
+  font-family: var(--bs-body-font-family);
+}

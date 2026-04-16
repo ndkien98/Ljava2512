@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Uniqlo CMS - Products</title>
+  <title>Uniqlo CMS - Sản phẩm</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" th:href="@{/cms/fonts.css}" />
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
@@ -24,7 +24,7 @@
       --bs-border-radius: 0.95rem;
       --bs-border-radius-lg: 1.1rem;
       --bs-body-color: var(--ink);
-      --bs-body-font-family:'Outfit',system-ui,-apple-system,"Segoe UI",Roboto,Arial,"Noto Sans","Liberation Sans",sans-serif;
+      /* --bs-body-font-family: var(--bs-body-font-family); */
     }
     body{
       background:
@@ -95,12 +95,12 @@
   <div class="topbar">
     <div class="container shell py-3 d-flex flex-wrap align-items-center justify-content-between gap-2">
       <div>
-        <div class="h4 mb-0" style="font-weight:900; letter-spacing:-0.6px;">Products</div>
-        <div class="small muted">UI mẫu cho bảng <span class="fw-bold">products</span>, liên kết <span class="fw-bold">categories</span>, <span class="fw-bold">product_images</span></div>
+        <div class="h4 mb-0" style="font-weight:900; letter-spacing:-0.6px;">Sản phẩm</div>
+        <div class="small muted">Quản lý <span class="fw-bold">products</span> + ảnh + biến thể (SKU)</div>
       </div>
       <div class="d-flex align-items-center gap-2">
-        <a class="btn btn-outline-dark" th:href="@{/cms}"><i class="bi bi-grid-1x2 me-1"></i> Dashboard</a>
-        <a class="btn btn-brand text-white" href="#"><i class="bi bi-plus-lg me-1"></i> Tạo product</a>
+        <a class="btn btn-outline-dark" th:href="@{/cms}"><i class="bi bi-grid-1x2 me-1"></i> Bảng điều khiển</a>
+        <a class="btn btn-brand text-white" href="#"><i class="bi bi-plus-lg me-1"></i> Thêm sản phẩm</a>
       </div>
     </div>
   </div>
@@ -110,9 +110,9 @@
       <div class="d-flex flex-wrap align-items-end justify-content-between gap-3">
         <div>
           <div class="h5 mb-1" style="font-weight:900; letter-spacing:-0.4px;">Bộ lọc</div>
-          <div class="small muted">Chỉ UI: không xử lý dữ liệu</div>
+          <div class="small muted">Mock data • chưa có backend</div>
         </div>
-        <span class="pill"><i class="bi bi-bag"></i> 15 products (mock)</span>
+        <span class="pill"><i class="bi bi-bag"></i> 8 sản phẩm</span>
       </div>
       <hr class="my-4" />
       <form class="row g-2 align-items-end">
@@ -120,83 +120,105 @@
           <label class="form-label fw-semibold" for="q">Tìm kiếm</label>
           <div class="input-group">
             <span class="input-group-text bg-white" style="border-radius:12px 0 0 12px; border:1px solid rgba(17,24,39,.11)"><i class="bi bi-search"></i></span>
-            <input id="q" class="form-control searchbox" placeholder="Nhập tên product..." />
+            <input id="q" class="form-control searchbox" placeholder="Tên sản phẩm..." />
           </div>
         </div>
         <div class="col-12 col-lg-3">
-          <label class="form-label fw-semibold" for="cat">Category</label>
+          <label class="form-label fw-semibold" for="cat">Danh mục</label>
           <select id="cat" class="form-select searchbox">
             <option selected>Tất cả</option>
-            <option>Áo Thun Nam</option>
-            <option>Áo Thun Nữ</option>
-            <option>Áo Thun Trẻ Em</option>
+            <option>Nam / Áo thun</option>
+            <option>Nam / Quần</option>
+            <option>Nữ / Váy</option>
+            <option>Trẻ em / Áo khoác</option>
           </select>
         </div>
         <div class="col-12 col-lg-2">
-          <label class="form-label fw-semibold" for="createdBy">Created by</label>
+          <label class="form-label fw-semibold" for="createdBy">Người tạo</label>
           <select id="createdBy" class="form-select searchbox">
-            <option selected>All</option>
-            <option>user_id=1</option>
-            <option>user_id=7</option>
+            <option selected>Tất cả</option>
+            <option>admin (id=1)</option>
+            <option>staff (id=7)</option>
           </select>
         </div>
         <div class="col-12 col-lg-2 d-grid">
-          <button type="button" class="btn btn-outline-dark" style="border-radius:12px; font-weight:800;"><i class="bi bi-funnel me-1"></i> Áp dụng</button>
+          <button type="button" class="btn btn-outline-dark" style="border-radius:12px; font-weight:800;"><i class="bi bi-funnel me-1"></i> Lọc</button>
         </div>
       </form>
     </div>
 
     <div class="card-elev overflow-hidden">
       <div class="p-3 d-flex align-items-center justify-content-between">
-        <div class="fw-bold">Product list</div>
-        <div class="small muted">HTML template</div>
+        <div class="fw-bold">Danh sách sản phẩm</div>
+        <div class="small muted">UI template</div>
       </div>
       <div class="table-responsive">
         <table class="table table-hover align-middle mb-0">
           <thead>
             <tr>
-              <th style="width:64px;">Avatar</th>
-              <th style="width:120px;">ID</th>
-              <th>Name</th>
-              <th>Category</th>
-              <th>Created</th>
-              <th>Updated</th>
-              <th class="text-end" style="width:190px;">Actions</th>
+              <th style="width:64px;">Ảnh</th>
+              <th style="width:120px;">Mã</th>
+              <th>Tên</th>
+              <th>Danh mục</th>
+              <th>Tạo</th>
+              <th>Cập nhật</th>
+              <th class="text-end" style="width:210px;">Thao tác</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td><div class="avatar"><img src="https://picsum.photos/seed/482557/80/80" alt="482557" /></div></td>
+              <td><div class="avatar"><img src="https://picsum.photos/seed/airism-tee/80/80" alt="AIRism" /></div></td>
               <td><span class="pill"><i class="bi bi-hash"></i> 482557</span></td>
               <td>
-                <div class="fw-semibold">Áo Thun Nam Cổ Tròn AIRism</div>
-                <div class="small muted">material_info: AIRism, 100% Cotton</div>
+                <div class="fw-semibold">Áo thun AIRism cổ tròn (Nam)</div>
+                <div class="small muted">Chất liệu: Cotton pha • Form: Regular</div>
               </td>
-              <td><span class="pill"><i class="bi bi-diagram-3"></i> category_id=4</span></td>
-              <td>11/03/2026</td>
-              <td>19/03/2026</td>
+              <td><span class="pill"><i class="bi bi-diagram-3"></i> Nam / Áo thun</span></td>
+              <td>22/03/2026</td>
+              <td>25/03/2026</td>
               <td class="text-end">
                 <div class="btn-group">
                   <button class="btn btn-outline-dark" style="border-radius:12px;"><i class="bi bi-pencil-square me-1"></i>Sửa</button>
-                  <button class="btn btn-outline-secondary" style="border-radius:12px;"><i class="bi bi-images me-1"></i>Images</button>
+                  <button class="btn btn-outline-secondary" style="border-radius:12px;"><i class="bi bi-images me-1"></i>Ảnh</button>
+                  <button class="btn btn-outline-secondary" style="border-radius:12px;"><i class="bi bi-upc-scan me-1"></i>SKU</button>
                   <button class="btn btn-outline-danger" style="border-radius:12px;"><i class="bi bi-trash3 me-1"></i>Xoá</button>
                 </div>
               </td>
             </tr>
             <tr>
-              <td><div class="avatar"><img src="https://picsum.photos/seed/482565/80/80" alt="482565" /></div></td>
-              <td><span class="pill"><i class="bi bi-hash"></i> 482565</span></td>
+              <td><div class="avatar"><img src="https://picsum.photos/seed/jeans-men/80/80" alt="Jeans" /></div></td>
+              <td><span class="pill"><i class="bi bi-hash"></i> 482558</span></td>
               <td>
-                <div class="fw-semibold">Váy Đầm Mềm Mại Nữ</div>
-                <div class="small muted">avatar: picsum</div>
+                <div class="fw-semibold">Quần jeans slim fit (Nam)</div>
+                <div class="small muted">Co giãn nhẹ • Màu: Xanh đậm</div>
               </td>
-              <td><span class="pill"><i class="bi bi-diagram-3"></i> category_id=20</span></td>
-              <td>11/03/2026</td>
-              <td>19/03/2026</td>
+              <td><span class="pill"><i class="bi bi-diagram-3"></i> Nam / Quần</span></td>
+              <td>22/03/2026</td>
+              <td>25/03/2026</td>
               <td class="text-end">
                 <div class="btn-group">
                   <button class="btn btn-outline-dark" style="border-radius:12px;"><i class="bi bi-pencil-square me-1"></i>Sửa</button>
-                  <button class="btn btn-outline-secondary" style="border-radius:12px;"><i class="bi bi-images me-1"></i>Images</button>
+                  <button class="btn btn-outline-secondary" style="border-radius:12px;"><i class="bi bi-images me-1"></i>Ảnh</button>
+                  <button class="btn btn-outline-secondary" style="border-radius:12px;"><i class="bi bi-upc-scan me-1"></i>SKU</button>
+                  <button class="btn btn-outline-danger" style="border-radius:12px;"><i class="bi bi-trash3 me-1"></i>Xoá</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td><div class="avatar"><img src="https://picsum.photos/seed/dress-women/80/80" alt="Dress" /></div></td>
+              <td><span class="pill"><i class="bi bi-hash"></i> 482565</span></td>
+              <td>
+                <div class="fw-semibold">Váy suông mềm mại (Nữ)</div>
+                <div class="small muted">Thoáng mát • Dễ phối</div>
+              </td>
+              <td><span class="pill"><i class="bi bi-diagram-3"></i> Nữ / Váy</span></td>
+              <td>22/03/2026</td>
+              <td>25/03/2026</td>
+              <td class="text-end">
+                <div class="btn-group">
+                  <button class="btn btn-outline-dark" style="border-radius:12px;"><i class="bi bi-pencil-square me-1"></i>Sửa</button>
+                  <button class="btn btn-outline-secondary" style="border-radius:12px;"><i class="bi bi-images me-1"></i>Ảnh</button>
+                  <button class="btn btn-outline-secondary" style="border-radius:12px;"><i class="bi bi-upc-scan me-1"></i>SKU</button>
                   <button class="btn btn-outline-danger" style="border-radius:12px;"><i class="bi bi-trash3 me-1"></i>Xoá</button>
                 </div>
               </td>
@@ -205,13 +227,13 @@
         </table>
       </div>
       <div class="p-3 d-flex flex-wrap justify-content-between align-items-center gap-2 border-top">
-        <div class="small muted">Gợi ý: tách module Product Images và Product SKUs theo DB.</div>
+        <div class="small muted">Gợi ý: tách module ảnh và SKU theo DB.</div>
         <nav aria-label="Pagination" class="ms-auto">
           <ul class="pagination pagination-sm mb-0">
-            <li class="page-item disabled"><a class="page-link" href="#">Prev</a></li>
+            <li class="page-item disabled"><a class="page-link" href="#">Trước</a></li>
             <li class="page-item active"><a class="page-link" href="#">1</a></li>
             <li class="page-item"><a class="page-link" href="#">2</a></li>
-            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+            <li class="page-item"><a class="page-link" href="#">Sau</a></li>
           </ul>
         </nav>
       </div>
@@ -221,4 +243,3 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-

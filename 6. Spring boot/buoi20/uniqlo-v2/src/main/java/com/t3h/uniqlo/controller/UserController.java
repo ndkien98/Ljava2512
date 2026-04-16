@@ -7,9 +7,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/users")
 public class UserController {
-
     @GetMapping
-    public String listUsers() {
+    public String getUsers() {
+        // maps to src/main/resources/templates/user_list.html
         return "user_list";
     }
+
 }
