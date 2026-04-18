@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0.4
+    container_name: keycloak-uniqlo
+    # start-dev: Chế độ dev, dùng HTTP (không cần SSL), thích hợp test local
+    command: start-dev
+    ports:
+      - "8080:8080"
+    environment:
+      # --- Database Configuration ---
+      # Loại database mà Keycloak sẽ dùng
+      KC_DB: mysql
+
+      # Địa chỉ MySQL đang chạy trực tiếp trên máy host
+      # host.docker.internal: Từ khoá "ma thuật" cho phép container truy cập máy host (Windows/macOS)
+      # Trên Linux: thêm extra_hosts bên dưới
+      KC_DB_URL: "jdbc:mysql://host.docker.internal:3306/keycloak_db?useSSL=false&allowPublicKeyRetrieval=true&characterEncoding=UTF-8"
+
+      # Thông tin đăng nhập MySQL local (điều chỉnh cho khớp với máy của bạn)
+      KC_DB_USERNAME: root
+      KC_DB_PASSWORD: root
+
+      # --- Admin Account ---
+      # Tài khoản quản trị Keycloak, truy cập tại: http://localhost:8080/admin
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+
+      # --- Optional: Tắt strict hostname check khi dev local ---
+      KC_HOSTNAME_STRICT: "false"
+      KC_HOSTNAME_STRICT_HTTPS: "false"
+      KC_HTTP_ENABLED: "true"
+
+    # Cần thiết trên Linux để container kết nối về host (Windows/macOS tự động hỗ trợ)
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+# NOTE: Trước khi chạy, hãy tạo database trong MySQL local:
+#   CREATE DATABASE keycloak_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

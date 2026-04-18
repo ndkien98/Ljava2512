@@ -1,0 +1,42 @@
+spring:
+  application:
+    name: uniqlo
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/uniqlo_education?useUnicode=true&characterEncoding=UTF-8
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      idle-timeout: 30000
+      connection-timeout: 20000
+      max-lifetime: 1800000
+
+  thymeleaf:
+    cache: false
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          # Issuer URI của Keycloak - trỏ đến realm của ứng dụng
+          # Spring Boot tự động tải Public Key từ: {issuer-uri}/protocol/openid-connect/certs
+          issuer-uri: http://localhost:8080/realms/uniqlo-realm
+
+# Các thông tin Keycloak cho Admin Client
+keycloak:
+  admin:
+    server-url: http://localhost:8080
+    realm: uniqlo-realm
+    client-id: uniqlo-backend
+    client-secret: CHANGE_ME_IN_PRODUCTION
+
+# Logging
+logging:
+  level:
+    org.springframework.security: DEBUG
+
+server:
+  port: 8082
