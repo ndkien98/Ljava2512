@@ -1,146 +1,213 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Uniqlo CMS - Thống kê truy cập</title>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="stylesheet" th:href="@{/cms/fonts.css}" />
-
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Uniqlo CMS — Thống kê truy cập</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
   <style>
-    :root{
-      --brand:#e50012;
-      --ink:#111827;
-      --muted:#6b7280;
-      --bg:#f6f7fb;
-      --card:#ffffff;
-      --ring: rgba(229,0,18,.18);
-      --line: rgba(17,24,39,.08);
-      --bs-border-radius: 0.95rem;
-      --bs-border-radius-lg: 1.1rem;
-      --bs-body-color: var(--ink);
-      /* --bs-body-font-family: var(--bs-body-font-family); */
-    }
-    body{
-      background:
-        radial-gradient(1200px 520px at 18% -10%, rgba(229,0,18,.10), transparent 60%),
-        radial-gradient(900px 520px at 95% 8%, rgba(17,24,39,.08), transparent 68%),
-        var(--bg);
-      color:var(--ink);
-    }
-    .topbar{
-      position: sticky;
-      top:0;
-      z-index: 1020;
-      background: rgba(255,255,255,.85);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid var(--line);
-      box-shadow: 0 10px 35px rgba(17,24,39,.06);
-    }
-    .shell{max-width:1100px;}
-    .card-elev{
-      background: var(--card);
-      border: 1px solid rgba(17,24,39,.06);
-      border-radius: 16px;
-      box-shadow: 0 18px 45px rgba(17,24,39,.08);
-    }
-    .kpi{
-      border-radius: 16px;
-      border: 1px solid rgba(17,24,39,.06);
-      background: linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.78));
-      box-shadow: 0 16px 40px rgba(17,24,39,.07);
-      overflow:hidden;
-      position:relative;
-    }
-    .kpi::after{
-      content:"";
-      position:absolute;
-      inset: -60px;
-      background: radial-gradient(250px 160px at 10% 20%, rgba(229,0,18,.12), transparent 60%),
-                  radial-gradient(220px 160px at 85% 10%, rgba(17,24,39,.10), transparent 60%);
-      pointer-events:none;
-    }
-    .kpi .inner{position:relative; z-index:1;}
-    .value{font-weight:900; letter-spacing:-0.8px; font-size: 2.4rem;}
-    .muted{color:var(--muted);}
-    .btn-brand{ background: var(--brand); border-color: var(--brand); border-radius: 12px; font-weight: 900; }
-    .btn-brand:hover{ background:#c80010; border-color:#c80010; }
-    .bar{
-      height: 10px;
-      border-radius: 999px;
-      background: rgba(17,24,39,.06);
-      overflow:hidden;
-    }
-    .bar>div{height:100%; width:45%; background: linear-gradient(90deg, rgba(229,0,18,.95), rgba(229,0,18,.40));}
+    :root{--brand:#e50012;--sidebar-bg:#0b1220;--sidebar-hover:rgba(255,255,255,.07);--sidebar-active:rgba(229,0,18,.15);--sidebar-active-border:#e50012;--sidebar-text:rgba(255,255,255,.65);--sidebar-muted:rgba(255,255,255,.35);--ink:#0f172a;--muted:#64748b;--bg:#f1f5f9;--card:#ffffff;--border:rgba(15,23,42,.07);--shadow-sm:0 4px 12px rgba(15,23,42,.06);--shadow-md:0 8px 28px rgba(15,23,42,.10);--radius-lg:14px;--radius-xl:20px;}
+    *,*::before,*::after{box-sizing:border-box;}html,body{height:100%;margin:0;padding:0;}
+    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;display:flex;}
+    .sidebar{width:260px;min-height:100vh;background:var(--sidebar-bg);display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto;}
+    .sidebar-logo{padding:28px 24px 20px;border-bottom:1px solid rgba(255,255,255,.07);}
+    .logo-text{font-size:1.3rem;font-weight:900;letter-spacing:-0.7px;color:#fff;}.logo-text em{font-style:normal;color:var(--brand);}
+    .logo-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;background:rgba(229,0,18,.18);border:1px solid rgba(229,0,18,.3);color:#ff6565;font-size:.68rem;font-weight:700;text-transform:uppercase;margin-top:6px;}
+    .sidebar-user{margin:16px 16px 0;padding:14px;border-radius:var(--radius-lg);background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:12px;}
+    .sidebar-avatar{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,rgba(229,0,18,.6),rgba(176,0,14,.4));display:flex;align-items:center;justify-content:center;color:#fff;font-size:1rem;font-weight:800;flex-shrink:0;}
+    .sidebar-user-info .name{color:#fff;font-weight:700;font-size:.88rem;}.sidebar-user-info .role{color:var(--sidebar-muted);font-size:.72rem;font-weight:600;}
+    .sidebar-nav{padding:20px 12px;flex:1;}
+    .nav-section-label{color:var(--sidebar-muted);font-size:.65rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:0 12px;margin-bottom:8px;margin-top:8px;}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;color:var(--sidebar-text);text-decoration:none;font-size:.875rem;font-weight:600;margin-bottom:2px;transition:all .18s;border-left:3px solid transparent;}
+    .nav-item:hover{background:var(--sidebar-hover);color:#fff;}.nav-item.active{background:var(--sidebar-active);color:#fff;border-left-color:var(--sidebar-active-border);}
+    .nav-icon{font-size:1rem;flex-shrink:0;}.nav-badge{margin-left:auto;padding:2px 8px;border-radius:999px;background:rgba(229,0,18,.2);color:var(--brand);font-size:.7rem;font-weight:700;}
+    .sidebar-footer{padding:16px;border-top:1px solid rgba(255,255,255,.07);}.btn-logout{display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:10px;background:rgba(229,0,18,.1);border:1px solid rgba(229,0,18,.2);color:#ff6565;font-size:.85rem;font-weight:700;text-decoration:none;width:100%;transition:all .18s;}
+    .btn-logout:hover{background:rgba(229,0,18,.18);}
+    .main-content{flex:1;min-height:100vh;display:flex;flex-direction:column;overflow:hidden;}
+    .topbar{background:rgba(255,255,255,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 32px;height:68px;display:flex;align-items:center;justify-content:space-between;gap:16px;position:sticky;top:0;z-index:50;box-shadow:0 1px 12px rgba(15,23,42,.05);}
+    .topbar-title{font-size:1.2rem;font-weight:900;letter-spacing:-0.5px;}.topbar-sub{font-size:.78rem;color:var(--muted);}
+    .topbar-right{display:flex;align-items:center;gap:10px;}
+    .btn-t{padding:8px 16px;border-radius:10px;border:1.5px solid rgba(15,23,42,.1);background:transparent;color:var(--ink);font-family:'Inter',sans-serif;font-size:.82rem;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:all .18s;cursor:pointer;}
+    .btn-t:hover{background:var(--bg);color:var(--ink);}
+    .btn-t-red{background:linear-gradient(135deg,#e50012,#b0000e);border-color:transparent;color:#fff;box-shadow:0 4px 12px rgba(229,0,18,.3);}
+    .btn-t-red:hover{color:#fff;transform:translateY(-1px);}
+    .page-body{padding:28px 32px;flex:1;}
+    /* HERO CARD */
+    .hero-stat-card{background:var(--sidebar-bg);border-radius:var(--radius-xl);padding:40px;position:relative;overflow:hidden;margin-bottom:24px;}
+    .hero-stat-card::before{content:'';position:absolute;top:-80px;right:-80px;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(229,0,18,.25),transparent 70%);pointer-events:none;}
+    .hero-stat-card::after{content:'';position:absolute;bottom:-60px;left:-60px;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,rgba(59,130,246,.15),transparent 70%);pointer-events:none;}
+    .hero-num{font-size:5rem;font-weight:900;letter-spacing:-4px;color:#fff;line-height:1;margin-bottom:8px;}
+    .hero-label{font-size:.9rem;font-weight:600;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:1px;}
+    .hero-meta{margin-top:20px;font-size:.82rem;color:rgba(255,255,255,.45);}
+    .hero-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:999px;background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.25);color:#34d399;font-size:.75rem;font-weight:700;margin-bottom:16px;}
+    /* PROGRESS BARS */
+    .progress-section{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:28px;}
+    .progress-label{display:flex;justify-content:space-between;font-size:.82rem;font-weight:700;margin-bottom:8px;}
+    .progress-bar-wrap{height:10px;border-radius:999px;background:rgba(15,23,42,.08);overflow:hidden;margin-bottom:20px;}
+    .progress-bar-fill{height:100%;border-radius:999px;transition:width 1.2s cubic-bezier(.22,1,.36,1);}
+    /* SCHEMA CARD */
+    .schema-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);overflow:hidden;}
+    .schema-head{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+    .schema-item{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;border-bottom:1px solid rgba(15,23,42,.04);}
+    .schema-item:last-child{border-bottom:none;}
+    .schema-item:hover{background:rgba(15,23,42,.02);}
+    .si-key{font-size:.82rem;font-weight:600;color:var(--muted);}
+    .si-val{font-size:.85rem;font-weight:700;}
+    .pill{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:999px;font-size:.72rem;font-weight:700;border:1px solid rgba(15,23,42,.1);background:rgba(15,23,42,.04);}
+    /* LIVE BADGE */
+    .live-dot{display:inline-flex;align-items:center;gap:6px;font-size:.75rem;font-weight:600;color:#10b981;}
+    .live-dot::before{content:'';width:8px;height:8px;border-radius:50%;background:#10b981;box-shadow:0 0 0 0 rgba(16,185,129,.4);animation:pulse 2s infinite;}
+    @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(16,185,129,.4);}70%{box-shadow:0 0 0 8px rgba(16,185,129,0);}100%{box-shadow:0 0 0 0 rgba(16,185,129,0);}}
+    @media(max-width:991px){.sidebar{display:none;}.topbar{padding:0 16px;}.page-body{padding:20px 16px;}.hero-num{font-size:3.5rem;}}
   </style>
 </head>
 <body>
-  <div class="topbar">
-    <div class="container shell py-3 d-flex flex-wrap align-items-center justify-content-between gap-2">
-      <div>
-        <div class="h4 mb-0" style="font-weight:900; letter-spacing:-0.6px;">Thống kê truy cập</div>
-        <div class="small muted">UI mẫu cho bảng <span class="fw-bold">visit_stats</span> (visit_count, last_updated)</div>
-      </div>
-      <div class="d-flex align-items-center gap-2">
-        <a class="btn btn-outline-dark" th:href="@{/cms}"><i class="bi bi-grid-1x2 me-1"></i> Bảng điều khiển</a>
-        <button class="btn btn-brand text-white" type="button"><i class="bi bi-arrow-repeat me-1"></i> Làm mới (mock)</button>
-      </div>
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-text">UNIQLO<em>.</em>CMS</div>
+      <div class="logo-badge"><i class="bi bi-database"></i> uniqlo_education</div>
     </div>
-  </div>
+    <div class="sidebar-user">
+      <div class="sidebar-avatar">A</div>
+      <div class="sidebar-user-info"><div class="name">Admin Uniqlo</div><div class="role">ADMIN</div></div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Menu chính</div>
+      <a class="nav-item" th:href="@{/cms}"><i class="bi bi-grid-1x2-fill nav-icon"></i> Dashboard</a>
+      <a class="nav-item" th:href="@{/users}"><i class="bi bi-people-fill nav-icon"></i> Người dùng <span class="nav-badge">8</span></a>
+      <div class="nav-section-label" style="margin-top:16px;">Sản phẩm</div>
+      <a class="nav-item" th:href="@{/cms/categories}"><i class="bi bi-diagram-3-fill nav-icon"></i> Danh mục</a>
+      <a class="nav-item" th:href="@{/cms/products}"><i class="bi bi-bag-fill nav-icon"></i> Sản phẩm <span class="nav-badge">15</span></a>
+      <a class="nav-item" th:href="@{/cms/skus}"><i class="bi bi-upc-scan nav-icon"></i> SKUs <span class="nav-badge">46</span></a>
+      <a class="nav-item" th:href="@{/cms/reviews}"><i class="bi bi-chat-quote-fill nav-icon"></i> Đánh giá</a>
+      <div class="nav-section-label" style="margin-top:16px;">Thống kê</div>
+      <a class="nav-item active" th:href="@{/cms/visit-stats}"><i class="bi bi-graph-up-arrow nav-icon"></i> Visit Stats</a>
+      <div class="nav-section-label" style="margin-top:16px;">Điều hướng</div>
+      <a class="nav-item" th:href="@{/}"><i class="bi bi-house-fill nav-icon"></i> Trang chủ</a>
+    </nav>
+    <div class="sidebar-footer">
+      <a class="btn-logout" th:href="@{/logout}"><i class="bi bi-box-arrow-right"></i> Đăng xuất</a>
+    </div>
+  </aside>
 
-  <div class="container shell my-4">
-    <div class="row g-3">
-      <div class="col-12 col-lg-7">
-        <div class="kpi p-4">
-          <div class="inner">
-            <div class="d-flex align-items-start justify-content-between gap-3">
-              <div>
-                <div class="muted fw-bold">Tổng lượt truy cập</div>
-                <div class="value">25</div>
-                <div class="small muted">Cập nhật lần cuối: 22/03/2026 15:48</div>
-              </div>
-              <div class="p-3" style="border-radius:16px; border:1px solid rgba(17,24,39,.08); background: rgba(255,255,255,.75)">
-                <div class="fw-bold">Trạng thái</div>
-                <div class="small muted">Theo dõi đang bật</div>
+  <div class="main-content">
+    <header class="topbar">
+      <div>
+        <div class="topbar-title">Thống kê truy cập</div>
+        <div class="topbar-sub">Bảng <strong>visit_stats</strong> · visit_count · last_updated</div>
+      </div>
+      <div class="topbar-right">
+        <span class="live-dot">LIVE</span>
+        <a class="btn-t" th:href="@{/cms}"><i class="bi bi-grid-1x2"></i> Dashboard</a>
+        <button class="btn-t btn-t-red" onclick="window.location.reload()"><i class="bi bi-arrow-repeat"></i> Làm mới</button>
+      </div>
+    </header>
+
+    <div class="page-body">
+      <div class="row g-4">
+
+        <!-- Hero stat -->
+        <div class="col-12 col-lg-5">
+          <div class="hero-stat-card" style="position:relative;z-index:1;">
+            <div class="hero-badge"><i class="bi bi-graph-up-arrow"></i> Đang theo dõi</div>
+            <div class="hero-label">Tổng lượt truy cập</div>
+            <div class="hero-num" th:text="${visitCount ?: 25}" id="visitCounter">25</div>
+            <div class="hero-meta">
+              <div><i class="bi bi-clock me-1"></i>Cập nhật: <span th:text="${lastUpdated ?: '22/03/2026 15:48'}">22/03/2026 15:48</span></div>
+              <div style="margin-top:8px;color:rgba(255,255,255,.35);font-size:.78rem;">
+                Bảng: <strong style="color:rgba(255,255,255,.55);">visit_stats</strong> · visit_count + last_updated
               </div>
             </div>
+          </div>
 
-            <div class="mt-4">
-              <div class="d-flex justify-content-between small muted mb-2">
-                <div>Hôm nay (mock)</div>
-                <div>45%</div>
-              </div>
-              <div class="bar"><div></div></div>
+          <!-- Schema detail -->
+          <div class="schema-card">
+            <div class="schema-head">
+              <span style="font-weight:800;font-size:.95rem;"><i class="bi bi-database-fill me-2" style="color:var(--brand);"></i>Cấu trúc bảng</span>
+              <span class="pill">visit_stats</span>
             </div>
+            <div class="schema-item"><span class="si-key">id</span><span class="si-val">INT AUTO_INCREMENT PK</span></div>
+            <div class="schema-item"><span class="si-key">visit_count</span><span class="si-val"><span class="pill" style="background:rgba(59,130,246,.08);border-color:rgba(59,130,246,.2);color:#2563eb;">BIGINT DEFAULT 0</span></span></div>
+            <div class="schema-item"><span class="si-key">last_updated</span><span class="si-val"><span class="pill" style="background:rgba(16,185,129,.08);border-color:rgba(16,185,129,.2);color:#047857;">TIMESTAMP AUTO</span></span></div>
+            <div style="padding:14px 22px;font-size:.78rem;color:var(--muted);">
+              <i class="bi bi-info-circle me-1"></i>
+              Tăng visit_count mỗi HTTP request. Cập nhật last_updated tự động.
+            </div>
+          </div>
+        </div>
 
-            <div class="mt-4 small muted">
-              Gợi ý BE: tăng visit_count khi có request vào web, update last_updated.
+        <!-- Charts & info -->
+        <div class="col-12 col-lg-7">
+          <!-- Progress bars chart -->
+          <div class="progress-section mb-4">
+            <div style="font-weight:800;font-size:1rem;margin-bottom:4px;"><i class="bi bi-bar-chart-line-fill me-2" style="color:var(--brand);"></i>Phân bố lượt truy cập (mock)</div>
+            <div style="font-size:.8rem;color:var(--muted);margin-bottom:24px;">Dữ liệu minh hoạ UI — tích hợp chart.js sau</div>
+            <div>
+              <div class="progress-label"><span>Hôm nay</span><span>45% · 11 lượt</span></div>
+              <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:45%;background:linear-gradient(90deg,#e50012,#ff6b6b);"></div></div>
+              <div class="progress-label"><span>Hôm qua</span><span>30% · 7 lượt</span></div>
+              <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:30%;background:linear-gradient(90deg,#3b82f6,#60a5fa);"></div></div>
+              <div class="progress-label"><span>7 ngày trước</span><span>70% · 18 lượt</span></div>
+              <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:70%;background:linear-gradient(90deg,#8b5cf6,#a78bfa);"></div></div>
+              <div class="progress-label"><span>30 ngày trước</span><span>100% · 25 lượt</span></div>
+              <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:100%;background:linear-gradient(90deg,#10b981,#34d399);"></div></div>
+            </div>
+          </div>
+
+          <!-- Info cards -->
+          <div class="row g-3">
+            <div class="col-6">
+              <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:20px;">
+                <div style="width:40px;height:40px;border-radius:12px;background:rgba(229,0,18,.1);color:var(--brand);display:flex;align-items:center;justify-content:center;font-size:1.1rem;margin-bottom:12px;"><i class="bi bi-globe"></i></div>
+                <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:4px;">Backend hint</div>
+                <div style="font-size:.85rem;font-weight:700;">Servlet Filter</div>
+                <div style="font-size:.75rem;color:var(--muted);margin-top:4px;">Tăng counter mỗi request HTTP vào /</div>
+              </div>
+            </div>
+            <div class="col-6">
+              <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:20px;">
+                <div style="width:40px;height:40px;border-radius:12px;background:rgba(16,185,129,.1);color:#10b981;display:flex;align-items:center;justify-content:center;font-size:1.1rem;margin-bottom:12px;"><i class="bi bi-database-fill"></i></div>
+                <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:4px;">SQL gợi ý</div>
+                <div style="font-size:.85rem;font-weight:700;">UPDATE visit_stats</div>
+                <div style="font-size:.75rem;color:var(--muted);margin-top:4px;">SET visit_count = visit_count + 1</div>
+              </div>
+            </div>
+            <div class="col-12">
+              <div style="background:rgba(11,18,32,.03);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;font-family:monospace;font-size:.8rem;line-height:1.8;">
+                <div style="font-family:'Inter',sans-serif;font-weight:800;font-size:.82rem;color:var(--muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px;">SQL Reference</div>
+                <div style="color:#7c3aed;">-- Tạo bảng</div>
+                <div><span style="color:#2563eb;">CREATE TABLE</span> visit_stats (</div>
+                <div style="padding-left:20px;">id <span style="color:#059669;">INT AUTO_INCREMENT PRIMARY KEY</span>,</div>
+                <div style="padding-left:20px;">visit_count <span style="color:#059669;">BIGINT DEFAULT 0 NOT NULL</span>,</div>
+                <div style="padding-left:20px;">last_updated <span style="color:#059669;">TIMESTAMP DEFAULT CURRENT_TIMESTAMP</span></div>
+                <div>);</div>
+                <div style="margin-top:8px;color:#7c3aed;">-- Tăng counter</div>
+                <div><span style="color:#2563eb;">UPDATE</span> visit_stats <span style="color:#2563eb;">SET</span> visit_count = visit_count + 1;</div>
+              </div>
             </div>
           </div>
         </div>
       </div>
-
-      <div class="col-12 col-lg-5">
-        <div class="card-elev p-4">
-          <div class="h5 mb-1" style="font-weight:900; letter-spacing:-0.4px;">Ghi chú</div>
-          <div class="small muted mb-3">UI only</div>
-          <ul class="list-group list-group-flush">
-            <li class="list-group-item">Bảng: <span class="fw-bold">visit_stats</span></li>
-            <li class="list-group-item">Cột: visit_count, last_updated</li>
-            <li class="list-group-item">Ứng dụng: đếm truy cập website cơ bản</li>
-          </ul>
-        </div>
-      </div>
     </div>
-
-    <div class="mt-4 small muted">© Uniqlo CMS (education) — UI only.</div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Animate counter number
+    const el = document.getElementById('visitCounter');
+    if (el) {
+      const target = parseInt(el.textContent) || 25;
+      let current = 0;
+      const step = Math.ceil(target / 30);
+      const timer = setInterval(() => {
+        current = Math.min(current + step, target);
+        el.textContent = current;
+        if (current >= target) clearInterval(timer);
+      }, 40);
+    }
+  </script>
 </body>
 </html>

@@ -1,322 +1,339 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin.Users - User Form</title>
-
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="stylesheet" th:href="@{/cms/fonts.css}" />
-
-  <!-- Bootstrap + Icons -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Uniqlo CMS — Tạo / Sửa người dùng</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
   <style>
-    :root {
-      --brand: #e50012;
-      --ink: #111827;
-      --muted: #6b7280;
-      --bg: #f6f7fb;
-      --card: #ffffff;
-      --ring: rgba(229, 0, 18, .18);
-
-      /* Bootstrap overrides */
-      --bs-border-radius: 0.9rem;
-      --bs-border-radius-lg: 1rem;
-      --bs-border-radius-sm: 0.7rem;
-      --bs-body-color: var(--ink);
-      --bs-body-font-family: var(--bs-body-font-family);
-    }
-
-    html, body { height: 100%; }
-
-    body {
-      /* font inherits from global */
-      text-rendering: optimizeLegibility;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      line-height: 1.5;
-      background:
-        radial-gradient(1200px 500px at 20% -10%, rgba(229, 0, 18, 0.10), transparent 60%),
-        radial-gradient(900px 500px at 90% 10%, rgba(17, 24, 39, 0.08), transparent 68%),
-        var(--bg);
-      color: var(--ink);
-    }
-
-    .shell { max-width: 960px; }
-
-    .topbar {
-      position: sticky;
-      top: 0;
-      z-index: 1020;
-      background: rgba(255,255,255,.85);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(17, 24, 39, 0.06);
-      box-shadow: 0 10px 35px rgba(17, 24, 39, 0.06);
-    }
-
-    .brand {
-      font-weight: 900;
-      letter-spacing: -0.6px;
-    }
-
-    .brand .dot { color: var(--brand); }
-
-    .card-elev {
-      background: var(--card);
-      border: 1px solid rgba(17, 24, 39, 0.06);
-      border-radius: 16px;
-      box-shadow: 0 18px 45px rgba(17, 24, 39, 0.08);
-    }
-
-    .action-btn { border-radius: 12px; font-weight: 800; }
-
-    .btn-brand { background: var(--brand); border-color: var(--brand); }
-    .btn-brand:hover { background: #c80010; border-color: #c80010; }
-
-    .form-control, .form-select {
-      border-radius: 12px;
-      border: 1px solid rgba(17, 24, 39, 0.10);
-      padding: 10px 12px;
-      background: rgba(255,255,255,.9);
-    }
-
-    .btn:focus, .btn:active,
-    .form-control:focus, .form-select:focus {
-      box-shadow: 0 0 0 .25rem var(--ring) !important;
-    }
-
-    .form-control:focus, .form-select:focus {
-      border-color: rgba(229, 0, 18, 0.35);
-    }
-
-    .hint { font-size: .9rem; color: var(--muted); }
-
-    .avatarPreview {
-      width: 72px; height: 72px;
-      border-radius: 18px;
-      border: 1px solid rgba(17, 24, 39, 0.10);
-      background: linear-gradient(135deg, rgba(229,0,18,.20), rgba(17,24,39,.06));
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 900;
-    }
-
-    .avatarPreview img { width: 100%; height: 100%; object-fit: cover; }
-
-    .form-title { font-weight: 950; letter-spacing: -0.8px; }
-
-    .section {
-      border: 1px dashed rgba(17, 24, 39, 0.18);
-      border-radius: 16px;
-      padding: 16px;
-      background: rgba(255,255,255,.6);
-    }
-
-    .error-text { color: #b42318; font-weight: 700; font-size: .9rem; }
-
-    @media (max-width: 576px) {
-      .form-title { font-size: 1.35rem; }
-      .topbar .brand { font-size: 1.15rem !important; }
-    }
+    :root{--brand:#e50012;--sidebar-bg:#0b1220;--sidebar-hover:rgba(255,255,255,.07);--sidebar-active:rgba(229,0,18,.15);--sidebar-active-border:#e50012;--sidebar-text:rgba(255,255,255,.65);--sidebar-muted:rgba(255,255,255,.35);--ink:#0f172a;--muted:#64748b;--bg:#f1f5f9;--card:#ffffff;--border:rgba(15,23,42,.07);--shadow-sm:0 4px 12px rgba(15,23,42,.06);--shadow-md:0 8px 28px rgba(15,23,42,.10);--radius-lg:14px;--radius-xl:20px;}
+    *,*::before,*::after{box-sizing:border-box;}html,body{height:100%;margin:0;padding:0;}
+    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;display:flex;}
+    .sidebar{width:260px;min-height:100vh;background:var(--sidebar-bg);display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto;}
+    .sidebar-logo{padding:28px 24px 20px;border-bottom:1px solid rgba(255,255,255,.07);}
+    .logo-text{font-size:1.3rem;font-weight:900;letter-spacing:-0.7px;color:#fff;}.logo-text em{font-style:normal;color:var(--brand);}
+    .logo-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;background:rgba(229,0,18,.18);border:1px solid rgba(229,0,18,.3);color:#ff6565;font-size:.68rem;font-weight:700;text-transform:uppercase;margin-top:6px;}
+    .sidebar-user{margin:16px 16px 0;padding:14px;border-radius:var(--radius-lg);background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:12px;}
+    .sidebar-avatar{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,rgba(229,0,18,.6),rgba(176,0,14,.4));display:flex;align-items:center;justify-content:center;color:#fff;font-size:1rem;font-weight:800;flex-shrink:0;}
+    .sidebar-user-info .name{color:#fff;font-weight:700;font-size:.88rem;}.sidebar-user-info .role{color:var(--sidebar-muted);font-size:.72rem;font-weight:600;}
+    .sidebar-nav{padding:20px 12px;flex:1;}
+    .nav-section-label{color:var(--sidebar-muted);font-size:.65rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:0 12px;margin-bottom:8px;margin-top:8px;}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;color:var(--sidebar-text);text-decoration:none;font-size:.875rem;font-weight:600;margin-bottom:2px;transition:all .18s;border-left:3px solid transparent;}
+    .nav-item:hover{background:var(--sidebar-hover);color:#fff;}.nav-item.active{background:var(--sidebar-active);color:#fff;border-left-color:var(--sidebar-active-border);}
+    .nav-icon{font-size:1rem;flex-shrink:0;}.nav-badge{margin-left:auto;padding:2px 8px;border-radius:999px;background:rgba(229,0,18,.2);color:var(--brand);font-size:.7rem;font-weight:700;}
+    .sidebar-footer{padding:16px;border-top:1px solid rgba(255,255,255,.07);}.btn-logout{display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:10px;background:rgba(229,0,18,.1);border:1px solid rgba(229,0,18,.2);color:#ff6565;font-size:.85rem;font-weight:700;text-decoration:none;width:100%;transition:all .18s;}
+    .btn-logout:hover{background:rgba(229,0,18,.18);}
+    .main-content{flex:1;min-height:100vh;display:flex;flex-direction:column;overflow:hidden;}
+    .topbar{background:rgba(255,255,255,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 32px;height:68px;display:flex;align-items:center;justify-content:space-between;gap:16px;position:sticky;top:0;z-index:50;box-shadow:0 1px 12px rgba(15,23,42,.05);}
+    .topbar-title{font-size:1.2rem;font-weight:900;letter-spacing:-0.5px;}.topbar-sub{font-size:.78rem;color:var(--muted);}
+    .topbar-right{display:flex;align-items:center;gap:10px;}
+    .btn-t{padding:8px 16px;border-radius:10px;border:1.5px solid rgba(15,23,42,.1);background:transparent;color:var(--ink);font-family:'Inter',sans-serif;font-size:.82rem;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:all .18s;cursor:pointer;}
+    .btn-t:hover{background:var(--bg);color:var(--ink);}
+    .btn-t-red{background:linear-gradient(135deg,#e50012,#b0000e);border-color:transparent;color:#fff;box-shadow:0 4px 12px rgba(229,0,18,.3);}
+    .btn-t-red:hover{color:#fff;box-shadow:0 6px 16px rgba(229,0,18,.4);transform:translateY(-1px);}
+    .page-body{padding:28px 32px;flex:1;}
+    /* FORM CARD */
+    .form-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-xl);box-shadow:var(--shadow-md);overflow:hidden;}
+    .form-card-header{padding:28px 32px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:20px;}
+    .user-preview-avatar{width:72px;height:72px;border-radius:18px;background:linear-gradient(135deg,rgba(229,0,18,.2),rgba(11,18,32,.06));border:1.5px solid rgba(15,23,42,.08);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.4rem;color:var(--ink);overflow:hidden;flex-shrink:0;}
+    .user-preview-avatar img{width:100%;height:100%;object-fit:cover;}
+    /* SECTIONS */
+    .form-section{padding:28px 32px;border-bottom:1px solid rgba(15,23,42,.04);}
+    .form-section:last-child{border-bottom:none;}
+    .section-title{font-weight:800;font-size:.9rem;color:var(--ink);display:flex;align-items:center;gap:8px;margin-bottom:20px;}
+    .section-icon{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0;}
+    /* INPUTS */
+    .form-label-s{display:block;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:7px;}
+    .input-f{width:100%;padding:12px 16px;border-radius:11px;border:1.5px solid rgba(15,23,42,.1);background:#fff;font-family:'Inter',sans-serif;font-size:.9rem;color:var(--ink);outline:none;transition:border-color .2s,box-shadow .2s;}
+    .input-f::placeholder{color:rgba(100,116,139,.5);}
+    .input-f:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(229,0,18,.14);}
+    .input-f.error-field{border-color:#e50012;background:rgba(229,0,18,.03);}
+    .input-f-icon{position:relative;}.input-f-icon .icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.9rem;pointer-events:none;}
+    .input-f-icon .input-f{padding-left:40px;}
+    .input-hint{font-size:.76rem;color:var(--muted);margin-top:5px;font-weight:500;}
+    .error-msg{font-size:.76rem;color:var(--brand);margin-top:5px;font-weight:700;display:none;}
+    .sel-f{width:100%;padding:12px 16px;border-radius:11px;border:1.5px solid rgba(15,23,42,.1);background:#fff;font-family:'Inter',sans-serif;font-size:.9rem;color:var(--ink);outline:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 16 16'%3E%3Cpath fill='%2364748b' d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;cursor:pointer;transition:border-color .2s,box-shadow .2s;}
+    .sel-f:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(229,0,18,.14);}
+    /* TOGGLE PWD */
+    .pwd-wrap{position:relative;}.pwd-wrap .input-f{padding-right:44px;}.toggle-eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;padding:4px;font-size:.95rem;}
+    .toggle-eye:hover{color:var(--ink);}
+    /* AVATAR PREVIEW */
+    .avatar-preview-wrap{display:flex;align-items:center;gap:14px;padding:16px;background:rgba(15,23,42,.03);border:1px solid var(--border);border-radius:12px;}
+    /* FORM FOOTER */
+    .form-footer{padding:24px 32px;background:rgba(15,23,42,.03);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+    .form-footer-note{font-size:.78rem;color:var(--muted);}
+    @media(max-width:991px){.sidebar{display:none;}.topbar{padding:0 16px;}.page-body{padding:16px;}.form-section{padding:20px;}.form-card-header{padding:20px;}.form-footer{padding:20px;}}
   </style>
 </head>
-
 <body>
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-text">UNIQLO<em>.</em>CMS</div>
+      <div class="logo-badge"><i class="bi bi-database"></i> uniqlo_education</div>
+    </div>
+    <div class="sidebar-user">
+      <div class="sidebar-avatar">A</div>
+      <div class="sidebar-user-info"><div class="name">Admin Uniqlo</div><div class="role">ADMIN</div></div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Menu chính</div>
+      <a class="nav-item" th:href="@{/cms}"><i class="bi bi-grid-1x2-fill nav-icon"></i> Dashboard</a>
+      <a class="nav-item active" th:href="@{/users}"><i class="bi bi-people-fill nav-icon"></i> Người dùng <span class="nav-badge">8</span></a>
+      <div class="nav-section-label" style="margin-top:16px;">Sản phẩm</div>
+      <a class="nav-item" th:href="@{/cms/categories}"><i class="bi bi-diagram-3-fill nav-icon"></i> Danh mục</a>
+      <a class="nav-item" th:href="@{/cms/products}"><i class="bi bi-bag-fill nav-icon"></i> Sản phẩm <span class="nav-badge">15</span></a>
+      <a class="nav-item" th:href="@{/cms/skus}"><i class="bi bi-upc-scan nav-icon"></i> SKUs <span class="nav-badge">46</span></a>
+      <a class="nav-item" th:href="@{/cms/reviews}"><i class="bi bi-chat-quote-fill nav-icon"></i> Đánh giá</a>
+      <div class="nav-section-label" style="margin-top:16px;">Thống kê</div>
+      <a class="nav-item" th:href="@{/cms/visit-stats}"><i class="bi bi-graph-up-arrow nav-icon"></i> Visit Stats</a>
+      <div class="nav-section-label" style="margin-top:16px;">Điều hướng</div>
+      <a class="nav-item" th:href="@{/}"><i class="bi bi-house-fill nav-icon"></i> Trang chủ</a>
+    </nav>
+    <div class="sidebar-footer">
+      <a class="btn-logout" th:href="@{/logout}"><i class="bi bi-box-arrow-right"></i> Đăng xuất</a>
+    </div>
+  </aside>
 
-  <div class="topbar">
-    <div class="container shell py-3 d-flex align-items-center justify-content-between">
-      <div class="brand fs-4">Admin<span class="dot">.</span>Users</div>
-      <div class="d-flex gap-2">
-        <a class="btn btn-outline-dark action-btn" href="user_list.html">
-          <i class="bi bi-arrow-left me-1"></i> Quay lại
-        </a>
-        <button type="button" class="btn btn-brand text-white action-btn" id="saveBtn">
-          <i class="bi bi-check2-circle me-1"></i> Lưu
+  <div class="main-content">
+    <header class="topbar">
+      <div>
+        <div class="topbar-title" th:text="${user?.id != null ? 'Chỉnh sửa người dùng' : 'Tạo người dùng mới'}">Tạo người dùng mới</div>
+        <div class="topbar-sub">
+          <span th:if="${user?.id != null}">ID: <strong th:text="${user.id}"></strong> · </span>
+          Bảng <strong>users</strong>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <a class="btn-t" th:href="@{/users}"><i class="bi bi-arrow-left"></i> Danh sách</a>
+        <button type="button" class="btn-t btn-t-red" id="topSaveBtn">
+          <i class="bi bi-check2-circle"></i> Lưu
         </button>
       </div>
-    </div>
-  </div>
+    </header>
 
-  <div class="container shell my-4">
+    <div class="page-body">
+      <div class="form-card">
 
-    <div class="card-elev p-4">
-      <div class="d-flex flex-wrap align-items-start justify-content-between gap-3">
-        <div>
-          <div class="form-title h3 mb-1">Tạo / Sửa người dùng</div>
-          <div class="hint">HTML template. Học viên tự map dữ liệu/validate/submit bằng JSP + Spring MVC.</div>
-        </div>
-
-        <div class="d-flex align-items-center gap-3">
-          <div class="avatarPreview" id="avatarPreviewBox" title="Preview avatar">
+        <!-- Preview header -->
+        <div class="form-card-header">
+          <div class="user-preview-avatar" id="avatarPreviewBox">
             <span id="avatarInitial">U</span>
-            <img id="avatarPreviewImg" src="" alt="avatar" style="display:none" />
+            <img id="avatarPreviewImg" src="" alt="avatar" style="display:none;"/>
           </div>
           <div>
-            <div class="fw-bold" id="previewName">New User</div>
-            <div class="hint">ID: <span class="fw-semibold">(auto)</span></div>
-          </div>
-        </div>
-      </div>
-
-      <hr class="my-4" />
-
-      <!-- Note: In real app, change action/method. This is UI-only. -->
-      <form id="userForm" class="row g-3" action="#" method="post">
-
-        <div class="col-12">
-          <div class="section">
-            <div class="fw-bold mb-3"><i class="bi bi-person-vcard me-2"></i>Thông tin cơ bản</div>
-
-            <div class="row g-3">
-              <div class="col-12 col-md-6">
-                <label class="form-label fw-semibold">Họ tên *</label>
-                <input class="form-control" type="text" name="fullName" id="fullName" placeholder="Ví dụ: Nguyễn Văn A" />
-                <div class="error-text mt-1 d-none" id="errFullName">Full name error</div>
-              </div>
-
-              <div class="col-12 col-md-6">
-                <label class="form-label fw-semibold">Email *</label>
-                <input class="form-control" type="email" name="email" placeholder="name@example.com" />
-                <div class="hint mt-1">Sẽ kiểm tra unique email trong database.</div>
-                <div class="error-text mt-1 d-none" id="errEmail">Email error</div>
-              </div>
-
-              <div class="col-12 col-md-4">
-                <label class="form-label fw-semibold">Giới tính</label>
-                <select class="form-select" name="gender">
-                  <option value="" selected>— Chọn —</option>
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                  <option value="Decline to state">Decline to state</option>
-                </select>
-              </div>
-
-              <div class="col-12 col-md-4">
-                <label class="form-label fw-semibold">Ngày sinh</label>
-                <input class="form-control" type="date" name="birthday" />
-              </div>
-
-              <div class="col-12 col-md-4">
-                <label class="form-label fw-semibold">Role</label>
-                <select class="form-select" name="role">
-                  <option value="USER" selected>USER</option>
-                  <option value="ADMIN">ADMIN</option>
-                </select>
-              </div>
+            <div style="font-weight:800;font-size:1.1rem;" id="previewName">Người dùng mới</div>
+            <div style="font-size:.82rem;color:var(--muted);" th:if="${user?.id != null}">
+              ID: <strong th:text="${user.id}"></strong> · <span th:text="${user.email}"></span>
+            </div>
+            <div style="font-size:.82rem;color:var(--muted);" th:unless="${user?.id != null}">
+              Điền thông tin và nhấn Lưu
             </div>
           </div>
         </div>
 
-        <div class="col-12">
-          <div class="section">
-            <div class="fw-bold mb-3"><i class="bi bi-image me-2"></i>Avatar</div>
-            <div class="row g-3 align-items-end">
-              <div class="col-12 col-md-9">
-                <label class="form-label fw-semibold">Avatar URL</label>
-                <input class="form-control" id="avatarInput" type="url" name="avatar" placeholder="https://..." />
-                <div class="hint mt-1">Gợi ý: dùng ảnh square để hiển thị đẹp.</div>
+        <!-- FORM -->
+        <form th:action="${user?.id != null ? '/users/' + user.id + '/edit' : '/users/new'}"
+              method="post" id="userForm" th:object="${user}">
+          <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" th:if="${_csrf}"/>
+
+          <!-- Section: Thông tin cơ bản -->
+          <div class="form-section">
+            <div class="section-title">
+              <div class="section-icon" style="background:rgba(59,130,246,.1);color:#3b82f6;"><i class="bi bi-person-vcard-fill"></i></div>
+              Thông tin cơ bản
+            </div>
+            <div class="row g-3">
+              <div class="col-12 col-md-6">
+                <label class="form-label-s" for="fullName">Họ tên *</label>
+                <div class="input-f-icon">
+                  <i class="bi bi-person icon"></i>
+                  <input class="input-f" type="text" id="fullName" name="fullName"
+                         th:value="${user?.fullName}" placeholder="Ví dụ: Nguyễn Văn An"/>
+                </div>
+                <p class="error-msg" style="display:block;" id="errFullName" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}">Vui lòng nhập họ tên.</p>
               </div>
-              <div class="col-12 col-md-3 d-grid">
-                <button type="button" class="btn btn-outline-dark action-btn" id="previewBtn">
-                  <i class="bi bi-magic me-1"></i> Preview
+              <div class="col-12 col-md-6">
+                <label class="form-label-s" for="email">Email *</label>
+                <div class="input-f-icon">
+                  <i class="bi bi-envelope icon"></i>
+                  <input class="input-f" type="email" id="email" name="email"
+                         th:value="${user?.email}" placeholder="name@example.com"/>
+                </div>
+                <p class="input-hint">Email phải là duy nhất trong hệ thống.</p>
+                <p class="error-msg" style="display:block;" id="errEmail" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email không hợp lệ hoặc đã tồn tại.</p>
+              </div>
+              <div class="col-12 col-md-4">
+                <label class="form-label-s" for="gender">Giới tính</label>
+                <select class="sel-f" id="gender" name="gender">
+                  <option value="">— Chọn —</option>
+                  <option value="Male" th:selected="${user?.gender == 'Male'}">Male</option>
+                  <option value="Female" th:selected="${user?.gender == 'Female'}">Female</option>
+                  <option value="Decline to state" th:selected="${user?.gender == 'Decline to state'}">Decline to state</option>
+                </select>
+              </div>
+              <div class="col-12 col-md-4">
+                <label class="form-label-s" for="birthday">Ngày sinh</label>
+                <input class="input-f" type="date" id="birthday" name="birthday"
+                       th:value="${user?.birthday != null ? #temporals.format(user.birthday, 'yyyy-MM-dd') : ''}"/>
+              </div>
+              <div class="col-12 col-md-4">
+                <label class="form-label-s" for="role">Role *</label>
+                <select class="sel-f" id="role" name="role">
+                  <option value="USER" th:selected="${user?.role == null or user?.role == 'USER'}">USER</option>
+                  <option value="ADMIN" th:selected="${user?.role == 'ADMIN'}">ADMIN</option>
+                </select>
+                <p class="input-hint">ADMIN có đầy đủ quyền quản trị.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section: Avatar -->
+          <div class="form-section">
+            <div class="section-title">
+              <div class="section-icon" style="background:rgba(139,92,246,.1);color:#8b5cf6;"><i class="bi bi-image-fill"></i></div>
+              Ảnh đại diện (Avatar URL)
+            </div>
+            <div class="avatar-preview-wrap mb-3" id="avatarPreviewRow">
+              <div class="user-preview-avatar" style="width:52px;height:52px;" id="avatarPreview2">
+                <span id="avatarInitial2">U</span>
+                <img id="avatarPreviewImg2" src="" alt="preview" style="display:none;"/>
+              </div>
+              <div>
+                <div style="font-weight:700;font-size:.85rem;">Xem trước avatar</div>
+                <div class="input-hint">Nhập URL bên dưới rồi nhấn Preview</div>
+              </div>
+            </div>
+            <div class="row g-3">
+              <div class="col-12 col-md-9">
+                <label class="form-label-s" for="avatarInput">URL ảnh đại diện</label>
+                <div class="input-f-icon">
+                  <i class="bi bi-link-45deg icon"></i>
+                  <input class="input-f" id="avatarInput" type="url" name="avatar"
+                         th:value="${user?.avatar}" placeholder="https://example.com/avatar.jpg"/>
+                </div>
+                <p class="input-hint">Dùng ảnh vuông (1:1) để hiển thị đẹp nhất. Lưu vào cột <strong>avatar</strong>.</p>
+              </div>
+              <div class="col-12 col-md-3 d-flex align-items-end">
+                <button type="button" class="btn-t" style="width:100%;justify-content:center;" id="previewBtn">
+                  <i class="bi bi-magic"></i> Xem trước
                 </button>
               </div>
             </div>
           </div>
-        </div>
 
-        <div class="col-12">
-          <div class="section">
-            <div class="fw-bold mb-3"><i class="bi bi-lock me-2"></i>Mật khẩu</div>
-
+          <!-- Section: Mật khẩu -->
+          <div class="form-section">
+            <div class="section-title">
+              <div class="section-icon" style="background:rgba(229,0,18,.1);color:var(--brand);"><i class="bi bi-shield-lock-fill"></i></div>
+              Mật khẩu
+              <span th:if="${user?.id != null}" style="font-size:.72rem;font-weight:600;color:var(--muted);">(để trống = giữ nguyên)</span>
+            </div>
             <div class="row g-3">
               <div class="col-12 col-md-6">
-                <label class="form-label fw-semibold">Mật khẩu *</label>
-                <input class="form-control" type="password" name="password" placeholder="••••••••" />
-                <div class="hint mt-1">Học viên hash và lưu vào cột <span class="fw-semibold">password_hash</span>.</div>
-                <div class="error-text mt-1 d-none" id="errPassword">Password error</div>
+                <label class="form-label-s" for="password">Mật khẩu *</label>
+                <div class="pwd-wrap">
+                  <input class="input-f" type="password" id="password" name="password" placeholder="••••••••"/>
+                  <button type="button" class="toggle-eye" id="togglePwd1" aria-label="Hiện mật khẩu">
+                    <i class="bi bi-eye" id="eyeIcon1"></i>
+                  </button>
+                </div>
+                <p class="input-hint">Sẽ được hash thành <strong>password_hash</strong> trong DB. Tối thiểu 6 ký tự.</p>
+                <p class="error-msg" style="display:block;" id="errPassword" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Mật khẩu phải có ít nhất 6 ký tự.</p>
               </div>
-
               <div class="col-12 col-md-6">
-                <label class="form-label fw-semibold">Nhập lại mật khẩu</label>
-                <input class="form-control" type="password" name="confirmPassword" placeholder="••••••••" />
-                <div class="error-text mt-1 d-none" id="errConfirmPassword">Confirm password error</div>
+                <label class="form-label-s" for="confirmPassword">Nhập lại mật khẩu</label>
+                <div class="pwd-wrap">
+                  <input class="input-f" type="password" id="confirmPassword" name="confirmPassword" placeholder="••••••••"/>
+                  <button type="button" class="toggle-eye" id="togglePwd2" aria-label="Hiện mật khẩu">
+                    <i class="bi bi-eye" id="eyeIcon2"></i>
+                  </button>
+                </div>
+                <p class="error-msg" style="display:block;" id="errConfirm" th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}">Mật khẩu không khớp.</p>
               </div>
             </div>
           </div>
-        </div>
 
-        <div class="col-12">
-          <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
-            <div class="hint">* Trường bắt buộc. Học viên tự validate serverside.</div>
-
-            <div class="d-flex gap-2">
-              <a class="btn btn-outline-dark action-btn" href="user_list.html">Huỷ</a>
-              <button type="submit" class="btn btn-brand text-white action-btn">
-                <i class="bi bi-check2-circle me-1"></i> Lưu
+          <!-- Form footer -->
+          <div class="form-footer">
+            <div class="form-footer-note">
+              <i class="bi bi-info-circle me-1"></i>
+              Trường có dấu * là bắt buộc. Server sẽ validate và hash mật khẩu.
+            </div>
+            <div style="display:flex;gap:10px;">
+              <a class="btn-t" th:href="@{/users}"><i class="bi bi-x-circle"></i> Huỷ</a>
+              <button type="submit" class="btn-t btn-t-red" id="submitBtn">
+                <i class="bi bi-check2-circle"></i>
+                <span th:text="${user?.id != null ? 'Cập nhật' : 'Tạo người dùng'}">Tạo người dùng</span>
               </button>
             </div>
           </div>
-        </div>
 
-      </form>
+        </form>
+      </div>
     </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
+    // ── Avatar preview ──
     function setAvatarPreview(url) {
-      const img = document.getElementById('avatarPreviewImg');
-      const initial = document.getElementById('avatarInitial');
-      if (!img) return;
-
-      if (url && url.trim().length > 0) {
-        img.src = url.trim();
-        img.style.display = 'block';
-        if (initial) initial.style.display = 'none';
-      } else {
-        img.src = '';
-        img.style.display = 'none';
-        if (initial) initial.style.display = 'block';
-      }
-    }
-
-    const previewBtn = document.getElementById('previewBtn');
-    const avatarInput = document.getElementById('avatarInput');
-    const fullName = document.getElementById('fullName');
-
-    if (previewBtn && avatarInput) {
-      previewBtn.addEventListener('click', function () {
-        setAvatarPreview(avatarInput.value);
-      });
-      avatarInput.addEventListener('change', function () {
-        setAvatarPreview(avatarInput.value);
+      const ids = [['avatarPreviewImg','avatarInitial'], ['avatarPreviewImg2','avatarInitial2']];
+      ids.forEach(([imgId, initId]) => {
+        const img = document.getElementById(imgId);
+        const init = document.getElementById(initId);
+        if (!img) return;
+        if (url && url.trim()) {
+          img.src = url.trim();
+          img.style.display = 'block';
+          if (init) init.style.display = 'none';
+        } else {
+          img.src = '';
+          img.style.display = 'none';
+          if (init) init.style.display = '';
+        }
       });
     }
 
-    if (fullName) {
-      fullName.addEventListener('input', function () {
-        document.getElementById('previewName').innerText = fullName.value?.trim()?.length ? fullName.value.trim() : 'New User';
-        document.getElementById('avatarInitial').innerText = fullName.value?.trim()?.length ? fullName.value.trim().substring(0,1).toUpperCase() : 'U';
+    document.getElementById('previewBtn')?.addEventListener('click', () => {
+      setAvatarPreview(document.getElementById('avatarInput')?.value);
+    });
+    document.getElementById('avatarInput')?.addEventListener('input', e => setAvatarPreview(e.target.value));
+
+    // ── Name preview ──
+    document.getElementById('fullName')?.addEventListener('input', function() {
+      const v = this.value.trim();
+      document.getElementById('previewName').textContent = v || 'Người dùng mới';
+      ['avatarInitial','avatarInitial2'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = v ? v.charAt(0).toUpperCase() : 'U';
+      });
+    });
+
+    // ── Toggle password ──
+    function setupToggle(btnId, inputId, iconId) {
+      document.getElementById(btnId)?.addEventListener('click', () => {
+        const input = document.getElementById(inputId);
+        const icon  = document.getElementById(iconId);
+        if (!input) return;
+        const isText = input.type === 'text';
+        input.type = isText ? 'password' : 'text';
+        if (icon) icon.className = isText ? 'bi bi-eye' : 'bi bi-eye-slash';
       });
     }
+    setupToggle('togglePwd1', 'password', 'eyeIcon1');
+    setupToggle('togglePwd2', 'confirmPassword', 'eyeIcon2');
 
-    // Keep top "Save" button consistent
-    const saveBtn = document.getElementById('saveBtn');
-    if (saveBtn) {
-      saveBtn.addEventListener('click', function () {
-        document.getElementById('userForm').requestSubmit();
-      });
-    }
+    // ── Top save button ──
+    document.getElementById('topSaveBtn')?.addEventListener('click', () => {
+      document.getElementById('userForm')?.requestSubmit();
+    });
 
-    // init
-    if (avatarInput) setAvatarPreview(avatarInput.value);
+    // ── Init ──
+    const initAvatar = document.getElementById('avatarInput')?.value;
+    if (initAvatar) setAvatarPreview(initAvatar);
   </script>
 </body>
 </html>

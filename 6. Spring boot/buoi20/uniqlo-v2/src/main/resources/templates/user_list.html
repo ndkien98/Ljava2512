@@ -1,397 +1,319 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin.Users - User Management</title>
-
-  <!-- Fonts -->
-  <!-- <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" /> -->
-  <link rel="stylesheet" th:href="@{/cms/fonts.css}" />
-
-  <!-- Bootstrap + Icons -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Uniqlo CMS — Quản lý người dùng</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
   <style>
-    :root {
-      --brand: #e50012;
-      --ink: #111827;
-      --muted: #6b7280;
-      --bg: #f6f7fb;
-      --card: #ffffff;
-      --ring: rgba(229, 0, 18, .18);
-      --bs-border-radius: 0.9rem;
-      --bs-border-radius-lg: 1rem;
-      --bs-border-radius-sm: 0.7rem;
-      --bs-body-color: var(--ink);
-      --bs-body-font-family: var(--bs-body-font-family);
-    }
-
-    /* Better default render baseline */
-    html, body { height: 100%; }
-
-    body {
-      /* font inherits from global */
-      text-rendering: optimizeLegibility;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      line-height: 1.5;
-      background:
-        radial-gradient(1200px 500px at 20% -10%, rgba(229, 0, 18, 0.10), transparent 60%),
-        radial-gradient(900px 500px at 90% 10%, rgba(17, 24, 39, 0.08), transparent 68%),
-        var(--bg);
-      color: var(--ink);
-    }
-
-    .topbar {
-      position: sticky;
-      top: 0;
-      z-index: 1020;
-      background: rgba(255,255,255,.85);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(17, 24, 39, 0.06);
-      box-shadow: 0 10px 35px rgba(17, 24, 39, 0.06);
-    }
-
-    .brand {
-      font-weight: 900;
-      letter-spacing: -0.6px;
-    }
-
-    .brand .dot { color: var(--brand); }
-
-    .shell { max-width: 1200px; }
-
-    .card-elev {
-      background: var(--card);
-      border: 1px solid rgba(17, 24, 39, 0.06);
-      border-radius: 16px;
-      box-shadow: 0 18px 45px rgba(17, 24, 39, 0.08);
-    }
-
-    .shadow-soft { box-shadow: 0 12px 30px rgba(17, 24, 39, 0.07); }
-
-    .pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 12px;
-      border-radius: 999px;
-      font-weight: 700;
-      font-size: .85rem;
-      border: 1px solid rgba(17, 24, 39, 0.08);
-      background: rgba(255, 255, 255, 0.65);
-    }
-
-    .pill-admin {
-      border-color: rgba(229, 0, 18, 0.25);
-      background: rgba(229, 0, 18, 0.08);
-      color: #b1000d;
-    }
-
-    .pill-user {
-      border-color: rgba(17, 24, 39, 0.15);
-      background: rgba(17, 24, 39, 0.04);
-      color: #111827;
-    }
-
-    .searchbox {
-      border-radius: 12px;
-      border: 1px solid rgba(17, 24, 39, 0.10);
-      padding: 10px 12px;
-      background: rgba(255,255,255,.85);
-    }
-
-    .search-addon {
-      border-radius: 12px 0 0 12px;
-      border: 1px solid rgba(17,24,39,.10);
-    }
-
-    .searchbox:focus {
-      box-shadow: 0 0 0 .25rem var(--ring);
-      border-color: rgba(229, 0, 18, 0.35);
-    }
-
-    .btn-brand {
-      background: var(--brand);
-      border-color: var(--brand);
-      border-radius: 12px;
-      font-weight: 800;
-    }
-
-    .btn-brand:hover {
-      background: #c80010;
-      border-color: #c80010;
-    }
-
-    .table thead th {
-      font-size: .8rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: var(--muted);
-      border-bottom: 1px solid rgba(17, 24, 39, 0.08);
-      white-space: nowrap;
-    }
-
-    .table tbody td { vertical-align: middle; }
-
-    .table tbody tr:hover {
-      background: rgba(17, 24, 39, 0.02);
-    }
-
-    .avatar {
-      width: 42px; height: 42px;
-      border-radius: 14px;
-      overflow: hidden;
-      border: 1px solid rgba(17, 24, 39, 0.08);
-      background: linear-gradient(135deg, rgba(229,0,18,.20), rgba(17,24,39,.06));
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 900;
-      color: rgba(17, 24, 39, 0.8);
-    }
-
-    .avatar img { width: 100%; height: 100%; object-fit: cover; }
-
-    .badge-gender {
-      border-radius: 999px;
-      font-weight: 800;
-      font-size: .8rem;
-      padding: 6px 10px;
-      border: 1px solid rgba(17, 24, 39, 0.10);
-      background: rgba(255,255,255,.7);
-      color: #111827;
-      white-space: nowrap;
-    }
-
-    .muted { color: var(--muted); }
-
-    .page-title {
-      font-weight: 900;
-      letter-spacing: -0.8px;
-    }
-
-    .subtle { color: var(--muted); }
-
-    .hint { font-size: .9rem; color: var(--muted); }
-
-    .footer-note { font-size: .85rem; color: var(--muted); }
-
-    .action-btn { border-radius: 10px; }
-
-    .empty {
-      padding: 70px 20px;
-      text-align: center;
-      color: var(--muted);
-    }
-
-    .empty i {
-      font-size: 56px;
-      color: rgba(17, 24, 39, 0.20);
-    }
-
-    /* Remove duplicate :root block that resets font to Outfit */
+    :root{--brand:#e50012;--sidebar-bg:#0b1220;--sidebar-hover:rgba(255,255,255,.07);--sidebar-active:rgba(229,0,18,.15);--sidebar-active-border:#e50012;--sidebar-text:rgba(255,255,255,.65);--sidebar-muted:rgba(255,255,255,.35);--ink:#0f172a;--muted:#64748b;--bg:#f1f5f9;--card:#ffffff;--border:rgba(15,23,42,.07);--shadow-sm:0 4px 12px rgba(15,23,42,.06);--shadow-md:0 8px 28px rgba(15,23,42,.10);--radius-lg:14px;}
+    *,*::before,*::after{box-sizing:border-box;}html,body{height:100%;margin:0;padding:0;}
+    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;display:flex;}
+    .sidebar{width:260px;min-height:100vh;background:var(--sidebar-bg);display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto;}
+    .sidebar-logo{padding:28px 24px 20px;border-bottom:1px solid rgba(255,255,255,.07);}
+    .logo-text{font-size:1.3rem;font-weight:900;letter-spacing:-0.7px;color:#fff;}.logo-text em{font-style:normal;color:var(--brand);}
+    .logo-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;background:rgba(229,0,18,.18);border:1px solid rgba(229,0,18,.3);color:#ff6565;font-size:.68rem;font-weight:700;text-transform:uppercase;margin-top:6px;}
+    .sidebar-user{margin:16px 16px 0;padding:14px;border-radius:var(--radius-lg);background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:12px;}
+    .sidebar-avatar{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,rgba(229,0,18,.6),rgba(176,0,14,.4));display:flex;align-items:center;justify-content:center;color:#fff;font-size:1rem;font-weight:800;flex-shrink:0;}
+    .sidebar-user-info .name{color:#fff;font-weight:700;font-size:.88rem;}.sidebar-user-info .role{color:var(--sidebar-muted);font-size:.72rem;font-weight:600;}
+    .sidebar-nav{padding:20px 12px;flex:1;}
+    .nav-section-label{color:var(--sidebar-muted);font-size:.65rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:0 12px;margin-bottom:8px;margin-top:8px;}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;color:var(--sidebar-text);text-decoration:none;font-size:.875rem;font-weight:600;margin-bottom:2px;transition:all .18s;border-left:3px solid transparent;}
+    .nav-item:hover{background:var(--sidebar-hover);color:#fff;}.nav-item.active{background:var(--sidebar-active);color:#fff;border-left-color:var(--sidebar-active-border);}
+    .nav-icon{font-size:1rem;flex-shrink:0;}.nav-badge{margin-left:auto;padding:2px 8px;border-radius:999px;background:rgba(229,0,18,.2);color:var(--brand);font-size:.7rem;font-weight:700;}
+    .sidebar-footer{padding:16px;border-top:1px solid rgba(255,255,255,.07);}.btn-logout{display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:10px;background:rgba(229,0,18,.1);border:1px solid rgba(229,0,18,.2);color:#ff6565;font-size:.85rem;font-weight:700;text-decoration:none;width:100%;transition:all .18s;}
+    .btn-logout:hover{background:rgba(229,0,18,.18);}
+    .main-content{flex:1;min-height:100vh;display:flex;flex-direction:column;overflow:hidden;}
+    .topbar{background:rgba(255,255,255,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 32px;height:68px;display:flex;align-items:center;justify-content:space-between;gap:16px;position:sticky;top:0;z-index:50;box-shadow:0 1px 12px rgba(15,23,42,.05);}
+    .topbar-title{font-size:1.2rem;font-weight:900;letter-spacing:-0.5px;}.topbar-sub{font-size:.78rem;color:var(--muted);}
+    .topbar-right{display:flex;align-items:center;gap:10px;}
+    .btn-t{padding:8px 16px;border-radius:10px;border:1.5px solid rgba(15,23,42,.1);background:transparent;color:var(--ink);font-family:'Inter',sans-serif;font-size:.82rem;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:all .18s;cursor:pointer;}
+    .btn-t:hover{background:var(--bg);color:var(--ink);}
+    .btn-t-red{background:linear-gradient(135deg,#e50012,#b0000e);border-color:transparent;color:#fff;box-shadow:0 4px 12px rgba(229,0,18,.3);}
+    .btn-t-red:hover{color:#fff;transform:translateY(-1px);}
+    .page-body{padding:28px 32px;flex:1;}
+    /* ALERT */
+    .alert-s{padding:12px 18px;border-radius:12px;font-size:.875rem;font-weight:600;display:flex;align-items:center;gap:10px;margin-bottom:20px;}
+    .alert-success{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);color:#047857;}
+    .alert-error{background:rgba(229,0,18,.07);border:1px solid rgba(229,0,18,.18);color:var(--brand);}
+    /* FILTER */
+    .filter-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:24px;margin-bottom:20px;}
+    .form-label-s{display:block;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:6px;}
+    .input-f{width:100%;padding:11px 16px;border-radius:10px;border:1.5px solid rgba(15,23,42,.1);background:#fff;font-family:'Inter',sans-serif;font-size:.875rem;color:var(--ink);outline:none;transition:border-color .2s,box-shadow .2s;}
+    .input-f:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(229,0,18,.15);}
+    .ig-wrap{display:flex;}.ig-addon{padding:11px 14px;border-radius:10px 0 0 10px;border:1.5px solid rgba(15,23,42,.1);border-right:0;background:var(--bg);color:var(--muted);}
+    .ig-field{border-radius:0 10px 10px 0;}
+    .sel-f{width:100%;padding:11px 16px;border-radius:10px;border:1.5px solid rgba(15,23,42,.1);background:#fff;font-family:'Inter',sans-serif;font-size:.875rem;color:var(--ink);outline:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 16 16'%3E%3Cpath fill='%2364748b' d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;cursor:pointer;}
+    .sel-f:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(229,0,18,.15);}
+    /* TABLE */
+    .table-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);overflow:hidden;}
+    .tc-head{padding:16px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+    .tc-head .title{font-weight:800;font-size:.95rem;}
+    .dt{width:100%;border-collapse:collapse;}
+    .dt thead th{padding:11px 16px;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);border-bottom:1px solid var(--border);text-align:left;background:var(--bg);white-space:nowrap;}
+    .dt tbody td{padding:14px 16px;border-bottom:1px solid rgba(15,23,42,.04);font-size:.85rem;vertical-align:middle;}
+    .dt tbody tr:last-child td{border-bottom:none;}.dt tbody tr:hover td{background:rgba(15,23,42,.02);}
+    /* USER AVATAR */
+    .user-av{width:40px;height:40px;border-radius:12px;overflow:hidden;border:1.5px solid rgba(15,23,42,.08);background:linear-gradient(135deg,rgba(229,0,18,.2),rgba(11,18,32,.06));display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:.9rem;color:var(--ink);flex-shrink:0;}
+    .user-av img{width:100%;height:100%;object-fit:cover;}
+    /* ROLE BADGES */
+    .role-admin{display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:999px;font-size:.72rem;font-weight:800;background:rgba(229,0,18,.1);border:1px solid rgba(229,0,18,.22);color:#b0000e;}
+    .role-user{display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:999px;font-size:.72rem;font-weight:800;background:rgba(15,23,42,.05);border:1px solid rgba(15,23,42,.12);color:var(--ink);}
+    .gender-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:999px;font-size:.72rem;font-weight:700;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.16);color:#2563eb;}
+    .gender-badge.female{background:rgba(236,72,153,.08);border-color:rgba(236,72,153,.16);color:#be185d;}
+    /* ACTION */
+    .action-group{display:flex;gap:5px;justify-content:flex-end;}
+    .btn-a{padding:7px 12px;border-radius:8px;font-size:.75rem;font-weight:700;border:1.5px solid;cursor:pointer;font-family:'Inter',sans-serif;display:inline-flex;align-items:center;gap:4px;transition:all .15s;text-decoration:none;}
+    .btn-edit{border-color:rgba(15,23,42,.15);background:transparent;color:var(--ink);}.btn-edit:hover{background:rgba(15,23,42,.06);}
+    .btn-del{border-color:rgba(229,0,18,.2);background:rgba(229,0,18,.06);color:var(--brand);}.btn-del:hover{background:rgba(229,0,18,.12);}
+    .pag-wrap{padding:14px 22px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:.82rem;color:var(--muted);}
+    .pag{display:flex;gap:4px;}.pag-btn{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:8px;border:1.5px solid rgba(15,23,42,.1);background:transparent;color:var(--ink);font-size:.8rem;font-weight:600;cursor:pointer;text-decoration:none;transition:all .15s;}
+    .pag-btn:hover{background:var(--bg);}.pag-btn.active{background:var(--brand);border-color:var(--brand);color:#fff;}.pag-btn.disabled{opacity:.4;pointer-events:none;}
+    /* MODAL */
+    .modal-card{border-radius:20px;border:1px solid var(--border);box-shadow:0 32px 80px rgba(15,23,42,.18);}
+    @media(max-width:991px){.sidebar{display:none;}.topbar{padding:0 16px;}.page-body{padding:20px 16px;}}
   </style>
 </head>
-
 <body>
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-text">UNIQLO<em>.</em>CMS</div>
+      <div class="logo-badge"><i class="bi bi-database"></i> uniqlo_education</div>
+    </div>
+    <div class="sidebar-user">
+      <div class="sidebar-avatar">A</div>
+      <div class="sidebar-user-info"><div class="name">Admin Uniqlo</div><div class="role">ADMIN</div></div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Menu chính</div>
+      <a class="nav-item" th:href="@{/cms}"><i class="bi bi-grid-1x2-fill nav-icon"></i> Dashboard</a>
+      <a class="nav-item active" th:href="@{/users}"><i class="bi bi-people-fill nav-icon"></i> Người dùng <span class="nav-badge">8</span></a>
+      <div class="nav-section-label" style="margin-top:16px;">Sản phẩm</div>
+      <a class="nav-item" th:href="@{/cms/categories}"><i class="bi bi-diagram-3-fill nav-icon"></i> Danh mục</a>
+      <a class="nav-item" th:href="@{/cms/products}"><i class="bi bi-bag-fill nav-icon"></i> Sản phẩm <span class="nav-badge">15</span></a>
+      <a class="nav-item" th:href="@{/cms/skus}"><i class="bi bi-upc-scan nav-icon"></i> SKUs <span class="nav-badge">46</span></a>
+      <a class="nav-item" th:href="@{/cms/reviews}"><i class="bi bi-chat-quote-fill nav-icon"></i> Đánh giá</a>
+      <div class="nav-section-label" style="margin-top:16px;">Thống kê</div>
+      <a class="nav-item" th:href="@{/cms/visit-stats}"><i class="bi bi-graph-up-arrow nav-icon"></i> Visit Stats</a>
+      <div class="nav-section-label" style="margin-top:16px;">Điều hướng</div>
+      <a class="nav-item" th:href="@{/}"><i class="bi bi-house-fill nav-icon"></i> Trang chủ</a>
+    </nav>
+    <div class="sidebar-footer">
+      <a class="btn-logout" th:href="@{/logout}"><i class="bi bi-box-arrow-right"></i> Đăng xuất</a>
+    </div>
+  </aside>
 
-  <!-- Top bar -->
-  <div class="topbar">
-    <div class="container shell py-3 d-flex align-items-center justify-content-between">
-      <div class="d-flex align-items-center gap-3">
-        <div class="brand fs-4">Admin<span class="dot">.</span>Users</div>
-        <span class="pill"><i class="bi bi-shield-check"></i> User Management</span>
+  <div class="main-content">
+    <header class="topbar">
+      <div>
+        <div class="topbar-title">Quản lý người dùng</div>
+        <div class="topbar-sub">Bảng <strong>users</strong> · role · avatar · remember_token</div>
+      </div>
+      <div class="topbar-right">
+        <a class="btn-t" th:href="@{/cms}"><i class="bi bi-grid-1x2"></i> Dashboard</a>
+        <a class="btn-t btn-t-red" th:href="@{/users/new}"><i class="bi bi-person-plus-fill"></i> Tạo người dùng</a>
+      </div>
+    </header>
+
+    <div class="page-body">
+      <!-- Alerts -->
+      <div class="alert-s alert-success" th:if="${successMessage}" role="alert">
+        <i class="bi bi-check-circle-fill"></i>
+        <span th:text="${successMessage}">Thao tác thành công!</span>
+      </div>
+      <div class="alert-s alert-error" th:if="${errorMessage}" role="alert">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <span th:text="${errorMessage}">Có lỗi xảy ra.</span>
       </div>
 
-      <div class="d-flex align-items-center gap-2">
-        <a class="btn btn-outline-dark action-btn" href="#" title="Home">
-          <i class="bi bi-house"></i>
-        </a>
-        <a class="btn btn-brand text-white action-btn" href="user_form.html">
-          <i class="bi bi-plus-lg me-1"></i> Tạo user
-        </a>
-      </div>
-    </div>
-  </div>
-
-  <div class="container shell my-4">
-
-    <!-- Alerts (sample) -->
-    <div class="alert alert-success card-elev shadow-soft border-0 d-none" role="alert">
-      <i class="bi bi-check-circle me-2"></i>Success message
-    </div>
-    <div class="alert alert-danger card-elev shadow-soft border-0 d-none" role="alert">
-      <i class="bi bi-exclamation-triangle me-2"></i>Error message
-    </div>
-
-    <!-- Header + Filters -->
-    <div class="card-elev p-4 mb-4">
-      <div class="d-flex flex-wrap align-items-end justify-content-between gap-3">
-        <div>
-          <div class="page-title h3 mb-1">Danh sách người dùng</div>
-          <div class="subtle">UI mẫu. Học viên tự xử lý dữ liệu, tìm kiếm, lọc và phân trang.</div>
-        </div>
-
-        <div class="d-flex align-items-center gap-2">
-          <span class="pill"><i class="bi bi-people"></i> 8 users</span>
-        </div>
-      </div>
-
-      <hr class="my-4" />
-
-      <form class="row g-2 align-items-end">
-        <div class="col-12 col-lg-6">
-          <label class="form-label fw-semibold">Tìm kiếm</label>
-          <div class="input-group">
-            <span class="input-group-text bg-white search-addon"><i class="bi bi-search"></i></span>
-            <input class="form-control searchbox" type="text" name="keyword" placeholder="Nhập tên hoặc email..." />
+      <!-- Filter -->
+      <div class="filter-card">
+        <div class="d-flex align-items-start justify-content-between flex-wrap gap-3 mb-4">
+          <div>
+            <div style="font-weight:800;font-size:1rem;margin-bottom:4px;">Danh sách người dùng</div>
+            <div style="font-size:.8rem;color:var(--muted);">Tìm kiếm theo tên, email · lọc theo role</div>
           </div>
-          <div class="hint mt-1">Gợi ý: tìm theo <span class="fw-semibold">full_name</span> hoặc <span class="fw-semibold">email</span>.</div>
+          <span style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:999px;font-size:.75rem;font-weight:700;border:1px solid rgba(15,23,42,.1);background:rgba(15,23,42,.04);">
+            <i class="bi bi-people"></i> <span th:text="${userCount ?: 8}">8</span> người dùng
+          </span>
         </div>
-
-        <div class="col-12 col-lg-3">
-          <label class="form-label fw-semibold">Role</label>
-          <select class="form-select searchbox" name="role">
-            <option value="" selected>Tất cả</option>
-            <option value="USER">USER</option>
-            <option value="ADMIN">ADMIN</option>
-          </select>
-        </div>
-
-        <div class="col-12 col-lg-3 d-grid">
-          <button class="btn btn-outline-dark action-btn" type="button">
-            <i class="bi bi-funnel me-1"></i> Áp dụng
-          </button>
-        </div>
-      </form>
-    </div>
-
-    <!-- Table -->
-    <div class="card-elev overflow-hidden">
-      <div class="p-3 d-flex align-items-center justify-content-between">
-        <div class="fw-bold">Users</div>
-        <div class="footer-note">HTML template</div>
+        <form th:action="@{/users}" method="get" class="row g-3">
+          <div class="col-12 col-lg-7">
+            <label class="form-label-s">Tìm kiếm</label>
+            <div class="ig-wrap">
+              <span class="ig-addon"><i class="bi bi-search"></i></span>
+              <input class="input-f ig-field" type="text" name="keyword" th:value="${keyword}"
+                     placeholder="Nhập tên hoặc email..."/>
+            </div>
+          </div>
+          <div class="col-6 col-lg-2">
+            <label class="form-label-s">Role</label>
+            <select class="sel-f" name="role">
+              <option value="" th:selected="${role == null or role == ''}">Tất cả</option>
+              <option value="USER" th:selected="${role == 'USER'}">USER</option>
+              <option value="ADMIN" th:selected="${role == 'ADMIN'}">ADMIN</option>
+            </select>
+          </div>
+          <div class="col-6 col-lg-3 d-flex align-items-end">
+            <button type="submit" class="btn-t" style="width:100%;justify-content:center;">
+              <i class="bi bi-funnel"></i> Lọc
+            </button>
+          </div>
+        </form>
       </div>
 
-      <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0">
-          <thead>
-            <tr>
-              <th style="width: 56px;">Avatar</th>
-              <th>Họ tên</th>
-              <th>Email</th>
-              <th>Giới tính</th>
-              <th>Ngày sinh</th>
-              <th>Role</th>
-              <th>Created</th>
-              <th class="text-end" style="width: 180px;">Thao tác</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- Row sample 1 -->
-            <tr>
-              <td>
-                <div class="avatar" title="Nguyễn Văn An">NA</div>
-              </td>
-              <td>
-                <div class="fw-semibold">Nguyễn Văn An</div>
-                <div class="muted small">ID: 1</div>
-              </td>
-              <td><div class="fw-semibold">nguyenvanan@email.com</div></td>
-              <td><span class="badge-gender">Male</span></td>
-              <td>15/05/1990</td>
-              <td><span class="pill pill-user"><i class="bi bi-person"></i> USER</span></td>
-              <td>11/03/2026 15:34</td>
-              <td class="text-end">
-                <div class="btn-group" role="group">
-                  <a class="btn btn-outline-dark action-btn" href="user_form.html"><i class="bi bi-pencil-square me-1"></i>Sửa</a>
-                  <button type="button" class="btn btn-outline-danger action-btn" data-bs-toggle="modal" data-bs-target="#deleteModal" data-user-id="1" data-user-name="Nguyễn Văn An">
-                    <i class="bi bi-trash3 me-1"></i>Xoá
-                  </button>
-                </div>
-              </td>
-            </tr>
+      <!-- Table -->
+      <div class="table-card">
+        <div class="tc-head">
+          <span class="title"><i class="bi bi-people-fill me-2" style="color:#3b82f6;"></i>Danh sách người dùng</span>
+          <span style="font-size:.78rem;color:var(--muted);">ID · Email · Role · Gender · Created</span>
+        </div>
+        <div class="table-responsive">
+          <table class="dt">
+            <thead>
+              <tr>
+                <th style="width:56px;">Avatar</th>
+                <th>Họ tên</th>
+                <th>Email</th>
+                <th style="width:90px;">Giới tính</th>
+                <th style="width:100px;">Ngày sinh</th>
+                <th style="width:90px;">Role</th>
+                <th style="width:130px;">Ngày tạo</th>
+                <th class="text-end" style="width:160px;">Thao tác</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Dynamic rows -->
+              <tr th:each="user : ${users}">
+                <td>
+                  <div class="user-av">
+                    <img th:if="${user.avatar}" th:src="${user.avatar}" th:alt="${user.fullName}"/>
+                    <span th:unless="${user.avatar}"
+                          th:text="${#strings.isEmpty(user.fullName) ? 'U' : #strings.toUpperCase(#strings.substring(user.fullName,0,1))}">U</span>
+                  </div>
+                </td>
+                <td>
+                  <div style="font-weight:700;" th:text="${user.fullName}"></div>
+                  <div style="font-size:.74rem;color:var(--muted);">ID: <span th:text="${user.id}"></span></div>
+                </td>
+                <td style="font-weight:600;" th:text="${user.email}"></td>
+                <td>
+                  <span class="gender-badge" th:classappend="${user.gender == 'Female' ? ' female' : ''}"
+                        th:text="${user.gender ?: '—'}">—</span>
+                </td>
+                <td style="font-size:.82rem;" th:text="${user.birthday != null ? #temporals.format(user.birthday,'dd/MM/yyyy') : '—'}">—</td>
+                <td>
+                  <span th:if="${user.role == 'ADMIN'}" class="role-admin"><i class="bi bi-stars"></i> ADMIN</span>
+                  <span th:unless="${user.role == 'ADMIN'}" class="role-user"><i class="bi bi-person"></i> USER</span>
+                </td>
+                <td style="font-size:.78rem;" th:text="${#temporals.format(user.createdAt,'dd/MM/yyyy HH:mm')}"></td>
+                <td>
+                  <div class="action-group">
+                    <a class="btn-a btn-edit" th:href="@{/users/{id}/edit(id=${user.id})}"><i class="bi bi-pencil-square"></i> Sửa</a>
+                    <button class="btn-a btn-del" data-bs-toggle="modal" data-bs-target="#deleteModal"
+                            th:data-user-id="${user.id}" th:data-user-name="${user.fullName}">
+                      <i class="bi bi-trash3"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
 
-            <!-- Row sample 2 -->
-            <tr>
-              <td>
-                <div class="avatar" title="Admin Uniqlo">
-                  <img src="https://picsum.photos/seed/admin/80/80" alt="Admin" />
-                </div>
-              </td>
-              <td>
-                <div class="fw-semibold">Admin Uniqlo</div>
-                <div class="muted small">ID: 7</div>
-              </td>
-              <td><div class="fw-semibold">admin@uniqlo.com</div></td>
-              <td><span class="badge-gender">—</span></td>
-              <td><span class="muted">—</span></td>
-              <td><span class="pill pill-admin"><i class="bi bi-stars"></i> ADMIN</span></td>
-              <td>22/03/2026 15:41</td>
-              <td class="text-end">
-                <div class="btn-group" role="group">
-                  <a class="btn btn-outline-dark action-btn" href="user_form.html"><i class="bi bi-pencil-square me-1"></i>Sửa</a>
-                  <button type="button" class="btn btn-outline-danger action-btn" data-bs-toggle="modal" data-bs-target="#deleteModal" data-user-id="7" data-user-name="Admin Uniqlo">
-                    <i class="bi bi-trash3 me-1"></i>Xoá
-                  </button>
-                </div>
-              </td>
-            </tr>
-
-            <!-- Empty-state placeholder (remove rows above to use) -->
-            <!--
-            <tr>
-              <td colspan="8">
-                <div class="empty">
-                  <i class="bi bi-person-x"></i>
-                  <div class="h4 mt-3 mb-1 fw-bold">Không có user nào</div>
-                  <div class="mb-3">Thử đổi bộ lọc hoặc tạo user mới.</div>
-                  <a class="btn btn-brand text-white action-btn" href="user_form.html"><i class="bi bi-plus-lg me-1"></i> Tạo user</a>
-                </div>
-              </td>
-            </tr>
-            -->
-          </tbody>
-        </table>
-      </div>
-
-      <div class="p-3 d-flex flex-wrap justify-content-between align-items-center gap-2 border-top">
-        <div class="footer-note">Gợi ý: thêm pagination (page, size) để được bonus.</div>
-        <nav aria-label="Pagination" class="ms-auto">
-          <ul class="pagination pagination-sm mb-0">
-            <li class="page-item disabled"><a class="page-link" href="#">Prev</a></li>
-            <li class="page-item active"><a class="page-link" href="#">1</a></li>
-            <li class="page-item"><a class="page-link" href="#">2</a></li>
-            <li class="page-item"><a class="page-link" href="#">Next</a></li>
-          </ul>
-        </nav>
+              <!-- Fallback mock rows -->
+              <tr th:if="${#lists.isEmpty(users)}">
+                <td>
+                  <div class="user-av">NA</div>
+                </td>
+                <td>
+                  <div style="font-weight:700;">Nguyễn Văn An</div>
+                  <div style="font-size:.74rem;color:var(--muted);">ID: 1</div>
+                </td>
+                <td style="font-weight:600;">nguyenvanan@email.com</td>
+                <td><span class="gender-badge">Male</span></td>
+                <td style="font-size:.82rem;">15/05/1990</td>
+                <td><span class="role-user"><i class="bi bi-person"></i> USER</span></td>
+                <td style="font-size:.78rem;">11/03/2026 15:34</td>
+                <td><div class="action-group">
+                  <a class="btn-a btn-edit" href="#"><i class="bi bi-pencil-square"></i> Sửa</a>
+                  <button class="btn-a btn-del" data-bs-toggle="modal" data-bs-target="#deleteModal" data-user-id="1" data-user-name="Nguyễn Văn An"><i class="bi bi-trash3"></i></button>
+                </div></td>
+              </tr>
+              <tr th:if="${#lists.isEmpty(users)}">
+                <td>
+                  <div class="user-av">
+                    <img src="https://api.dicebear.com/7.x/initials/svg?seed=Admin&fontFamily=Inter" alt="Admin"/>
+                  </div>
+                </td>
+                <td>
+                  <div style="font-weight:700;">Admin Uniqlo</div>
+                  <div style="font-size:.74rem;color:var(--muted);">ID: 7</div>
+                </td>
+                <td style="font-weight:600;">admin@uniqlo.com</td>
+                <td><span style="color:var(--muted);font-size:.82rem;">—</span></td>
+                <td style="font-size:.82rem;color:var(--muted);">—</td>
+                <td><span class="role-admin"><i class="bi bi-stars"></i> ADMIN</span></td>
+                <td style="font-size:.78rem;">22/03/2026 15:41</td>
+                <td><div class="action-group">
+                  <a class="btn-a btn-edit" href="#"><i class="bi bi-pencil-square"></i> Sửa</a>
+                  <button class="btn-a btn-del" data-bs-toggle="modal" data-bs-target="#deleteModal" data-user-id="7" data-user-name="Admin Uniqlo"><i class="bi bi-trash3"></i></button>
+                </div></td>
+              </tr>
+              <tr th:if="${#lists.isEmpty(users)}">
+                <td><div class="user-av">TH</div></td>
+                <td>
+                  <div style="font-weight:700;">Trần Thị Hương</div>
+                  <div style="font-size:.74rem;color:var(--muted);">ID: 2</div>
+                </td>
+                <td style="font-weight:600;">thuong.tran@email.com</td>
+                <td><span class="gender-badge female">Female</span></td>
+                <td style="font-size:.82rem;">20/08/1995</td>
+                <td><span class="role-user"><i class="bi bi-person"></i> USER</span></td>
+                <td style="font-size:.78rem;">12/03/2026 09:12</td>
+                <td><div class="action-group">
+                  <a class="btn-a btn-edit" href="#"><i class="bi bi-pencil-square"></i> Sửa</a>
+                  <button class="btn-a btn-del" data-bs-toggle="modal" data-bs-target="#deleteModal" data-user-id="2" data-user-name="Trần Thị Hương"><i class="bi bi-trash3"></i></button>
+                </div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="pag-wrap">
+          <span>Hiển thị <span th:text="${#lists.size(users ?: {})}">3</span> / <span th:text="${userCount ?: 8}">8</span> người dùng</span>
+          <div class="pag">
+            <a class="pag-btn disabled" href="#"><i class="bi bi-chevron-left"></i></a>
+            <a class="pag-btn active" href="#">1</a>
+            <a class="pag-btn" href="#">2</a>
+            <a class="pag-btn" href="#"><i class="bi bi-chevron-right"></i></a>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Delete confirm modal -->
+  <!-- Delete modal -->
   <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content card-elev">
-        <div class="modal-header border-0">
-          <h5 class="modal-title fw-bold"><i class="bi bi-trash3 me-2 text-danger"></i>Xác nhận xoá</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      <div class="modal-content modal-card">
+        <div class="modal-header border-0 pb-0">
+          <h5 class="modal-title fw-bold"><i class="bi bi-trash3 me-2" style="color:var(--brand);"></i>Xác nhận xoá</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
-          <div class="mb-2">Bạn có chắc muốn xoá user:</div>
-          <div class="fw-bold" id="deleteUserName">(user)</div>
-          <div class="small muted mt-2">Thao tác này không thể hoàn tác.</div>
+          <p style="color:var(--muted);font-size:.9rem;">Bạn có chắc chắn muốn xoá người dùng:</p>
+          <div style="font-weight:800;font-size:1.05rem;" id="deleteUserName">(tên user)</div>
+          <div style="margin-top:10px;padding:10px 14px;background:rgba(229,0,18,.06);border:1px solid rgba(229,0,18,.15);border-radius:10px;font-size:.82rem;color:var(--brand);">
+            <i class="bi bi-exclamation-triangle-fill me-1"></i>Thao tác này không thể hoàn tác.
+          </div>
         </div>
-        <div class="modal-footer border-0">
-          <button type="button" class="btn btn-outline-dark action-btn" data-bs-dismiss="modal">Huỷ</button>
-          <button type="button" class="btn btn-danger action-btn">
-            <i class="bi bi-trash3 me-1"></i> Xoá
-          </button>
+        <div class="modal-footer border-0 pt-0">
+          <button type="button" class="btn-t" data-bs-dismiss="modal">Huỷ</button>
+          <form th:action="@{/users/delete}" method="post" id="deleteForm">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" th:if="${_csrf}"/>
+            <input type="hidden" name="id" id="deleteUserId"/>
+            <button type="submit" class="btn-t btn-t-red"><i class="bi bi-trash3"></i> Xoá người dùng</button>
+          </form>
         </div>
       </div>
     </div>
@@ -401,11 +323,10 @@
   <script>
     const deleteModal = document.getElementById('deleteModal');
     if (deleteModal) {
-      deleteModal.addEventListener('show.bs.modal', function (event) {
-        const button = event.relatedTarget;
-        const userId = button?.getAttribute('data-user-id');
-        const userName = button?.getAttribute('data-user-name');
-        document.getElementById('deleteUserName').innerText = userName ? userName : ('ID ' + userId);
+      deleteModal.addEventListener('show.bs.modal', function(event) {
+        const btn = event.relatedTarget;
+        document.getElementById('deleteUserName').textContent = btn?.dataset.userName || 'User';
+        document.getElementById('deleteUserId').value = btn?.dataset.userId || '';
       });
     }
   </script>

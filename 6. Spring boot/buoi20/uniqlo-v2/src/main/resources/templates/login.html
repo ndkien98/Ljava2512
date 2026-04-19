@@ -1,238 +1,548 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Uniqlo CMS - Login</title>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Uniqlo CMS — Đăng nhập</title>
+  <meta name="description" content="Trang đăng nhập quản trị Uniqlo CMS"/>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="stylesheet" th:href="@{/cms/fonts.css}" />
-
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
 
   <style>
-    :root{
-      --brand:#e50012;
-      --ink:#0b1220;
-      --muted:#6b7280;
-      --bg:#f7f8fc;
-      --card:#ffffff;
-      --line: rgba(17,24,39,.08);
-      --ring: rgba(229,0,18,.18);
-      --bs-body-font-family: var(--bs-body-font-family);
-      --bs-body-color: var(--ink);
-      --bs-border-radius: 1rem;
+    :root {
+      --brand: #e50012;
+      --brand-dark: #b0000e;
+      --ink: #0b1220;
+      --muted: #64748b;
+      --bg: #f1f5f9;
+      --glass: rgba(255,255,255,0.88);
+      --glass-border: rgba(255,255,255,0.5);
+      --ring: rgba(229,0,18,.25);
+      --shadow-xl: 0 32px 80px rgba(11,18,32,0.22);
+      --shadow-md: 0 8px 32px rgba(11,18,32,0.12);
     }
 
-    html,body{height:100%;}
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    body{
-      background:
-        radial-gradient(1200px 520px at 18% -10%, rgba(229,0,18,.14), transparent 60%),
-        radial-gradient(900px 520px at 95% 8%, rgba(17,24,39,.08), transparent 68%),
-        var(--bg);
+    html, body { height: 100%; font-family: 'Inter', sans-serif; }
+
+    body {
+      display: flex;
+      min-height: 100vh;
+      background: var(--ink);
+      -webkit-font-smoothing: antialiased;
     }
 
-    .topbar{
-      position: sticky;
-      top:0;
-      z-index: 100;
-      background: rgba(255,255,255,.78);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid var(--line);
+    /* ── Left photo panel ── */
+    .photo-panel {
+      position: relative;
+      flex: 0 0 55%;
+      overflow: hidden;
+      display: none;
+    }
+    @media (min-width: 992px) { .photo-panel { display: block; } }
+
+    .photo-panel img.bg-photo {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      transform: scale(1.03);
+      transition: transform 8s ease;
+    }
+    .photo-panel:hover img.bg-photo { transform: scale(1.08); }
+
+    .photo-panel::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        135deg,
+        rgba(11,18,32,.72) 0%,
+        rgba(229,0,18,.28) 50%,
+        rgba(11,18,32,.55) 100%
+      );
     }
 
-    .brand{ font-weight: 1000; letter-spacing: -0.8px; }
-    .brand .dot{ color: var(--brand); }
+    .photo-overlay-content {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 48px;
+      color: #fff;
+    }
 
-    .card-elev{
-      background: rgba(255,255,255,.82);
-      border: 1px solid rgba(17,24,39,.06);
-      border-radius: 20px;
-      box-shadow: 0 26px 70px rgba(17,24,39,.10);
-      overflow:hidden;
+    .photo-logo {
+      font-size: 1.6rem;
+      font-weight: 900;
+      letter-spacing: -1px;
+    }
+    .photo-logo span { color: var(--brand); }
+
+    .photo-tagline {
+      font-size: 2.6rem;
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -1.2px;
+    }
+    .photo-tagline em {
+      font-style: normal;
+      background: linear-gradient(90deg, #ff6b6b, #e50012);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .photo-stats {
+      display: flex;
+      gap: 32px;
+    }
+    .photo-stat { }
+    .photo-stat .num {
+      font-size: 1.9rem;
+      font-weight: 900;
+      letter-spacing: -1px;
+      line-height: 1;
+    }
+    .photo-stat .lbl {
+      font-size: .78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      opacity: .7;
+      margin-top: 4px;
+    }
+
+    /* ── Right form panel ── */
+    .form-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 24px;
+      background: var(--bg);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .form-panel::before {
+      content: '';
+      position: absolute;
+      top: -200px; right: -200px;
+      width: 600px; height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(229,0,18,.12), transparent 70%);
+      pointer-events: none;
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 440px;
+      background: var(--glass);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      box-shadow: var(--shadow-xl);
+      padding: 48px 44px;
+      position: relative;
+      z-index: 1;
+      animation: slideUp .5s cubic-bezier(.22,1,.36,1) both;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* mobile logo */
+    .mobile-logo {
+      font-size: 1.5rem;
+      font-weight: 900;
+      letter-spacing: -0.8px;
+      color: var(--ink);
+      margin-bottom: 28px;
+    }
+    .mobile-logo span { color: var(--brand); }
+    @media (min-width: 992px) { .mobile-logo { display: none; } }
+
+    .login-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(229,0,18,.1);
+      color: var(--brand);
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .login-title {
+      font-size: 2rem;
+      font-weight: 900;
+      letter-spacing: -1px;
+      color: var(--ink);
+      line-height: 1.2;
+      margin-bottom: 6px;
+    }
+
+    .login-sub {
+      font-size: .9rem;
+      color: var(--muted);
+      margin-bottom: 32px;
+    }
+
+    /* Alert */
+    .alert-error {
+      background: rgba(229,0,18,.08);
+      border: 1px solid rgba(229,0,18,.25);
+      border-radius: 14px;
+      color: #b0000e;
+      padding: 12px 16px;
+      font-size: .88rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Form */
+    .form-group { margin-bottom: 20px; }
+
+    .form-label-custom {
+      display: block;
+      font-size: .82rem;
+      font-weight: 700;
+      letter-spacing: .3px;
+      color: var(--ink);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    .input-wrap {
       position: relative;
     }
-
-    .card-elev::after{
-      content:"";
-      position:absolute;
-      inset:-120px;
-      background:
-        radial-gradient(540px 260px at 18% 10%, rgba(229,0,18,.18), transparent 60%),
-        radial-gradient(520px 300px at 90% 70%, rgba(17,24,39,.12), transparent 60%);
-      pointer-events:none;
+    .input-wrap .input-icon {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      font-size: 1.05rem;
+      pointer-events: none;
     }
-
-    .inner{ position: relative; z-index: 1; }
-
-    .btn-brand{
-      background: var(--brand);
+    .input-field {
+      width: 100%;
+      padding: 14px 16px 14px 44px;
+      border-radius: 14px;
+      border: 1.5px solid rgba(11,18,32,.12);
+      background: rgba(255,255,255,.95);
+      font-family: 'Inter', sans-serif;
+      font-size: .95rem;
+      font-weight: 500;
+      color: var(--ink);
+      transition: border-color .2s, box-shadow .2s;
+      outline: none;
+    }
+    .input-field::placeholder { color: rgba(100,116,139,.6); }
+    .input-field:focus {
       border-color: var(--brand);
+      box-shadow: 0 0 0 4px var(--ring);
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      padding: 4px;
+      font-size: 1rem;
+    }
+    .toggle-password:hover { color: var(--ink); }
+
+    .form-helpers {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 28px;
+      font-size: .85rem;
+    }
+    .remember-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      color: var(--ink);
+    }
+    .remember-label input[type=checkbox] {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--brand);
+    }
+    .forgot-link {
+      color: var(--brand);
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .forgot-link:hover { text-decoration: underline; }
+
+    .btn-login {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(135deg, #e50012, #b0000e);
+      color: #fff;
+      border: none;
       border-radius: 14px;
-      font-weight: 900;
-      padding: 12px 14px;
+      font-family: 'Inter', sans-serif;
+      font-size: 1rem;
+      font-weight: 800;
+      letter-spacing: .3px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all .2s;
+      box-shadow: 0 8px 24px rgba(229,0,18,.35);
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-login::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,.12), transparent);
+    }
+    .btn-login:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(229,0,18,.45);
+    }
+    .btn-login:active { transform: translateY(0); }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 24px 0;
+      color: var(--muted);
+      font-size: .8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(11,18,32,.1);
     }
 
-    .btn-brand:hover{ background: #c80010; border-color:#c80010; }
-
-    .field{
-      border-radius: 14px;
-      border: 1px solid rgba(17,24,39,.12);
-      padding: 12px 12px;
-      background: rgba(255,255,255,.92);
+    .quick-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .quick-link {
+      flex: 1;
+      min-width: 100px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1.5px solid rgba(11,18,32,.1);
+      background: rgba(255,255,255,.7);
+      color: var(--ink);
+      font-size: .82rem;
+      font-weight: 700;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all .18s;
+    }
+    .quick-link:hover {
+      border-color: var(--brand);
+      color: var(--brand);
+      background: rgba(229,0,18,.04);
+      transform: translateY(-1px);
     }
 
-    .field:focus{ box-shadow: 0 0 0 .25rem var(--ring); border-color: rgba(229,0,18,.35); }
-
-    .pill{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding: 7px 12px;
-      border-radius: 999px;
-      border: 1px solid rgba(17,24,39,.10);
-      background: rgba(255,255,255,.75);
-      font-weight: 900;
-      font-size: .88rem;
+    .login-footer {
+      text-align: center;
+      margin-top: 28px;
+      font-size: .82rem;
+      color: var(--muted);
     }
 
-    .muted{ color: var(--muted); }
-
-    .side{
-      border-left: 1px solid rgba(17,24,39,.06);
-      background: linear-gradient(180deg, rgba(255,255,255,.2), rgba(255,255,255,.0));
+    /* floating particles */
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      animation: float linear infinite;
+      opacity: .3;
     }
-
-    .mini{
-      border-radius: 16px;
-      border: 1px solid rgba(17,24,39,.06);
-      background: rgba(255,255,255,.78);
-      padding: 12px;
+    @keyframes float {
+      0%   { transform: translateY(100vh) scale(0); opacity: 0; }
+      10%  { opacity: .3; }
+      90%  { opacity: .3; }
+      100% { transform: translateY(-100px) scale(1); opacity: 0; }
     }
   </style>
 </head>
 <body>
 
-  <div class="topbar">
-    <div class="container py-3 d-flex align-items-center justify-content-between">
-      <a class="text-decoration-none text-dark" th:href="@{/}">
-        <div class="brand fs-4">Uniqlo<span class="dot">.</span>CMS</div>
-      </a>
-      <div class="d-flex align-items-center gap-2">
-        <a class="btn btn-outline-dark btn-sm" th:href="@{/}"><i class="bi bi-house me-1"></i>Home</a>
-        <a class="btn btn-outline-dark btn-sm" th:href="@{/cms}"><i class="bi bi-grid-1x2 me-1"></i>Dashboard</a>
+  <!-- ── Left photo panel ── -->
+  <div class="photo-panel">
+    <img class="bg-photo"
+         src="https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=1200&q=85&auto=format&fit=crop"
+         alt="Uniqlo Fashion"/>
+
+    <div class="photo-overlay-content">
+      <!-- Logo -->
+      <div class="photo-logo">UNIQLO<span>.</span>CMS</div>
+
+      <!-- Tagline -->
+      <div>
+        <div class="photo-tagline">
+          Quản trị<br/><em>thời trang</em><br/>hiệu quả &amp; đẹp.
+        </div>
+        <p style="color:rgba(255,255,255,.65); margin-top:16px; font-size:.95rem; max-width:320px; line-height:1.7;">
+          Hệ thống CMS nội bộ giúp quản lý sản phẩm, SKU, danh mục và người dùng một cách trực quan.
+        </p>
+      </div>
+
+      <!-- Stats -->
+      <div class="photo-stats">
+        <div class="photo-stat">
+          <div class="num">15+</div>
+          <div class="lbl">Sản phẩm</div>
+        </div>
+        <div class="photo-stat">
+          <div class="num">46</div>
+          <div class="lbl">SKU</div>
+        </div>
+        <div class="photo-stat">
+          <div class="num">8</div>
+          <div class="lbl">Users</div>
+        </div>
       </div>
     </div>
   </div>
 
-  <main class="container my-4 my-lg-5" style="max-width: 1100px;">
-    <div class="card-elev">
-      <div class="inner">
-        <div class="row g-0">
-          <div class="col-12 col-lg-6 p-4 p-lg-5">
-            <div class="d-flex align-items-center justify-content-between">
-              <span class="pill"><i class="bi bi-shield-check"></i> Admin access</span>
-              <span class="pill"><i class="bi bi-info-circle"></i> UI only</span>
-            </div>
+  <!-- ── Right form panel ── -->
+  <div class="form-panel">
 
-            <h1 class="mt-4 mb-2" style="font-weight:1000; letter-spacing:-1px;">Đăng nhập</h1>
-            <div class="muted mb-4">Không có backend. Nút đăng nhập sẽ chuyển thẳng vào dashboard.</div>
+    <div class="login-card">
+      <!-- Mobile logo -->
+      <div class="mobile-logo">UNIQLO<span>.</span>CMS</div>
 
-            <form class="row g-3" th:action="@{/fake-login}" method="get">
-              <div class="col-12">
-                <label class="form-label fw-bold" for="email">Email</label>
-                <div class="input-group">
-                  <span class="input-group-text bg-white" style="border-radius:14px 0 0 14px; border:1px solid rgba(17,24,39,.12)"><i class="bi bi-envelope"></i></span>
-                  <input id="email" class="form-control field" type="email" value="admin@uniqlo.com" placeholder="admin@uniqlo.com" />
-                </div>
-              </div>
-              <div class="col-12">
-                <label class="form-label fw-bold" for="password">Password</label>
-                <div class="input-group">
-                  <span class="input-group-text bg-white" style="border-radius:14px 0 0 14px; border:1px solid rgba(17,24,39,.12)"><i class="bi bi-lock"></i></span>
-                  <input id="password" class="form-control field" type="password" value="admin123" placeholder="••••••••" />
-                </div>
-              </div>
-              <div class="col-12 d-flex align-items-center justify-content-between">
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="remember" checked />
-                  <label class="form-check-label" for="remember">Remember me</label>
-                </div>
-                <a class="small text-decoration-none" href="#">Forgot password?</a>
-              </div>
+      <!-- Eyebrow -->
+      <div class="login-eyebrow">
+        <i class="bi bi-shield-lock-fill"></i>
+        Admin Portal
+      </div>
 
-              <div class="col-12 d-grid">
-                <button class="btn btn-brand text-white" type="submit"><i class="bi bi-box-arrow-in-right me-1"></i>Login (fake)</button>
-              </div>
+      <h1 class="login-title">Đăng nhập</h1>
+      <p class="login-sub">Chào mừng trở lại — hãy nhập thông tin để tiếp tục.</p>
 
-              <div class="col-12 text-center small muted">
-                Tip: sau khi login, vào <span class="fw-bold">/cms</span>.
-              </div>
-            </form>
+      <!-- Error alert (Thymeleaf) -->
+      <div class="alert-error" th:if="${error}" th:text="${error}">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        Email hoặc mật khẩu không đúng.
+      </div>
+
+      <!-- Form -->
+      <form th:action="@{/login}" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" th:if="${_csrf}"/>
+
+        <div class="form-group">
+          <label class="form-label-custom" for="email">Email</label>
+          <div class="input-wrap">
+            <i class="bi bi-envelope input-icon"></i>
+            <input id="email" name="email" type="email" class="input-field"
+                   placeholder="admin@uniqlo.com" value="admin@uniqlo.com" required autocomplete="email"/>
           </div>
-
-          <div class="col-12 col-lg-6 p-4 p-lg-5 side">
-            <div class="d-flex justify-content-between align-items-center">
-              <div class="fw-bold">Quick preview</div>
-              <div class="small muted">mock</div>
-            </div>
-
-            <div class="row g-3 mt-2">
-              <div class="col-12">
-                <div class="mini">
-                  <div class="d-flex justify-content-between">
-                    <div>
-                      <div class="muted fw-bold">Admin user</div>
-                      <div class="h5 mb-1" style="font-weight:1000;">Admin Uniqlo</div>
-                      <div class="small muted">role: ADMIN</div>
-                    </div>
-                    <div class="d-flex align-items-center justify-content-center" style="width:54px;height:54px;border-radius:18px;border:1px solid rgba(229,0,18,.18);background:rgba(229,0,18,.08);color:#b1000d;font-size:22px;">
-                      <i class="bi bi-person-badge"></i>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="col-6">
-                <div class="mini">
-                  <div class="muted fw-bold">Products</div>
-                  <div class="h3 mb-0" style="font-weight:1000;">15</div>
-                  <div class="small muted">in database_authen.sql</div>
-                </div>
-              </div>
-              <div class="col-6">
-                <div class="mini">
-                  <div class="muted fw-bold">SKUs</div>
-                  <div class="h3 mb-0" style="font-weight:1000;">46</div>
-                  <div class="small muted">stock tracked</div>
-                </div>
-              </div>
-
-              <div class="col-12">
-                <div class="mini">
-                  <div class="fw-bold mb-2">Where to go</div>
-                  <div class="d-flex flex-wrap gap-2">
-                    <a class="btn btn-outline-dark btn-sm" th:href="@{/cms/categories}"><i class="bi bi-diagram-3 me-1"></i>Categories</a>
-                    <a class="btn btn-outline-dark btn-sm" th:href="@{/cms/products}"><i class="bi bi-bag me-1"></i>Products</a>
-                    <a class="btn btn-outline-dark btn-sm" th:href="@{/cms/skus}"><i class="bi bi-upc-scan me-1"></i>SKUs</a>
-                    <a class="btn btn-outline-dark btn-sm" th:href="@{/cms/reviews}"><i class="bi bi-chat-square-quote me-1"></i>Reviews</a>
-                    <a class="btn btn-outline-dark btn-sm" th:href="@{/users}"><i class="bi bi-people me-1"></i>Users</a>
-                  </div>
-                </div>
-              </div>
-
-              <div class="col-12 small muted">Không lưu session/cookie. Trang chỉ để demo UI flow.</div>
-            </div>
-          </div>
-
         </div>
+
+        <div class="form-group">
+          <label class="form-label-custom" for="password">Mật khẩu</label>
+          <div class="input-wrap">
+            <i class="bi bi-lock input-icon"></i>
+            <input id="password" name="password" type="password" class="input-field"
+                   placeholder="••••••••" value="admin123" required autocomplete="current-password"/>
+            <button type="button" class="toggle-password" id="togglePwd" aria-label="Hiện mật khẩu">
+              <i class="bi bi-eye" id="eyeIcon"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="form-helpers">
+          <label class="remember-label">
+            <input type="checkbox" name="remember-me" id="rememberMe" checked/>
+            Nhớ đăng nhập
+          </label>
+          <a href="#" class="forgot-link">Quên mật khẩu?</a>
+        </div>
+
+        <button type="submit" class="btn-login" id="loginBtn">
+          <i class="bi bi-box-arrow-in-right"></i>
+          Đăng nhập
+        </button>
+      </form>
+
+      <div class="divider">Điều hướng nhanh</div>
+
+      <div class="quick-links">
+        <a class="quick-link" th:href="@{/}"><i class="bi bi-house"></i> Trang chủ</a>
+        <a class="quick-link" th:href="@{/cms}"><i class="bi bi-grid-1x2"></i> Dashboard</a>
+        <a class="quick-link" th:href="@{/users}"><i class="bi bi-people"></i> Users</a>
+        <a class="quick-link" th:href="@{/cms/products}"><i class="bi bi-bag"></i> Sản phẩm</a>
+      </div>
+
+      <div class="login-footer">
+        © 2026 Uniqlo CMS — Dành cho mục đích học tập.
       </div>
     </div>
-  </main>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Toggle password visibility
+    const toggleBtn = document.getElementById('togglePwd');
+    const pwdInput  = document.getElementById('password');
+    const eyeIcon   = document.getElementById('eyeIcon');
+    if (toggleBtn) {
+      toggleBtn.addEventListener('click', () => {
+        const isText = pwdInput.type === 'text';
+        pwdInput.type = isText ? 'password' : 'text';
+        eyeIcon.className = isText ? 'bi bi-eye' : 'bi bi-eye-slash';
+      });
+    }
+
+    // Button loading state
+    const loginBtn = document.getElementById('loginBtn');
+    loginBtn?.closest('form')?.addEventListener('submit', () => {
+      loginBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Đang đăng nhập...';
+      loginBtn.disabled = true;
+    });
+  </script>
 </body>
 </html>
