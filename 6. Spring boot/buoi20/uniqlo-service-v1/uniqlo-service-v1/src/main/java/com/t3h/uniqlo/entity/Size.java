@@ -14,11 +14,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Size {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+public class Size extends BaseEntity{
 
     @Column(name = "size_code", nullable = false, length = 20)
     private String sizeCode;

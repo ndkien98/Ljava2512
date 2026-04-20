@@ -13,17 +13,10 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class VisitStat {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+public class VisitStat extends BaseEntity{
 
     @Column(name = "visit_count", nullable = false)
     @Builder.Default
     private Long visitCount = 0L;
 
-    @UpdateTimestamp
-    @Column(name = "last_updated", nullable = false)
-    private LocalDateTime lastUpdated;
 }
