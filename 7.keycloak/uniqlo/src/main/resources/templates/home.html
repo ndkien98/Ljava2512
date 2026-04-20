@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Uniqlo CMS - Home</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+  <link rel="stylesheet" th:href="@{/cms/cms.css}" />
+  <link rel="stylesheet" th:href="@{/cms/fonts.css}" />
+
+  <style>
+    /* keep only page-specific tweaks */
+    body{ background: var(--bg); }
+    .hero-wrap{ border-radius: var(--radius-xl); box-shadow: var(--shadow-lg); }
+    .gradient-slab{
+      border-radius: var(--radius-xl);
+      background:
+        radial-gradient(640px 320px at 18% 10%, rgba(229,0,18,.18), transparent 60%),
+        radial-gradient(620px 340px at 90% 30%, rgba(17,24,39,.12), transparent 60%),
+        rgba(255,255,255,.78);
+      border: 1px solid rgba(17,24,39,.06);
+    }
+    .stat{ border-radius: 16px; border: 1px solid rgba(17,24,39,.06); background: rgba(255,255,255,.82); }
+    .stat .v{ font-weight: 1000; letter-spacing: -0.8px; font-size: 1.8rem; }
+  </style>
+</head>
+<body>
+
+<div class="cms-topbar">
+  <div class="container cms-shell py-3 d-flex align-items-center justify-content-between gap-2">
+    <a class="text-decoration-none text-dark" th:href="@{/}">
+      <div class="cms-brand fs-4">Uniqlo<span class="dot">.</span>CMS</div>
+    </a>
+    <div class="d-flex align-items-center gap-2">
+      <a class="btn btn-ghost btn-sm" th:href="@{/cms}"><i class="bi bi-grid-1x2 me-1"></i>Dashboard</a>
+      <a class="btn btn-brand btn-sm text-white" th:href="@{/login}"><i class="bi bi-box-arrow-in-right me-1"></i>Login</a>
+    </div>
+  </div>
+</div>
+
+<main class="container cms-shell my-4 my-lg-5">
+  <section class="gradient-slab p-4 p-lg-5 hero-wrap">
+    <div class="row g-4 align-items-center">
+      <div class="col-12 col-lg-6">
+        <span class="cms-pill cms-pill-danger mb-3"><i class="bi bi-shield-check"></i> UI only • Thymeleaf • Fake data</span>
+        <h1 class="display-5 mb-2" style="font-weight:1000; letter-spacing:-1px;">CMS quản trị Uniqlo — gọn, đẹp, dễ dùng.</h1>
+        <p class="text-muted-soft fs-5 mb-4">Trang mẫu gồm Home → Login (fake) → Dashboard + các module quản lý theo schema DB.</p>
+
+        <div class="d-flex flex-wrap gap-2">
+          <a class="btn btn-brand text-white" th:href="@{/login}"><i class="bi bi-box-arrow-in-right me-1"></i>Đăng nhập</a>
+          <a class="btn btn-ghost" th:href="@{/cms}"><i class="bi bi-grid-1x2 me-1"></i>Vào Dashboard</a>
+          <a class="btn btn-ghost" th:href="@{/users}"><i class="bi bi-people me-1"></i>Users</a>
+        </div>
+
+        <div class="row g-2 mt-4">
+          <div class="col-6">
+            <div class="stat p-3">
+              <div class="text-muted-soft fw-bold">Users</div>
+              <div class="v">8</div>
+              <div class="small text-muted-soft">table: users</div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="stat p-3">
+              <div class="text-muted-soft fw-bold">Products</div>
+              <div class="v">15</div>
+              <div class="small text-muted-soft">table: products</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-6">
+        <div class="cms-card p-4">
+          <div class="d-flex align-items-center justify-content-between">
+            <div class="fw-bold">Quick access</div>
+            <span class="cms-pill"><i class="bi bi-lightning-charge"></i> modules</span>
+          </div>
+          <div class="row g-2 mt-2">
+            <div class="col-12 col-md-6">
+              <a class="cms-card-soft p-3 d-flex align-items-center justify-content-between" style="text-decoration:none; color:inherit;" th:href="@{/cms/categories}">
+                <div class="d-flex align-items-center gap-2"><i class="bi bi-diagram-3"></i><span class="fw-bold">Categories</span></div>
+                <i class="bi bi-chevron-right"></i>
+              </a>
+            </div>
+            <div class="col-12 col-md-6">
+              <a class="cms-card-soft p-3 d-flex align-items-center justify-content-between" style="text-decoration:none; color:inherit;" th:href="@{/cms/products}">
+                <div class="d-flex align-items-center gap-2"><i class="bi bi-bag"></i><span class="fw-bold">Products</span></div>
+                <i class="bi bi-chevron-right"></i>
+              </a>
+            </div>
+            <div class="col-12 col-md-6">
+              <a class="cms-card-soft p-3 d-flex align-items-center justify-content-between" style="text-decoration:none; color:inherit;" th:href="@{/cms/skus}">
+                <div class="d-flex align-items-center gap-2"><i class="bi bi-upc-scan"></i><span class="fw-bold">SKUs</span></div>
+                <i class="bi bi-chevron-right"></i>
+              </a>
+            </div>
+            <div class="col-12 col-md-6">
+              <a class="cms-card-soft p-3 d-flex align-items-center justify-content-between" style="text-decoration:none; color:inherit;" th:href="@{/cms/reviews}">
+                <div class="d-flex align-items-center gap-2"><i class="bi bi-chat-square-quote"></i><span class="fw-bold">Reviews</span></div>
+                <i class="bi bi-chevron-right"></i>
+              </a>
+            </div>
+            <div class="col-12">
+              <a class="cms-card-soft p-3 d-flex align-items-center justify-content-between" style="text-decoration:none; color:inherit;" th:href="@{/cms/visit-stats}">
+                <div class="d-flex align-items-center gap-2"><i class="bi bi-graph-up"></i><span class="fw-bold">Visit stats</span></div>
+                <i class="bi bi-chevron-right"></i>
+              </a>
+            </div>
+          </div>
+          <div class="small text-muted-soft mt-3">Tip: Không có BE — thay fake data bằng th:each sau.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="row g-3 mt-3">
+    <div class="col-12 col-lg-4">
+      <div class="cms-card p-4 h-100">
+        <div class="fw-bold mb-1"><i class="bi bi-table me-2"></i>Theo schema DB</div>
+        <div class="text-muted-soft">Bám sát bảng: categories, products, product_skus, reviews, visit_stats...</div>
+      </div>
+    </div>
+    <div class="col-12 col-lg-4">
+      <div class="cms-card p-4 h-100">
+        <div class="fw-bold mb-1"><i class="bi bi-palette me-2"></i>Design system</div>
+        <div class="text-muted-soft">Tông Uniqlo đỏ + nền sáng, card mềm, topbar blur.</div>
+      </div>
+    </div>
+    <div class="col-12 col-lg-4">
+      <div class="cms-card p-4 h-100">
+        <div class="fw-bold mb-1"><i class="bi bi-lightning-charge me-2"></i>Ready for Thymeleaf</div>
+        <div class="text-muted-soft">Mỗi trang là 1 template độc lập, dễ gắn dữ liệu sau.</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="mt-4 small text-muted-soft">© Uniqlo CMS (education) — UI only.</div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

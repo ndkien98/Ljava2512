@@ -1,0 +1,81 @@
+{
+  "realm": "uniqlo-realm",
+  "enabled": true,
+  "displayName": "Uniqlo Platform",
+  "registrationAllowed": true,
+  "resetPasswordAllowed": true,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "verifyEmail": false,
+  "clients": [
+    {
+      "clientId": "uniqlo-backend",
+      "name": "Uniqlo Backend Service",
+      "enabled": true,
+      "publicClient": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "CHANGE_ME_IN_PRODUCTION",
+      "directAccessGrantsEnabled": true,
+      "standardFlowEnabled": true,
+      "serviceAccountsEnabled": true,
+      "redirectUris": [
+        "http://localhost:3000/*",
+        "http://localhost:8082/*"
+      ],
+      "webOrigins": [
+        "http://localhost:3000",
+        "http://localhost:8082"
+      ],
+      "defaultClientScopes": [
+        "web-origins",
+        "acr",
+        "roles",
+        "profile",
+        "email"
+      ]
+    }
+  ],
+  "roles": {
+    "realm": [
+      {
+        "name": "ROLE_USER",
+        "description": "Standard authenticated user"
+      },
+      {
+        "name": "ROLE_ADMIN",
+        "description": "Administrator with full access"
+      }
+    ]
+  },
+  "identityProviders": [
+    {
+      "alias": "google",
+      "displayName": "Google",
+      "providerId": "google",
+      "enabled": true,
+      "firstBrokerLoginFlowAlias": "first broker login",
+      "config": {
+        "clientId": "REPLACE_WITH_GOOGLE_CLIENT_ID",
+        "clientSecret": "REPLACE_WITH_GOOGLE_CLIENT_SECRET",
+        "syncMode": "IMPORT",
+        "useJwksUrl": "true"
+      }
+    },
+    {
+      "alias": "github",
+      "displayName": "GitHub",
+      "providerId": "github",
+      "enabled": true,
+      "firstBrokerLoginFlowAlias": "first broker login",
+      "config": {
+        "clientId": "REPLACE_WITH_GITHUB_CLIENT_ID",
+        "clientSecret": "REPLACE_WITH_GITHUB_CLIENT_SECRET",
+        "syncMode": "IMPORT",
+        "defaultScope": "user:email"
+      }
+    }
+  ],
+  "browserSecurityHeaders": {
+    "contentSecurityPolicy": "frame-src 'self'; frame-ancestors 'self'; object-src 'none';"
+  }
+}

@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin.Users - User Form</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" th:href="@{/cms/fonts.css}" />
+
+  <!-- Bootstrap + Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+
+  <style>
+    :root {
+      --brand: #e50012;
+      --ink: #111827;
+      --muted: #6b7280;
+      --bg: #f6f7fb;
+      --card: #ffffff;
+      --ring: rgba(229, 0, 18, .18);
+
+      /* Bootstrap overrides */
+      --bs-border-radius: 0.9rem;
+      --bs-border-radius-lg: 1rem;
+      --bs-border-radius-sm: 0.7rem;
+      --bs-body-color: var(--ink);
+      --bs-body-font-family: var(--bs-body-font-family);
+    }
+
+    html, body { height: 100%; }
+
+    body {
+      /* font inherits from global */
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      line-height: 1.5;
+      background:
+        radial-gradient(1200px 500px at 20% -10%, rgba(229, 0, 18, 0.10), transparent 60%),
+        radial-gradient(900px 500px at 90% 10%, rgba(17, 24, 39, 0.08), transparent 68%),
+        var(--bg);
+      color: var(--ink);
+    }
+
+    .shell { max-width: 960px; }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 1020;
+      background: rgba(255,255,255,.85);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(17, 24, 39, 0.06);
+      box-shadow: 0 10px 35px rgba(17, 24, 39, 0.06);
+    }
+
+    .brand {
+      font-weight: 900;
+      letter-spacing: -0.6px;
+    }
+
+    .brand .dot { color: var(--brand); }
+
+    .card-elev {
+      background: var(--card);
+      border: 1px solid rgba(17, 24, 39, 0.06);
+      border-radius: 16px;
+      box-shadow: 0 18px 45px rgba(17, 24, 39, 0.08);
+    }
+
+    .action-btn { border-radius: 12px; font-weight: 800; }
+
+    .btn-brand { background: var(--brand); border-color: var(--brand); }
+    .btn-brand:hover { background: #c80010; border-color: #c80010; }
+
+    .form-control, .form-select {
+      border-radius: 12px;
+      border: 1px solid rgba(17, 24, 39, 0.10);
+      padding: 10px 12px;
+      background: rgba(255,255,255,.9);
+    }
+
+    .btn:focus, .btn:active,
+    .form-control:focus, .form-select:focus {
+      box-shadow: 0 0 0 .25rem var(--ring) !important;
+    }
+
+    .form-control:focus, .form-select:focus {
+      border-color: rgba(229, 0, 18, 0.35);
+    }
+
+    .hint { font-size: .9rem; color: var(--muted); }
+
+    .avatarPreview {
+      width: 72px; height: 72px;
+      border-radius: 18px;
+      border: 1px solid rgba(17, 24, 39, 0.10);
+      background: linear-gradient(135deg, rgba(229,0,18,.20), rgba(17,24,39,.06));
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+    }
+
+    .avatarPreview img { width: 100%; height: 100%; object-fit: cover; }
+
+    .form-title { font-weight: 950; letter-spacing: -0.8px; }
+
+    .section {
+      border: 1px dashed rgba(17, 24, 39, 0.18);
+      border-radius: 16px;
+      padding: 16px;
+      background: rgba(255,255,255,.6);
+    }
+
+    .error-text { color: #b42318; font-weight: 700; font-size: .9rem; }
+
+    @media (max-width: 576px) {
+      .form-title { font-size: 1.35rem; }
+      .topbar .brand { font-size: 1.15rem !important; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="topbar">
+    <div class="container shell py-3 d-flex align-items-center justify-content-between">
+      <div class="brand fs-4">Admin<span class="dot">.</span>Users</div>
+      <div class="d-flex gap-2">
+        <a class="btn btn-outline-dark action-btn" href="user_list.html">
+          <i class="bi bi-arrow-left me-1"></i> Quay lại
+        </a>
+        <button type="button" class="btn btn-brand text-white action-btn" id="saveBtn">
+          <i class="bi bi-check2-circle me-1"></i> Lưu
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="container shell my-4">
+
+    <div class="card-elev p-4">
+      <div class="d-flex flex-wrap align-items-start justify-content-between gap-3">
+        <div>
+          <div class="form-title h3 mb-1">Tạo / Sửa người dùng</div>
+          <div class="hint">HTML template. Học viên tự map dữ liệu/validate/submit bằng JSP + Spring MVC.</div>
+        </div>
+
+        <div class="d-flex align-items-center gap-3">
+          <div class="avatarPreview" id="avatarPreviewBox" title="Preview avatar">
+            <span id="avatarInitial">U</span>
+            <img id="avatarPreviewImg" src="" alt="avatar" style="display:none" />
+          </div>
+          <div>
+            <div class="fw-bold" id="previewName">New User</div>
+            <div class="hint">ID: <span class="fw-semibold">(auto)</span></div>
+          </div>
+        </div>
+      </div>
+
+      <hr class="my-4" />
+
+      <!-- Note: In real app, change action/method. This is UI-only. -->
+      <form id="userForm" class="row g-3" action="#" method="post">
+
+        <div class="col-12">
+          <div class="section">
+            <div class="fw-bold mb-3"><i class="bi bi-person-vcard me-2"></i>Thông tin cơ bản</div>
+
+            <div class="row g-3">
+              <div class="col-12 col-md-6">
+                <label class="form-label fw-semibold">Họ tên *</label>
+                <input class="form-control" type="text" name="fullName" id="fullName" placeholder="Ví dụ: Nguyễn Văn A" />
+                <div class="error-text mt-1 d-none" id="errFullName">Full name error</div>
+              </div>
+
+              <div class="col-12 col-md-6">
+                <label class="form-label fw-semibold">Email *</label>
+                <input class="form-control" type="email" name="email" placeholder="name@example.com" />
+                <div class="hint mt-1">Sẽ kiểm tra unique email trong database.</div>
+                <div class="error-text mt-1 d-none" id="errEmail">Email error</div>
+              </div>
+
+              <div class="col-12 col-md-4">
+                <label class="form-label fw-semibold">Giới tính</label>
+                <select class="form-select" name="gender">
+                  <option value="" selected>— Chọn —</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Decline to state">Decline to state</option>
+                </select>
+              </div>
+
+              <div class="col-12 col-md-4">
+                <label class="form-label fw-semibold">Ngày sinh</label>
+                <input class="form-control" type="date" name="birthday" />
+              </div>
+
+              <div class="col-12 col-md-4">
+                <label class="form-label fw-semibold">Role</label>
+                <select class="form-select" name="role">
+                  <option value="USER" selected>USER</option>
+                  <option value="ADMIN">ADMIN</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12">
+          <div class="section">
+            <div class="fw-bold mb-3"><i class="bi bi-image me-2"></i>Avatar</div>
+            <div class="row g-3 align-items-end">
+              <div class="col-12 col-md-9">
+                <label class="form-label fw-semibold">Avatar URL</label>
+                <input class="form-control" id="avatarInput" type="url" name="avatar" placeholder="https://..." />
+                <div class="hint mt-1">Gợi ý: dùng ảnh square để hiển thị đẹp.</div>
+              </div>
+              <div class="col-12 col-md-3 d-grid">
+                <button type="button" class="btn btn-outline-dark action-btn" id="previewBtn">
+                  <i class="bi bi-magic me-1"></i> Preview
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12">
+          <div class="section">
+            <div class="fw-bold mb-3"><i class="bi bi-lock me-2"></i>Mật khẩu</div>
+
+            <div class="row g-3">
+              <div class="col-12 col-md-6">
+                <label class="form-label fw-semibold">Mật khẩu *</label>
+                <input class="form-control" type="password" name="password" placeholder="••••••••" />
+                <div class="hint mt-1">Học viên hash và lưu vào cột <span class="fw-semibold">password_hash</span>.</div>
+                <div class="error-text mt-1 d-none" id="errPassword">Password error</div>
+              </div>
+
+              <div class="col-12 col-md-6">
+                <label class="form-label fw-semibold">Nhập lại mật khẩu</label>
+                <input class="form-control" type="password" name="confirmPassword" placeholder="••••••••" />
+                <div class="error-text mt-1 d-none" id="errConfirmPassword">Confirm password error</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12">
+          <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <div class="hint">* Trường bắt buộc. Học viên tự validate serverside.</div>
+
+            <div class="d-flex gap-2">
+              <a class="btn btn-outline-dark action-btn" href="user_list.html">Huỷ</a>
+              <button type="submit" class="btn btn-brand text-white action-btn">
+                <i class="bi bi-check2-circle me-1"></i> Lưu
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function setAvatarPreview(url) {
+      const img = document.getElementById('avatarPreviewImg');
+      const initial = document.getElementById('avatarInitial');
+      if (!img) return;
+
+      if (url && url.trim().length > 0) {
+        img.src = url.trim();
+        img.style.display = 'block';
+        if (initial) initial.style.display = 'none';
+      } else {
+        img.src = '';
+        img.style.display = 'none';
+        if (initial) initial.style.display = 'block';
+      }
+    }
+
+    const previewBtn = document.getElementById('previewBtn');
+    const avatarInput = document.getElementById('avatarInput');
+    const fullName = document.getElementById('fullName');
+
+    if (previewBtn && avatarInput) {
+      previewBtn.addEventListener('click', function () {
+        setAvatarPreview(avatarInput.value);
+      });
+      avatarInput.addEventListener('change', function () {
+        setAvatarPreview(avatarInput.value);
+      });
+    }
+
+    if (fullName) {
+      fullName.addEventListener('input', function () {
+        document.getElementById('previewName').innerText = fullName.value?.trim()?.length ? fullName.value.trim() : 'New User';
+        document.getElementById('avatarInitial').innerText = fullName.value?.trim()?.length ? fullName.value.trim().substring(0,1).toUpperCase() : 'U';
+      });
+    }
+
+    // Keep top "Save" button consistent
+    const saveBtn = document.getElementById('saveBtn');
+    if (saveBtn) {
+      saveBtn.addEventListener('click', function () {
+        document.getElementById('userForm').requestSubmit();
+      });
+    }
+
+    // init
+    if (avatarInput) setAvatarPreview(avatarInput.value);
+  </script>
+</body>
+</html>

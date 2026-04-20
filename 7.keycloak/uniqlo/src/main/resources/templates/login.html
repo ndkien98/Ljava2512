@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Đăng nhập — Uniqlo CMS</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+
+  <style>
+    /* ─── Design Tokens ─────────────────────────────────────────── */
+    :root {
+      --brand: #e50012;
+      --brand-dark: #b8000f;
+      --brand-glow: rgba(229, 0, 18, .22);
+      --ink: #0b1220;
+      --muted: #6b7280;
+      --bg: #f4f5f9;
+      --surface: rgba(255, 255, 255, .88);
+      --border: rgba(17, 24, 39, .09);
+      --shadow-card: 0 32px 80px rgba(17, 24, 39, .13);
+      --radius-lg: 20px;
+      --radius-md: 14px;
+      --radius-sm: 10px;
+    }
+
+    /* ─── Base ──────────────────────────────────────────────────── */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      height: 100%;
+      font-family: 'Inter', sans-serif;
+      color: var(--ink);
+    }
+
+    body {
+      background:
+        radial-gradient(ellipse 1400px 600px at 10% -12%, rgba(229, 0, 18, .16), transparent 55%),
+        radial-gradient(ellipse 900px 500px at 95% 5%, rgba(17, 24, 39, .07), transparent 60%),
+        radial-gradient(ellipse 600px 400px at 60% 95%, rgba(229, 0, 18, .07), transparent 60%),
+        var(--bg);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ─── Topbar ─────────────────────────────────────────────────── */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, .76);
+      backdrop-filter: blur(14px) saturate(160%);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .brand {
+      font-weight: 900;
+      letter-spacing: -0.8px;
+      font-size: 1.25rem;
+    }
+
+    .brand .dot {
+      color: var(--brand);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 6px 14px;
+      font-size: .875rem;
+      font-weight: 600;
+      color: var(--ink);
+      text-decoration: none;
+      transition: background .18s, border-color .18s;
+    }
+
+    .btn-ghost:hover {
+      background: rgba(17, 24, 39, .05);
+    }
+
+    /* ─── Main layout ────────────────────────────────────────────── */
+    main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      padding: 2.5rem 1rem;
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 1040px;
+      margin: auto;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-card);
+      overflow: hidden;
+      position: relative;
+      backdrop-filter: blur(16px) saturate(130%);
+    }
+
+    /* subtle top-left glow inside card */
+    .login-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(600px 300px at -5% -10%, rgba(229, 0, 18, .12), transparent 55%),
+        radial-gradient(400px 250px at 105% 105%, rgba(17, 24, 39, .08), transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .card-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ─── Left panel ─────────────────────────────────────────────── */
+    .panel-left {
+      padding: 3rem 2.5rem;
+    }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 14px;
+      border-radius: 99px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, .72);
+      font-size: .8rem;
+      font-weight: 700;
+      backdrop-filter: blur(8px);
+    }
+
+    .badge-pill.brand {
+      background: rgba(229, 0, 18, .08);
+      border-color: rgba(229, 0, 18, .22);
+      color: var(--brand);
+    }
+
+    .title-block {
+      margin: 1.5rem 0;
+    }
+
+    .title-block h1 {
+      font-size: clamp(1.7rem, 3.5vw, 2.2rem);
+      font-weight: 900;
+      letter-spacing: -1px;
+      line-height: 1.15;
+    }
+
+    .title-block p {
+      color: var(--muted);
+      margin-top: .45rem;
+      font-size: .95rem;
+    }
+
+    /* ─── Tab switcher ───────────────────────────────────────────── */
+    .tab-switcher {
+      display: flex;
+      gap: 4px;
+      background: rgba(17, 24, 39, .05);
+      border-radius: var(--radius-sm);
+      padding: 4px;
+      margin-bottom: 1.75rem;
+    }
+
+    .tab-btn {
+      flex: 1;
+      border: none;
+      outline: none;
+      background: transparent;
+      border-radius: 8px;
+      padding: 9px 14px;
+      font-size: .875rem;
+      font-weight: 700;
+      color: var(--muted);
+      cursor: pointer;
+      transition: background .2s, color .2s, box-shadow .2s;
+    }
+
+    .tab-btn.active {
+      background: #fff;
+      color: var(--ink);
+      box-shadow: 0 2px 8px rgba(17, 24, 39, .10);
+    }
+
+    /* ─── Tab panels ─────────────────────────────────────────────── */
+    .tab-panel {
+      display: none;
+      animation: fadeUp .25s ease;
+    }
+
+    .tab-panel.show {
+      display: block;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ─── Form fields ────────────────────────────────────────────── */
+    .field-group {
+      margin-bottom: 1rem;
+    }
+
+    .field-group label {
+      display: block;
+      font-size: .8rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: var(--ink);
+    }
+
+    .field-wrap {
+      display: flex;
+      align-items: center;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, .92);
+      overflow: hidden;
+      transition: border-color .18s, box-shadow .18s;
+    }
+
+    .field-wrap:focus-within {
+      border-color: rgba(229, 0, 18, .4);
+      box-shadow: 0 0 0 3.5px rgba(229, 0, 18, .12);
+    }
+
+    .field-icon {
+      width: 44px;
+      min-width: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    .field-wrap input {
+      flex: 1;
+      border: none;
+      outline: none;
+      background: transparent;
+      padding: 11px 12px 11px 0;
+      font-size: .95rem;
+      color: var(--ink);
+      font-family: 'Inter', sans-serif;
+    }
+
+    .field-wrap input::placeholder {
+      color: #b0b7c3;
+    }
+
+    .toggle-pw {
+      width: 44px;
+      min-width: 44px;
+      background: none;
+      border: none;
+      outline: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 1rem;
+      transition: color .18s;
+    }
+
+    .toggle-pw:hover {
+      color: var(--ink);
+    }
+
+    .row-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: .65rem 0 1.25rem;
+    }
+
+    .check-wrap {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: .85rem;
+    }
+
+    .check-wrap input[type=checkbox] {
+      accent-color: var(--brand);
+      width: 15px;
+      height: 15px;
+    }
+
+    .link-subtle {
+      font-size: .85rem;
+      font-weight: 600;
+      color: var(--brand);
+      text-decoration: none;
+    }
+
+    .link-subtle:hover {
+      opacity: .8;
+    }
+
+    /* ─── Primary button ─────────────────────────────────────────── */
+    .btn-primary-brand {
+      width: 100%;
+      padding: 12px;
+      background: var(--brand);
+      color: #fff;
+      border: none;
+      outline: none;
+      border-radius: var(--radius-md);
+      font-size: .95rem;
+      font-weight: 900;
+      cursor: pointer;
+      transition: background .18s, transform .13s, box-shadow .18s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary-brand:hover {
+      background: var(--brand-dark);
+      box-shadow: 0 6px 20px rgba(229, 0, 18, .32);
+    }
+
+    .btn-primary-brand:active {
+      transform: scale(.98);
+    }
+
+    /* Ripple */
+    .btn-primary-brand .ripple {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, .35);
+      transform: scale(0);
+      animation: rippleAnim .5s linear;
+      pointer-events: none;
+    }
+
+    @keyframes rippleAnim {
+      to {
+        transform: scale(4);
+        opacity: 0;
+      }
+    }
+
+    /* ─── Divider ────────────────────────────────────────────────── */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 1.4rem 0;
+      font-size: .8rem;
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ─── Social buttons ─────────────────────────────────────────── */
+    .social-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .btn-social {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      padding: 10px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, .82);
+      font-size: .875rem;
+      font-weight: 700;
+      color: var(--ink);
+      text-decoration: none;
+      cursor: pointer;
+      transition: background .18s, border-color .18s, transform .13s, box-shadow .18s;
+      backdrop-filter: blur(8px);
+    }
+
+    .btn-social:hover {
+      background: rgba(255, 255, 255, .97);
+      box-shadow: 0 4px 16px rgba(17, 24, 39, .10);
+      transform: translateY(-1px);
+      border-color: rgba(17, 24, 39, .16);
+    }
+
+    .btn-social:active {
+      transform: scale(.98);
+    }
+
+    .btn-social svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .btn-social.full-width {
+      grid-column: span 2;
+    }
+
+    /* Keycloak button (SSO) */
+    .btn-keycloak {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      width: 100%;
+      padding: 11px 14px;
+      border: 1.5px solid rgba(229, 0, 18, .25);
+      border-radius: var(--radius-md);
+      background: rgba(229, 0, 18, .06);
+      font-size: .9rem;
+      font-weight: 700;
+      color: var(--brand);
+      text-decoration: none;
+      cursor: pointer;
+      transition: background .18s, transform .13s;
+    }
+
+    .btn-keycloak:hover {
+      background: rgba(229, 0, 18, .12);
+      transform: translateY(-1px);
+    }
+
+    /* ─── Right panel ────────────────────────────────────────────── */
+    .panel-right {
+      border-left: 1px solid var(--border);
+      background: linear-gradient(160deg, rgba(255, 255, 255, .18), rgba(255, 255, 255, 0));
+      padding: 3rem 2.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .info-label {
+      font-size: .75rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+
+    .flow-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin: 1.25rem 0;
+    }
+
+    .flow-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 13px;
+      padding: 14px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: rgba(255, 255, 255, .72);
+      backdrop-filter: blur(8px);
+      transition: transform .18s, box-shadow .18s;
+    }
+
+    .flow-step:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(17, 24, 39, .08);
+    }
+
+    .step-num {
+      min-width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 2px solid var(--brand);
+      color: var(--brand);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .78rem;
+      font-weight: 900;
+    }
+
+    .step-num.done {
+      background: rgba(229, 0, 18, .1);
+      border-color: var(--brand);
+    }
+
+    .flow-step p {
+      font-size: .85rem;
+      color: var(--muted);
+      margin: 0;
+    }
+
+    .flow-step strong {
+      font-size: .9rem;
+      font-weight: 700;
+      display: block;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .stat-box {
+      padding: 14px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: rgba(255, 255, 255, .72);
+    }
+
+    .stat-box .val {
+      font-size: 1.7rem;
+      font-weight: 900;
+      letter-spacing: -1px;
+    }
+
+    .stat-box .lbl {
+      font-size: .75rem;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .idp-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 1.5rem;
+    }
+
+    .idp-tag {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      border-radius: 99px;
+      background: rgba(255, 255, 255, .72);
+      font-size: .78rem;
+      font-weight: 700;
+      backdrop-filter: blur(6px);
+    }
+
+    .idp-tag .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+    }
+
+    .dot-green {
+      background: #22c55e;
+    }
+
+    .dot-blue {
+      background: #3b82f6;
+    }
+
+    .dot-brand {
+      background: var(--brand);
+    }
+
+    /* ─── Status toast ───────────────────────────────────────────── */
+    #status-toast {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--ink);
+      color: #fff;
+      padding: 11px 22px;
+      border-radius: 99px;
+      font-size: .875rem;
+      font-weight: 600;
+      box-shadow: 0 8px 30px rgba(17, 24, 39, .25);
+      transition: transform .3s cubic-bezier(.34, 1.56, .64, 1), opacity .3s;
+      opacity: 0;
+      pointer-events: none;
+      white-space: nowrap;
+      z-index: 999;
+    }
+
+    #status-toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    /* ─── Loading spinner on btn ─────────────────────────────────── */
+    .spinner-ring {
+      width: 18px;
+      height: 18px;
+      border: 2.5px solid rgba(255, 255, 255, .4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      display: none;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* ─── Responsive ─────────────────────────────────────────────── */
+    @media (max-width: 991.98px) {
+
+      .panel-left,
+      .panel-right {
+        padding: 2rem 1.5rem;
+      }
+
+      .panel-right {
+        border-left: none;
+        border-top: 1px solid var(--border);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ═══ Topbar ════════════════════════════════════════════════════ -->
+  <header class="topbar">
+    <div class="container py-3 d-flex align-items-center justify-content-between">
+      <a class="text-decoration-none text-dark" th:href="@{/}">
+        <div class="brand">Uniqlo<span class="dot">.</span>CMS</div>
+      </a>
+      <div class="d-flex align-items-center gap-2">
+        <a class="btn-ghost" th:href="@{/}"><i class="bi bi-house me-1"></i>Home</a>
+        <a class="btn-ghost" th:href="@{/cms}"><i class="bi bi-grid-1x2 me-1"></i>Dashboard</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══ Main ══════════════════════════════════════════════════════ -->
+  <main>
+    <div class="container">
+      <div class="login-card">
+        <div class="card-inner">
+          <div class="row g-0">
+
+            <!-- ── Left panel ──────────────────────────────────────── -->
+            <div class="col-12 col-lg-6 panel-left">
+
+              <div class="d-flex align-items-center gap-2">
+                <span class="badge-pill brand"><i class="bi bi-shield-lock-fill"></i> Keycloak SSO</span>
+                <span class="badge-pill"><i class="bi bi-lock"></i> OAuth2 / OIDC</span>
+              </div>
+
+              <div class="title-block">
+                <h1>Chào mừng<br>trở lại 👋</h1>
+                <p>Đăng nhập bằng tài khoản Uniqlo hoặc tài khoản xã hội.</p>
+              </div>
+
+              <!-- Tab switcher -->
+              <div class="tab-switcher" role="tablist">
+                <button class="tab-btn active" id="tab-local" data-target="panel-local" role="tab" aria-selected="true">
+                  <i class="bi bi-person-fill me-1"></i>Tài khoản
+                </button>
+                <button class="tab-btn" id="tab-sso" data-target="panel-sso" role="tab" aria-selected="false">
+                  <i class="bi bi-shields-fill me-1"></i>Keycloak SSO
+                </button>
+              </div>
+
+              <!-- ── Panel: Local login ──────────────────────────── -->
+              <div class="tab-panel show" id="panel-local" role="tabpanel">
+                <form id="login-form" th:action="@{/login}" method="post" novalidate>
+
+                  <!-- CSRF token (Spring Security yêu cầu) -->
+                  <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+                  <!-- Thông báo lỗi từ Spring Security -->
+                  <div th:if="${param.error}"
+                    class="alert alert-danger d-flex align-items-center gap-2 py-2 mb-3 rounded-3" role="alert"
+                    style="font-size:.875rem;">
+                    <i class="bi bi-exclamation-circle-fill text-danger"></i>
+                    Sai email hoặc mật khẩu. Vui lòng thử lại.
+                  </div>
+                  <div th:if="${param.logout}"
+                    class="alert alert-success d-flex align-items-center gap-2 py-2 mb-3 rounded-3" role="alert"
+                    style="font-size:.875rem;">
+                    <i class="bi bi-check-circle-fill text-success"></i>
+                    Bạn đã đăng xuất thành công.
+                  </div>
+
+                  <!-- Email -->
+                  <div class="field-group">
+                    <label for="username">Email</label>
+                    <div class="field-wrap">
+                      <span class="field-icon"><i class="bi bi-envelope"></i></span>
+                      <input id="username" name="username" type="email" placeholder="admin@uniqlo.com"
+                        autocomplete="email" required spellcheck="false" />
+                    </div>
+                  </div>
+
+                  <!-- Password -->
+                  <div class="field-group">
+                    <label for="password">Mật khẩu</label>
+                    <div class="field-wrap">
+                      <span class="field-icon"><i class="bi bi-lock"></i></span>
+                      <input id="password" name="password" type="password" placeholder="••••••••"
+                        autocomplete="current-password" required />
+                      <button type="button" class="toggle-pw" aria-label="Hiện/ẩn mật khẩu" id="toggle-pw-btn">
+                        <i class="bi bi-eye" id="pw-icon"></i>
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Remember + Forgot -->
+                  <div class="row-meta">
+                    <label class="check-wrap">
+                      <input type="checkbox" name="remember-me" id="remember-me" />
+                      Ghi nhớ đăng nhập
+                    </label>
+                    <a href="#" class="link-subtle">Quên mật khẩu?</a>
+                  </div>
+
+                  <!-- Submit -->
+                  <button type="submit" class="btn-primary-brand" id="login-btn">
+                    <span class="spinner-ring" id="login-spinner"></span>
+                    <i class="bi bi-box-arrow-in-right" id="login-icon"></i>
+                    <span id="login-label">Đăng nhập</span>
+                  </button>
+
+                </form>
+
+                <!-- Social divider -->
+                <div class="divider">hoặc tiếp tục với</div>
+
+                <!-- Social buttons -->
+                <div class="social-grid">
+                  <!-- Google: Redirect qua Keycloak broker -->
+                  <a class="btn-social" th:href="@{/oauth2/authorization/keycloak-google}" id="btn-google">
+                    <!-- Google icon -->
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                        fill="#4285F4" />
+                      <path
+                        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                        fill="#34A853" />
+                      <path
+                        d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"
+                        fill="#FBBC05" />
+                      <path
+                        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                        fill="#EA4335" />
+                    </svg>
+                    Google
+                  </a>
+
+                  <!-- GitHub: Redirect qua Keycloak broker -->
+                  <a class="btn-social" th:href="@{/oauth2/authorization/keycloak-github}" id="btn-github">
+                    <!-- GitHub icon -->
+                    <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
+                    </svg>
+                    GitHub
+                  </a>
+                </div>
+
+              </div>
+              <!-- end panel-local -->
+
+              <!-- ── Panel: Keycloak SSO ─────────────────────────── -->
+              <div class="tab-panel" id="panel-sso" role="tabpanel">
+
+                <p class="text-muted mb-4" style="font-size:.9rem; line-height:1.6;">
+                  Đăng nhập trực tiếp qua <strong>Keycloak Authorization Server</strong>.
+                  Phù hợp cho hệ thống doanh nghiệp với nhiều ứng dụng dùng chung một identity.
+                </p>
+
+                <!-- Nút redirect thẳng sang Keycloak Login UI -->
+                <a class="btn-keycloak mb-3" th:href="@{/oauth2/authorization/keycloak}">
+                  <!-- Keycloak logo -->
+                  <svg width="20" height="20" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="256" cy="256" r="256" fill="#e50012" />
+                    <path d="M140 180h100v70l60-70h72L296 256l76 76h-72l-60-70v70H140V180z" fill="white" />
+                  </svg>
+                  Tiếp tục với Keycloak
+                </a>
+
+                <div class="divider">Luồng hoạt động</div>
+
+                <!-- Mini flow diagram kiểu text -->
+                <div class="d-flex flex-column gap-2" style="font-size:.82rem;">
+                  <div class="d-flex align-items-center gap-2">
+                    <span class="badge-pill brand" style="padding:4px 10px; font-size:.75rem;">1</span>
+                    <span>Bạn được redirect sang <strong>Keycloak Login Page</strong></span>
+                  </div>
+                  <div class="d-flex align-items-center gap-2 ps-1"><i class="bi bi-arrow-down text-muted"></i></div>
+                  <div class="d-flex align-items-center gap-2">
+                    <span class="badge-pill" style="padding:4px 10px; font-size:.75rem;">2</span>
+                    <span>Chọn: <strong>Google / GitHub</strong> hoặc đăng nhập bằng username/password nội bộ</span>
+                  </div>
+                  <div class="d-flex align-items-center gap-2 ps-1"><i class="bi bi-arrow-down text-muted"></i></div>
+                  <div class="d-flex align-items-center gap-2">
+                    <span class="badge-pill" style="padding:4px 10px; font-size:.75rem;">3</span>
+                    <span>Keycloak phát sinh <strong>JWT Token</strong> → redirect về app</span>
+                  </div>
+                  <div class="d-flex align-items-center gap-2 ps-1"><i class="bi bi-arrow-down text-muted"></i></div>
+                  <div class="d-flex align-items-center gap-2">
+                    <span class="badge-pill" style="padding:4px 10px; font-size:.75rem;">4</span>
+                    <span>Spring Boot xác minh chữ ký JWT → cấp quyền theo Roles</span>
+                  </div>
+                </div>
+
+                <div class="mt-4 p-3 rounded-3"
+                  style="background:rgba(229,0,18,.06); border:1px solid rgba(229,0,18,.18);">
+                  <div style="font-size:.8rem; color: var(--brand); font-weight:700; margin-bottom:4px;">
+                    <i class="bi bi-info-circle me-1"></i>Keycloak Server
+                  </div>
+                  <div style="font-size:.8rem; color: var(--muted);">
+                    Đảm bảo Keycloak đang chạy tại <code style="color:var(--brand);">http://localhost:8080</code>
+                    và realm <code style="color:var(--brand);">uniqlo-realm</code> đã được cấu hình.
+                  </div>
+                </div>
+
+              </div>
+              <!-- end panel-sso -->
+
+            </div>
+            <!-- end col left -->
+
+            <!-- ── Right panel ─────────────────────────────────────── -->
+            <div class="col-12 col-lg-6 panel-right">
+
+              <div>
+                <div class="info-label mb-3">Kiến trúc hệ thống</div>
+
+                <div class="flow-steps">
+                  <div class="flow-step">
+                    <div class="step-num done">1</div>
+                    <div>
+                      <strong>Identity Provider</strong>
+                      <p>Google / GitHub xác thực người dùng thực sự là ai.</p>
+                    </div>
+                  </div>
+                  <div class="flow-step">
+                    <div class="step-num done">2</div>
+                    <div>
+                      <strong>Identity Broker — Keycloak</strong>
+                      <p>Hợp nhất Social Login và Local Account thành 1 JWT chuẩn.</p>
+                    </div>
+                  </div>
+                  <div class="flow-step">
+                    <div class="step-num">3</div>
+                    <div>
+                      <strong>Resource Server — Spring Boot</strong>
+                      <p>Xác minh JWT, phân quyền theo Roles, bảo vệ API.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <div class="info-label mb-3">Thông tin hệ thống</div>
+                <div class="stats-grid">
+                  <div class="stat-box">
+                    <div class="val">15</div>
+                    <div class="lbl">Sản phẩm</div>
+                  </div>
+                  <div class="stat-box">
+                    <div class="val">46</div>
+                    <div class="lbl">SKUs</div>
+                  </div>
+                  <div class="stat-box">
+                    <div class="val">8</div>
+                    <div class="lbl">Users</div>
+                  </div>
+                  <div class="stat-box">
+                    <div class="val">3</div>
+                    <div class="lbl">Roles</div>
+                  </div>
+                </div>
+
+                <div class="idp-row">
+                  <span class="idp-tag"><span class="dot dot-green"></span>Google IDP</span>
+                  <span class="idp-tag"><span class="dot dot-blue"></span>GitHub IDP</span>
+                  <span class="idp-tag"><span class="dot dot-brand"></span>Local Account</span>
+                </div>
+              </div>
+
+            </div>
+            <!-- end col right -->
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ═══ Toast ══════════════════════════════════════════════════════ -->
+  <div id="status-toast"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    /* ── Tab switching ─────────────────────────────────────────── */
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        // Deactivate all
+        tabBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected', 'false'); });
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('show'));
+
+        // Activate clicked
+        btn.classList.add('active');
+        btn.setAttribute('aria-selected', 'true');
+        const target = document.getElementById(btn.dataset.target);
+        if (target) target.classList.add('show');
+      });
+    });
+
+    /* ── Password toggle ───────────────────────────────────────── */
+    const pwInput = document.getElementById('password');
+    const pwIcon = document.getElementById('pw-icon');
+    const pwToggle = document.getElementById('toggle-pw-btn');
+    pwToggle.addEventListener('click', () => {
+      const isHidden = pwInput.type === 'password';
+      pwInput.type = isHidden ? 'text' : 'password';
+      pwIcon.className = isHidden ? 'bi bi-eye-slash' : 'bi bi-eye';
+    });
+
+    /* ── Button ripple effect ──────────────────────────────────── */
+    document.querySelectorAll('.btn-primary-brand').forEach(btn => {
+      btn.addEventListener('click', function (e) {
+        const ripple = document.createElement('span');
+        ripple.classList.add('ripple');
+        const size = Math.max(this.offsetWidth, this.offsetHeight);
+        ripple.style.width = ripple.style.height = size + 'px';
+        ripple.style.left = (e.offsetX - size / 2) + 'px';
+        ripple.style.top = (e.offsetY - size / 2) + 'px';
+        this.appendChild(ripple);
+        setTimeout(() => ripple.remove(), 520);
+      });
+    });
+
+    /* ── Form submit with loading state ────────────────────────── */
+    const loginForm = document.getElementById('login-form');
+    const loginBtn = document.getElementById('login-btn');
+    const loginSpinner = document.getElementById('login-spinner');
+    const loginIcon = document.getElementById('login-icon');
+    const loginLabel = document.getElementById('login-label');
+
+    loginForm.addEventListener('submit', function (e) {
+      const email = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+
+      if (!email || !password) {
+        e.preventDefault();
+        showToast('Vui lòng nhập đầy đủ email và mật khẩu.');
+        return;
+      }
+
+      // Show loading state
+      loginSpinner.style.display = 'block';
+      loginIcon.style.display = 'none';
+      loginLabel.textContent = 'Đang xử lý…';
+      loginBtn.disabled = true;
+    });
+
+    /* ── Social buttons loading toast ─────────────────────────── */
+    document.getElementById('btn-google').addEventListener('click', function () {
+      showToast('Đang chuyển sang Google…');
+    });
+    document.getElementById('btn-github').addEventListener('click', function () {
+      showToast('Đang chuyển sang GitHub…');
+    });
+
+    /* ── Toast helper ──────────────────────────────────────────── */
+    let toastTimer;
+    function showToast(msg) {
+      const toast = document.getElementById('status-toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove('show'), 2800);
+    }
+
+    /* ── Auto-fill demo credentials (dev only) ─────────────────── */
+    // Xóa đoạn này khi deploy production
+    const isDevMode = /*[[${@environment.getProperty('spring.profiles.active','') == 'dev'}]]*/ false;
+    if (isDevMode) {
+      document.getElementById('username').value = 'admin@uniqlo.com';
+      document.getElementById('password').value = 'admin123';
+    }
+  </script>
+</body>
+
+</html>
