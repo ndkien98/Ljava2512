@@ -1,219 +1,697 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Uniqlo CMS - Dashboard</title>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Uniqlo CMS — Dashboard</title>
+  <meta name="description" content="Dashboard quản trị Uniqlo CMS"/>
 
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="stylesheet" th:href="@{/cms/fonts.css}" />
-
-  <!-- Bootstrap + Icons -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-  <link rel="stylesheet" th:href="@{/cms/cms.css}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
 
   <style>
-    /* page-specific only */
-    .kpi{
+    :root {
+      --brand: #e50012;
+      --brand-dark: #b0000e;
+      --sidebar-bg: #0b1220;
+      --sidebar-hover: rgba(255,255,255,.07);
+      --sidebar-active: rgba(229,0,18,.15);
+      --sidebar-active-border: #e50012;
+      --sidebar-text: rgba(255,255,255,.65);
+      --sidebar-muted: rgba(255,255,255,.35);
+      --ink: #0f172a;
+      --muted: #64748b;
+      --bg: #f1f5f9;
+      --card: #ffffff;
+      --border: rgba(15,23,42,.07);
+      --shadow-xl: 0 24px 60px rgba(15,23,42,.14);
+      --shadow-md: 0 8px 28px rgba(15,23,42,.10);
+      --shadow-sm: 0 4px 12px rgba(15,23,42,.06);
+      --radius-xl: 20px;
+      --radius-lg: 14px;
+      --radius-md: 10px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      -webkit-font-smoothing: antialiased;
+      display: flex;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: 260px;
+      min-height: 100vh;
+      background: var(--sidebar-bg);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+    .sidebar::-webkit-scrollbar { width: 4px; }
+    .sidebar::-webkit-scrollbar-track { background: transparent; }
+    .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); border-radius: 4px; }
+
+    .sidebar-logo {
+      padding: 28px 24px 20px;
+      border-bottom: 1px solid rgba(255,255,255,.07);
+    }
+    .logo-text {
+      font-size: 1.3rem;
+      font-weight: 900;
+      letter-spacing: -0.7px;
+      color: #fff;
+    }
+    .logo-text em {
+      font-style: normal;
+      color: var(--brand);
+    }
+    .logo-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: rgba(229,0,18,.18);
+      border: 1px solid rgba(229,0,18,.3);
+      color: #ff6565;
+      font-size: .68rem;
+      font-weight: 700;
+      letter-spacing: .8px;
+      text-transform: uppercase;
+      margin-top: 6px;
+    }
+
+    /* Admin profile */
+    .sidebar-user {
+      margin: 16px 16px 0;
+      padding: 14px;
       border-radius: var(--radius-lg);
-      border: 1px solid rgba(17,24,39,.06);
-      background: linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.78));
-      box-shadow: var(--shadow);
-      overflow:hidden;
-      position:relative;
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.08);
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
-    .kpi::after{
-      content:"";
-      position:absolute;
-      inset:-60px;
-      background:
-        radial-gradient(260px 160px at 10% 20%, rgba(229,0,18,.14), transparent 60%),
-        radial-gradient(220px 160px at 85% 10%, rgba(17,24,39,.10), transparent 60%);
-      pointer-events:none;
+    .sidebar-avatar {
+      width: 38px; height: 38px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(229,0,18,.6), rgba(176,0,14,.4));
+      display: flex; align-items: center; justify-content: center;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 800;
+      flex-shrink: 0;
+      overflow: hidden;
     }
-    .kpi .inner{position:relative; z-index:1;}
-    .kpi .label{color: var(--muted); font-weight:800; font-size:.9rem;}
-    .kpi .value{font-weight: 1000; letter-spacing:-0.8px; font-size: 2rem;}
+    .sidebar-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .sidebar-user-info .name { color: #fff; font-weight: 700; font-size: .88rem; line-height: 1.3; }
+    .sidebar-user-info .role { color: var(--sidebar-muted); font-size: .72rem; font-weight: 600; }
+
+    /* Nav */
+    .sidebar-nav { padding: 20px 12px; flex: 1; }
+    .nav-section-label {
+      color: var(--sidebar-muted);
+      font-size: .65rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 0 12px;
+      margin-bottom: 8px;
+      margin-top: 8px;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      color: var(--sidebar-text);
+      text-decoration: none;
+      font-size: .875rem;
+      font-weight: 600;
+      margin-bottom: 2px;
+      transition: all .18s;
+      position: relative;
+      border-left: 3px solid transparent;
+    }
+    .nav-item:hover {
+      background: var(--sidebar-hover);
+      color: #fff;
+    }
+    .nav-item.active {
+      background: var(--sidebar-active);
+      color: #fff;
+      border-left-color: var(--sidebar-active-border);
+    }
+    .nav-item .nav-icon { font-size: 1rem; flex-shrink: 0; }
+    .nav-item .nav-badge {
+      margin-left: auto;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(229,0,18,.2);
+      color: var(--brand);
+      font-size: .7rem;
+      font-weight: 700;
+    }
+
+    /* Sidebar footer */
+    .sidebar-footer {
+      padding: 16px;
+      border-top: 1px solid rgba(255,255,255,.07);
+    }
+    .sidebar-footer .btn-logout {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: rgba(229,0,18,.1);
+      border: 1px solid rgba(229,0,18,.2);
+      color: #ff6565;
+      font-size: .85rem;
+      font-weight: 700;
+      text-decoration: none;
+      width: 100%;
+      transition: all .18s;
+    }
+    .sidebar-footer .btn-logout:hover {
+      background: rgba(229,0,18,.18);
+      color: #ff8080;
+    }
+
+    /* ── MAIN CONTENT ── */
+    .main-content {
+      flex: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Topbar */
+    .topbar {
+      background: rgba(255,255,255,.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px;
+      height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      sticky: top 0;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: 0 1px 12px rgba(15,23,42,.05);
+    }
+    .topbar-title { font-size: 1.2rem; font-weight: 900; letter-spacing: -0.5px; }
+    .topbar-sub { font-size: .78rem; color: var(--muted); font-weight: 500; }
+
+    .topbar-search {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 16px;
+      border-radius: 10px;
+      border: 1.5px solid rgba(15,23,42,.1);
+      background: var(--bg);
+      font-size: .875rem;
+      color: var(--muted);
+      width: 220px;
+    }
+    .topbar-search input {
+      border: none;
+      background: transparent;
+      font-family: 'Inter', sans-serif;
+      font-size: .875rem;
+      color: var(--ink);
+      outline: none;
+      width: 100%;
+    }
+    .topbar-search input::placeholder { color: var(--muted); }
+
+    .topbar-right { display: flex; align-items: center; gap: 10px; }
+    .btn-topbar {
+      padding: 8px 16px;
+      border-radius: 10px;
+      border: 1.5px solid rgba(15,23,42,.1);
+      background: transparent;
+      color: var(--ink);
+      font-family: 'Inter', sans-serif;
+      font-size: .82rem;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-flex; align-items: center; gap: 6px;
+      transition: all .18s;
+      cursor: pointer;
+    }
+    .btn-topbar:hover { background: var(--bg); color: var(--ink); }
+    .btn-topbar-red {
+      background: linear-gradient(135deg, #e50012, #b0000e);
+      border-color: transparent;
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(229,0,18,.3);
+    }
+    .btn-topbar-red:hover { color: #fff; box-shadow: 0 6px 16px rgba(229,0,18,.4); transform: translateY(-1px); }
+
+    /* ── PAGE CONTENT ── */
+    .page-body { padding: 32px; flex: 1; }
+
+    /* ── KPI ── */
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+
+    .kpi-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      padding: 22px;
+      position: relative;
+      overflow: hidden;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .kpi-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+    .kpi-glow {
+      position: absolute;
+      top: -50px; right: -50px;
+      width: 160px; height: 160px;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .kpi-card.kpi-red .kpi-glow   { background: radial-gradient(circle, rgba(229,0,18,.15), transparent 70%); }
+    .kpi-card.kpi-blue .kpi-glow  { background: radial-gradient(circle, rgba(59,130,246,.12), transparent 70%); }
+    .kpi-card.kpi-green .kpi-glow { background: radial-gradient(circle, rgba(16,185,129,.12), transparent 70%); }
+    .kpi-card.kpi-amber .kpi-glow { background: radial-gradient(circle, rgba(245,158,11,.12), transparent 70%); }
+    .kpi-card.kpi-violet .kpi-glow{ background: radial-gradient(circle, rgba(139,92,246,.12), transparent 70%); }
+
+    .kpi-icon {
+      width: 44px; height: 44px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem;
+      margin-bottom: 16px;
+    }
+    .kpi-red .kpi-icon    { background: rgba(229,0,18,.1);  color: var(--brand); }
+    .kpi-blue .kpi-icon   { background: rgba(59,130,246,.1); color: #3b82f6; }
+    .kpi-green .kpi-icon  { background: rgba(16,185,129,.1); color: #10b981; }
+    .kpi-amber .kpi-icon  { background: rgba(245,158,11,.1); color: #f59e0b; }
+    .kpi-violet .kpi-icon { background: rgba(139,92,246,.1); color: #8b5cf6; }
+
+    .kpi-label {
+      font-size: .72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .kpi-value {
+      font-size: 2.2rem;
+      font-weight: 900;
+      letter-spacing: -1.5px;
+      line-height: 1;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+    .kpi-trend {
+      font-size: .75rem;
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    /* ── MODULE GRID ── */
+    .module-link {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      padding: 20px;
+      text-decoration: none;
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      transition: all .2s cubic-bezier(.22,1,.36,1);
+      position: relative;
+      overflow: hidden;
+    }
+    .module-link::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: linear-gradient(180deg, #e50012, #ff6b6b);
+      transform: scaleY(0);
+      transform-origin: bottom;
+      transition: transform .22s;
+    }
+    .module-link:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+      color: var(--ink);
+      border-color: rgba(229,0,18,.15);
+    }
+    .module-link:hover::before { transform: scaleY(1); }
+    .ml-icon {
+      width: 44px; height: 44px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+    .ml-info .ml-name { font-weight: 800; font-size: .92rem; }
+    .ml-info .ml-desc { font-size: .75rem; color: var(--muted); margin-top: 2px; }
+    .ml-arrow { margin-left: auto; color: rgba(15,23,42,.2); font-size: .9rem; transition: transform .18s, color .18s; }
+    .module-link:hover .ml-arrow { transform: translateX(4px); color: var(--brand); }
+
+    /* ── SCHEMA TABLE ── */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .data-table th {
+      padding: 10px 16px;
+      font-size: .7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      background: var(--bg);
+    }
+    .data-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(15,23,42,.04);
+      font-size: .85rem;
+    }
+    .data-table tbody tr:last-child td { border-bottom: none; }
+    .data-table tbody tr:hover td { background: rgba(15,23,42,.02); }
+
+    .tag {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-size: .7rem;
+      font-weight: 700;
+      border: 1px solid rgba(15,23,42,.1);
+      background: rgba(15,23,42,.04);
+    }
+
+    /* ── CARD SIMPLE ── */
+    .card-s {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+    }
+    .card-s-head {
+      padding: 18px 22px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .card-s-head .title { font-weight: 800; font-size: .95rem; }
+    .sub-label { font-size: .8rem; color: var(--muted); }
+
+    /* ── MISC ── */
+    .pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 12px; border-radius: 999px;
+      font-size: .78rem; font-weight: 700;
+      border: 1px solid rgba(15,23,42,.1);
+      background: rgba(15,23,42,.04);
+    }
+    .pill-brand { background: rgba(229,0,18,.1); border-color: rgba(229,0,18,.2); color: var(--brand); }
+
+    @media (max-width: 991px) {
+      .sidebar { display: none; }
+      .topbar { padding: 0 16px; }
+      .page-body { padding: 20px 16px; }
+    }
   </style>
 </head>
 <body>
-<div class="cms-layout">
-  <!-- Sidebar -->
-  <aside class="cms-sidebar p-3">
-    <div class="d-flex align-items-center justify-content-between mb-3">
-      <div class="cms-brand fs-4">Uniqlo<span class="dot">.</span>CMS</div>
-      <span class="cms-pill cms-pill-danger"><i class="bi bi-database"></i> DB UI</span>
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-text">UNIQLO<em>.</em>CMS</div>
+      <div class="logo-badge"><i class="bi bi-database"></i> uniqlo_education</div>
     </div>
 
-    <div class="mb-3">
-      <div class="small text-muted-soft fw-bold mb-2">Modules</div>
-      <nav class="cms-nav">
-        <a class="active" th:href="@{/cms}"><span class="d-flex align-items-center gap-2"><i class="bi bi-grid-1x2"></i>Dashboard</span><i class="bi bi-chevron-right"></i></a>
-        <a th:href="@{/users}"><span class="d-flex align-items-center gap-2"><i class="bi bi-people"></i>Users</span><i class="bi bi-chevron-right"></i></a>
-        <a th:href="@{/cms/categories}"><span class="d-flex align-items-center gap-2"><i class="bi bi-diagram-3"></i>Categories</span><i class="bi bi-chevron-right"></i></a>
-        <a th:href="@{/cms/products}"><span class="d-flex align-items-center gap-2"><i class="bi bi-bag"></i>Products</span><i class="bi bi-chevron-right"></i></a>
-        <a th:href="@{/cms/skus}"><span class="d-flex align-items-center gap-2"><i class="bi bi-upc-scan"></i>SKUs</span><i class="bi bi-chevron-right"></i></a>
-        <a th:href="@{/cms/reviews}"><span class="d-flex align-items-center gap-2"><i class="bi bi-chat-square-quote"></i>Reviews</span><i class="bi bi-chevron-right"></i></a>
-        <a th:href="@{/cms/visit-stats}"><span class="d-flex align-items-center gap-2"><i class="bi bi-graph-up"></i>Visit stats</span><i class="bi bi-chevron-right"></i></a>
-      </nav>
-    </div>
-
-    <div class="cms-card-soft p-3 mt-3">
-      <div class="small text-muted-soft fw-bold mb-2">Database</div>
-      <div class="d-flex align-items-center gap-2">
-        <div class="d-flex align-items-center justify-content-center" style="width:44px;height:44px;border-radius:14px;border:1px solid rgba(229,0,18,.18);background:rgba(229,0,18,.08);color:#b1000d;"><i class="bi bi-server"></i></div>
-        <div>
-          <div class="fw-bold">uniqlo_education</div>
-          <div class="small text-muted-soft">schema UI only</div>
-        </div>
+    <!-- Admin user -->
+    <div class="sidebar-user">
+      <div class="sidebar-avatar">A</div>
+      <div class="sidebar-user-info">
+        <div class="name" th:text="${currentUser?.fullName ?: 'Admin Uniqlo'}">Admin Uniqlo</div>
+        <div class="role">ADMIN</div>
       </div>
     </div>
 
-    <div class="small text-muted-soft mt-3">Sidebar ẩn trên mobile.</div>
+    <!-- Nav -->
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Menu chính</div>
+
+      <a class="nav-item active" th:href="@{/cms}">
+        <i class="bi bi-grid-1x2-fill nav-icon"></i> Dashboard
+      </a>
+      <a class="nav-item" th:href="@{/users}">
+        <i class="bi bi-people-fill nav-icon"></i> Người dùng
+        <span class="nav-badge">8</span>
+      </a>
+
+      <div class="nav-section-label" style="margin-top:16px;">Sản phẩm</div>
+
+      <a class="nav-item" th:href="@{/cms/categories}">
+        <i class="bi bi-diagram-3-fill nav-icon"></i> Danh mục
+      </a>
+      <a class="nav-item" th:href="@{/cms/products}">
+        <i class="bi bi-bag-fill nav-icon"></i> Sản phẩm
+        <span class="nav-badge">15</span>
+      </a>
+      <a class="nav-item" th:href="@{/cms/skus}">
+        <i class="bi bi-upc-scan nav-icon"></i> SKUs
+        <span class="nav-badge">46</span>
+      </a>
+      <a class="nav-item" th:href="@{/cms/reviews}">
+        <i class="bi bi-chat-quote-fill nav-icon"></i> Đánh giá
+      </a>
+
+      <div class="nav-section-label" style="margin-top:16px;">Thống kê</div>
+      <a class="nav-item" th:href="@{/cms/visit-stats}">
+        <i class="bi bi-graph-up-arrow nav-icon"></i> Visit Stats
+      </a>
+
+      <div class="nav-section-label" style="margin-top:16px;">Điều hướng</div>
+      <a class="nav-item" th:href="@{/}">
+        <i class="bi bi-house-fill nav-icon"></i> Trang chủ
+      </a>
+      <a class="nav-item" th:href="@{/login}">
+        <i class="bi bi-box-arrow-in-right nav-icon"></i> Đăng nhập
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a class="btn-logout" th:href="@{/logout}">
+        <i class="bi bi-box-arrow-right"></i> Đăng xuất
+      </a>
+    </div>
   </aside>
 
-  <!-- Content -->
-  <main class="cms-content">
+  <!-- ── MAIN ── -->
+  <div class="main-content">
+
     <!-- Topbar -->
-    <div class="cms-topbar">
-      <div class="container cms-shell py-3 d-flex flex-wrap align-items-center justify-content-between gap-2">
-        <div>
-          <div class="h4 mb-0" style="font-weight:1000; letter-spacing:-0.7px;">Dashboard</div>
-          <div class="small text-muted-soft">UI theo folder <span class="fw-bold">resources/db</span></div>
-        </div>
-
-        <div class="d-flex align-items-center gap-2">
-          <a class="btn btn-ghost btn-sm" th:href="@{/}"><i class="bi bi-house me-1"></i>Home</a>
-          <a class="btn btn-ghost btn-sm" th:href="@{/login}"><i class="bi bi-box-arrow-in-right me-1"></i>Login</a>
-          <a class="btn btn-outline-danger btn-sm" style="border-radius:14px; font-weight:900;" th:href="@{/logout}"><i class="bi bi-box-arrow-right me-1"></i>Logout</a>
-          <div class="input-group" style="width: 280px; max-width: 60vw;">
-            <span class="input-group-text bg-white" style="border-radius:12px 0 0 12px; border:1px solid rgba(17,24,39,.11)"><i class="bi bi-search"></i></span>
-            <input id="search" class="form-control cms-input" placeholder="Search modules..." aria-label="Search" />
-          </div>
-          <a class="btn btn-brand btn-sm text-white" th:href="@{/users}"><i class="bi bi-people me-1"></i>Users</a>
-        </div>
+    <header class="topbar">
+      <div>
+        <div class="topbar-title">Dashboard</div>
+        <div class="topbar-sub">Xin chào · Hệ thống Uniqlo CMS</div>
       </div>
-    </div>
 
-    <div class="container cms-shell my-4">
+      <div class="topbar-right">
+        <div class="topbar-search">
+          <i class="bi bi-search" style="font-size:.85rem;"></i>
+          <input type="text" placeholder="Tìm kiếm module..."/>
+        </div>
+        <a class="btn-topbar" th:href="@{/}"><i class="bi bi-house"></i> Home</a>
+        <a class="btn-topbar btn-topbar-red" th:href="@{/cms/products}">
+          <i class="bi bi-plus-lg"></i> Thêm sản phẩm
+        </a>
+      </div>
+    </header>
+
+    <!-- Page body -->
+    <div class="page-body">
+
       <!-- KPI row -->
-      <div class="row g-3">
-        <div class="col-12 col-md-6 col-lg-3">
-          <div class="kpi p-3"><div class="inner">
-            <div class="d-flex align-items-center justify-content-between">
-              <div><div class="label">Users</div><div class="value">8</div></div>
-              <span class="cms-pill"><i class="bi bi-people"></i></span>
-            </div>
-            <div class="small text-muted-soft">table: <span class="fw-bold">users</span></div>
-          </div></div>
+      <div class="kpi-grid mb-4">
+        <div class="kpi-card kpi-red">
+          <div class="kpi-glow"></div>
+          <div class="kpi-icon"><i class="bi bi-bag-heart-fill"></i></div>
+          <div class="kpi-label">Sản phẩm</div>
+          <div class="kpi-value" th:text="${productCount ?: 15}">15</div>
+          <div class="kpi-trend"><i class="bi bi-table me-1"></i>products</div>
         </div>
-
-        <div class="col-12 col-md-6 col-lg-3">
-          <div class="kpi p-3"><div class="inner">
-            <div class="d-flex align-items-center justify-content-between">
-              <div><div class="label">Products</div><div class="value">15</div></div>
-              <span class="cms-pill"><i class="bi bi-bag"></i></span>
-            </div>
-            <div class="small text-muted-soft">table: <span class="fw-bold">products</span></div>
-          </div></div>
+        <div class="kpi-card kpi-blue">
+          <div class="kpi-glow"></div>
+          <div class="kpi-icon"><i class="bi bi-upc-scan"></i></div>
+          <div class="kpi-label">SKUs</div>
+          <div class="kpi-value" th:text="${skuCount ?: 46}">46</div>
+          <div class="kpi-trend"><i class="bi bi-table me-1"></i>product_skus</div>
         </div>
-
-        <div class="col-12 col-md-6 col-lg-3">
-          <div class="kpi p-3"><div class="inner">
-            <div class="d-flex align-items-center justify-content-between">
-              <div><div class="label">SKUs</div><div class="value">46</div></div>
-              <span class="cms-pill"><i class="bi bi-upc-scan"></i></span>
-            </div>
-            <div class="small text-muted-soft">table: <span class="fw-bold">product_skus</span></div>
-          </div></div>
+        <div class="kpi-card kpi-green">
+          <div class="kpi-glow"></div>
+          <div class="kpi-icon"><i class="bi bi-people-fill"></i></div>
+          <div class="kpi-label">Người dùng</div>
+          <div class="kpi-value" th:text="${userCount ?: 8}">8</div>
+          <div class="kpi-trend"><i class="bi bi-table me-1"></i>users</div>
         </div>
-
-        <div class="col-12 col-md-6 col-lg-3">
-          <div class="kpi p-3"><div class="inner">
-            <div class="d-flex align-items-center justify-content-between">
-              <div><div class="label">Visits</div><div class="value">25</div></div>
-              <span class="cms-pill"><i class="bi bi-graph-up"></i></span>
-            </div>
-            <div class="small text-muted-soft">table: <span class="fw-bold">visit_stats</span></div>
-          </div></div>
+        <div class="kpi-card kpi-amber">
+          <div class="kpi-glow"></div>
+          <div class="kpi-icon"><i class="bi bi-diagram-3-fill"></i></div>
+          <div class="kpi-label">Danh mục</div>
+          <div class="kpi-value">12</div>
+          <div class="kpi-trend"><i class="bi bi-table me-1"></i>categories</div>
+        </div>
+        <div class="kpi-card kpi-violet">
+          <div class="kpi-glow"></div>
+          <div class="kpi-icon"><i class="bi bi-graph-up-arrow"></i></div>
+          <div class="kpi-label">Lượt truy cập</div>
+          <div class="kpi-value" th:text="${visitCount ?: 25}">25</div>
+          <div class="kpi-trend"><i class="bi bi-table me-1"></i>visit_stats</div>
         </div>
       </div>
 
-      <!-- Quick modules -->
-      <div class="row g-3 mt-1">
+      <!-- Content Grid -->
+      <div class="row g-4">
+
+        <!-- Quick modules left -->
         <div class="col-12 col-lg-7">
-          <div class="cms-card p-4">
-            <div class="d-flex align-items-center justify-content-between">
-              <div>
-                <div class="h5 mb-1" style="font-weight:1000; letter-spacing:-0.5px;">Quick modules</div>
-                <div class="small text-muted-soft">Đi tới trang quản lý (UI fake data)</div>
-              </div>
-              <span class="cms-pill"><i class="bi bi-lightning-charge"></i> UI only</span>
+          <div class="card-s" style="height:100%;">
+            <div class="card-s-head">
+              <span class="title"><i class="bi bi-lightning-charge-fill me-2" style="color:var(--brand);"></i>Điều hướng nhanh</span>
+              <span class="pill pill-brand"><i class="bi bi-grid"></i> 6 modules</span>
             </div>
-
-            <div class="row g-2 mt-2">
-              <div class="col-12 col-md-6">
-                <a class="cms-card-soft p-3 d-flex align-items-center justify-content-between" style="text-decoration:none; color:inherit;" th:href="@{/users}">
-                  <div class="d-flex align-items-center gap-2"><i class="bi bi-people"></i><span class="fw-bold">Users</span></div>
-                  <i class="bi bi-chevron-right"></i>
-                </a>
-              </div>
-              <div class="col-12 col-md-6">
-                <a class="cms-card-soft p-3 d-flex align-items-center justify-content-between" style="text-decoration:none; color:inherit;" th:href="@{/cms/categories}">
-                  <div class="d-flex align-items-center gap-2"><i class="bi bi-diagram-3"></i><span class="fw-bold">Categories</span></div>
-                  <i class="bi bi-chevron-right"></i>
-                </a>
-              </div>
-              <div class="col-12 col-md-6">
-                <a class="cms-card-soft p-3 d-flex align-items-center justify-content-between" style="text-decoration:none; color:inherit;" th:href="@{/cms/products}">
-                  <div class="d-flex align-items-center gap-2"><i class="bi bi-bag"></i><span class="fw-bold">Products</span></div>
-                  <i class="bi bi-chevron-right"></i>
-                </a>
-              </div>
-              <div class="col-12 col-md-6">
-                <a class="cms-card-soft p-3 d-flex align-items-center justify-content-between" style="text-decoration:none; color:inherit;" th:href="@{/cms/skus}">
-                  <div class="d-flex align-items-center gap-2"><i class="bi bi-upc-scan"></i><span class="fw-bold">SKUs</span></div>
-                  <i class="bi bi-chevron-right"></i>
-                </a>
-              </div>
-              <div class="col-12">
-                <a class="cms-card-soft p-3 d-flex align-items-center justify-content-between" style="text-decoration:none; color:inherit;" th:href="@{/cms/reviews}">
-                  <div class="d-flex align-items-center gap-2"><i class="bi bi-chat-square-quote"></i><span class="fw-bold">Reviews</span></div>
-                  <i class="bi bi-chevron-right"></i>
-                </a>
+            <div class="p-3">
+              <div class="row g-2">
+                <div class="col-12 col-md-6">
+                  <a class="module-link" th:href="@{/users}">
+                    <div class="ml-icon" style="background:rgba(59,130,246,.1);color:#3b82f6;"><i class="bi bi-people-fill"></i></div>
+                    <div class="ml-info">
+                      <div class="ml-name">Người dùng</div>
+                      <div class="ml-desc">ADMIN · USER · role · remember_token</div>
+                    </div>
+                    <i class="bi bi-chevron-right ml-arrow"></i>
+                  </a>
+                </div>
+                <div class="col-12 col-md-6">
+                  <a class="module-link" th:href="@{/cms/categories}">
+                    <div class="ml-icon" style="background:rgba(16,185,129,.1);color:#10b981;"><i class="bi bi-diagram-3-fill"></i></div>
+                    <div class="ml-info">
+                      <div class="ml-name">Danh mục</div>
+                      <div class="ml-desc">Cây danh mục theo parent_id</div>
+                    </div>
+                    <i class="bi bi-chevron-right ml-arrow"></i>
+                  </a>
+                </div>
+                <div class="col-12 col-md-6">
+                  <a class="module-link" th:href="@{/cms/products}">
+                    <div class="ml-icon" style="background:rgba(229,0,18,.1);color:var(--brand);"><i class="bi bi-bag-fill"></i></div>
+                    <div class="ml-info">
+                      <div class="ml-name">Sản phẩm</div>
+                      <div class="ml-desc">name · avatar · description</div>
+                    </div>
+                    <i class="bi bi-chevron-right ml-arrow"></i>
+                  </a>
+                </div>
+                <div class="col-12 col-md-6">
+                  <a class="module-link" th:href="@{/cms/skus}">
+                    <div class="ml-icon" style="background:rgba(139,92,246,.1);color:#8b5cf6;"><i class="bi bi-upc-scan"></i></div>
+                    <div class="ml-info">
+                      <div class="ml-name">SKUs</div>
+                      <div class="ml-desc">color · size · price · stock</div>
+                    </div>
+                    <i class="bi bi-chevron-right ml-arrow"></i>
+                  </a>
+                </div>
+                <div class="col-12 col-md-6">
+                  <a class="module-link" th:href="@{/cms/reviews}">
+                    <div class="ml-icon" style="background:rgba(245,158,11,.1);color:#f59e0b;"><i class="bi bi-chat-quote-fill"></i></div>
+                    <div class="ml-info">
+                      <div class="ml-name">Đánh giá</div>
+                      <div class="ml-desc">rating 1‑5 · height · weight · fit</div>
+                    </div>
+                    <i class="bi bi-chevron-right ml-arrow"></i>
+                  </a>
+                </div>
+                <div class="col-12 col-md-6">
+                  <a class="module-link" th:href="@{/cms/visit-stats}">
+                    <div class="ml-icon" style="background:rgba(20,184,166,.1);color:#14b8a6;"><i class="bi bi-graph-up-arrow"></i></div>
+                    <div class="ml-info">
+                      <div class="ml-name">Visit Stats</div>
+                      <div class="ml-desc">visit_count · last_updated</div>
+                    </div>
+                    <i class="bi bi-chevron-right ml-arrow"></i>
+                  </a>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
+        <!-- Schema right -->
         <div class="col-12 col-lg-5">
-          <div class="cms-card p-4">
-            <div class="h5 mb-1" style="font-weight:1000; letter-spacing:-0.5px;">Schema overview</div>
-            <div class="small text-muted-soft mb-3">Các bảng chính (UI mô tả)</div>
-
-            <ul class="list-group list-group-flush">
-              <li class="list-group-item d-flex justify-content-between align-items-center"><span class="fw-semibold"><i class="bi bi-table me-2"></i>users</span><span class="badge text-bg-light border">role, remember_token</span></li>
-              <li class="list-group-item d-flex justify-content-between align-items-center"><span class="fw-semibold"><i class="bi bi-table me-2"></i>categories</span><span class="badge text-bg-light border">parent_id</span></li>
-              <li class="list-group-item d-flex justify-content-between align-items-center"><span class="fw-semibold"><i class="bi bi-table me-2"></i>products</span><span class="badge text-bg-light border">category_id</span></li>
-              <li class="list-group-item d-flex justify-content-between align-items-center"><span class="fw-semibold"><i class="bi bi-table me-2"></i>product_images</span><span class="badge text-bg-light border">is_main, sort_order</span></li>
-              <li class="list-group-item d-flex justify-content-between align-items-center"><span class="fw-semibold"><i class="bi bi-table me-2"></i>product_skus</span><span class="badge text-bg-light border">price, stock</span></li>
-              <li class="list-group-item d-flex justify-content-between align-items-center"><span class="fw-semibold"><i class="bi bi-table me-2"></i>reviews</span><span class="badge text-bg-light border">rating 1..5</span></li>
-              <li class="list-group-item d-flex justify-content-between align-items-center"><span class="fw-semibold"><i class="bi bi-table me-2"></i>visit_stats</span><span class="badge text-bg-light border">counter</span></li>
-            </ul>
-
-            <div class="small text-muted-soft mt-3">Số liệu là mock, không gọi DB.</div>
+          <div class="card-s" style="height:100%;">
+            <div class="card-s-head">
+              <span class="title"><i class="bi bi-database-fill me-2" style="color:var(--brand);"></i>Schema Overview</span>
+              <span class="pill">MySQL</span>
+            </div>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Bảng</th>
+                  <th>Cột nổi bật</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td><strong>users</strong></td><td><span class="tag">role</span> <span class="tag">remember_token</span> <span class="tag">avatar</span></td></tr>
+                <tr><td><strong>categories</strong></td><td><span class="tag">parent_id</span> <span class="tag">created_by</span></td></tr>
+                <tr><td><strong>products</strong></td><td><span class="tag">category_id</span> <span class="tag">avatar</span></td></tr>
+                <tr><td><strong>product_skus</strong></td><td><span class="tag">original_price</span> <span class="tag">sale_price</span> <span class="tag">stock</span></td></tr>
+                <tr><td><strong>reviews</strong></td><td><span class="tag">rating 1‑5</span> <span class="tag">fit_status</span></td></tr>
+                <tr><td><strong>colors</strong></td><td><span class="tag">color_code</span> <span class="tag">hex_code</span></td></tr>
+                <tr><td><strong>sizes</strong></td><td><span class="tag">size_code</span></td></tr>
+                <tr><td><strong>visit_stats</strong></td><td><span class="tag">visit_count</span></td></tr>
+              </tbody>
+            </table>
           </div>
         </div>
+
       </div>
 
-      <div class="mt-4 small text-muted-soft">© Uniqlo CMS (education) — UI only.</div>
-    </div>
-  </main>
-</div>
+      <!-- Footer note -->
+      <div style="margin-top:32px; font-size:.8rem; color:var(--muted); text-align:center;">
+        © 2026 Uniqlo CMS — Dự án giáo dục Java Spring Boot
+      </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    </div><!-- /page-body -->
+  </div><!-- /main-content -->
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
