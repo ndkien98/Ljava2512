@@ -5,9 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Uniqlo CMS — Tạo / Sửa người dùng</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <!-- keep Inter link if you want, but enforce Montserrat via global css -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
+  <link rel="stylesheet" th:href="@{/cms/fonts.css}"/>
   <style>
     :root{--brand:#e50012;--sidebar-bg:#0b1220;--sidebar-hover:rgba(255,255,255,.07);--sidebar-active:rgba(229,0,18,.15);--sidebar-active-border:#e50012;--sidebar-text:rgba(255,255,255,.65);--sidebar-muted:rgba(255,255,255,.35);--ink:#0f172a;--muted:#64748b;--bg:#f1f5f9;--card:#ffffff;--border:rgba(15,23,42,.07);--shadow-sm:0 4px 12px rgba(15,23,42,.06);--shadow-md:0 8px 28px rgba(15,23,42,.10);--radius-lg:14px;--radius-xl:20px;}
     *,*::before,*::after{box-sizing:border-box;}html,body{height:100%;margin:0;padding:0;}
@@ -115,6 +117,11 @@
     </header>
 
     <div class="page-body">
+
+      <!-- Alerts -->
+      <div class="alert alert-success" th:if="${successMessage}" th:text="${successMessage}"></div>
+      <div class="alert alert-danger" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+
       <div class="form-card">
 
         <!-- Preview header -->
@@ -147,45 +154,34 @@
             </div>
             <div class="row g-3">
               <div class="col-12 col-md-6">
-                <label class="form-label-s" for="fullName">Họ tên *</label>
+                <label class="form-label-s" for="fullName">Họ tên</label>
                 <div class="input-f-icon">
                   <i class="bi bi-person icon"></i>
-                  <input class="input-f" type="text" id="fullName" name="fullName"
-                         th:value="${user?.fullName}" placeholder="Ví dụ: Nguyễn Văn An"/>
+                  <input class="input-f" type="text" id="fullName" th:field="*{fullName}"
+                         placeholder="Ví dụ: Nguyễn Văn An"/>
                 </div>
-                <p class="error-msg" style="display:block;" id="errFullName" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}">Vui lòng nhập họ tên.</p>
               </div>
               <div class="col-12 col-md-6">
-                <label class="form-label-s" for="email">Email *</label>
+                <label class="form-label-s" for="email">Email</label>
                 <div class="input-f-icon">
                   <i class="bi bi-envelope icon"></i>
-                  <input class="input-f" type="email" id="email" name="email"
-                         th:value="${user?.email}" placeholder="name@example.com"/>
+                  <input class="input-f" type="email" id="email" th:field="*{email}"
+                         placeholder="name@example.com"/>
                 </div>
                 <p class="input-hint">Email phải là duy nhất trong hệ thống.</p>
-                <p class="error-msg" style="display:block;" id="errEmail" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email không hợp lệ hoặc đã tồn tại.</p>
               </div>
-              <div class="col-12 col-md-4">
+              <div class="col-12 col-md-6">
                 <label class="form-label-s" for="gender">Giới tính</label>
-                <select class="sel-f" id="gender" name="gender">
+                <select class="sel-f" id="gender" th:field="*{gender}">
                   <option value="">— Chọn —</option>
-                  <option value="Male" th:selected="${user?.gender == 'Male'}">Male</option>
-                  <option value="Female" th:selected="${user?.gender == 'Female'}">Female</option>
-                  <option value="Decline to state" th:selected="${user?.gender == 'Decline to state'}">Decline to state</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Decline to state">Decline to state</option>
                 </select>
               </div>
-              <div class="col-12 col-md-4">
+              <div class="col-12 col-md-6">
                 <label class="form-label-s" for="birthday">Ngày sinh</label>
-                <input class="input-f" type="date" id="birthday" name="birthday"
-                       th:value="${user?.birthday != null ? #temporals.format(user.birthday, 'yyyy-MM-dd') : ''}"/>
-              </div>
-              <div class="col-12 col-md-4">
-                <label class="form-label-s" for="role">Role *</label>
-                <select class="sel-f" id="role" name="role">
-                  <option value="USER" th:selected="${user?.role == null or user?.role == 'USER'}">USER</option>
-                  <option value="ADMIN" th:selected="${user?.role == 'ADMIN'}">ADMIN</option>
-                </select>
-                <p class="input-hint">ADMIN có đầy đủ quyền quản trị.</p>
+                <input class="input-f" type="date" id="birthday" th:field="*{birthday}"/>
               </div>
             </div>
           </div>
@@ -211,15 +207,33 @@
                 <label class="form-label-s" for="avatarInput">URL ảnh đại diện</label>
                 <div class="input-f-icon">
                   <i class="bi bi-link-45deg icon"></i>
-                  <input class="input-f" id="avatarInput" type="url" name="avatar"
-                         th:value="${user?.avatar}" placeholder="https://example.com/avatar.jpg"/>
+                  <input class="input-f" id="avatarInput" type="url" th:field="*{avatar}"
+                         placeholder="https://example.com/avatar.jpg"/>
                 </div>
-                <p class="input-hint">Dùng ảnh vuông (1:1) để hiển thị đẹp nhất. Lưu vào cột <strong>avatar</strong>.</p>
+                <p class="input-hint">Dùng ảnh vuông (1:1) để hiển thị đẹp nhất.</p>
               </div>
               <div class="col-12 col-md-3 d-flex align-items-end">
                 <button type="button" class="btn-t" style="width:100%;justify-content:center;" id="previewBtn">
                   <i class="bi bi-magic"></i> Xem trước
                 </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section: Quyền (Role) -->
+          <div class="form-section">
+            <div class="section-title">
+              <div class="section-icon" style="background:rgba(15,23,42,.06);color:var(--ink);"><i class="bi bi-shield-check"></i></div>
+              Quyền (Role)
+            </div>
+            <div class="row g-3">
+              <div class="col-12 col-md-6">
+                <label class="form-label-s" for="role">Role</label>
+                <select class="sel-f" id="role" th:field="*{role}">
+                  <option value="USER">USER</option>
+                  <option value="ADMIN">ADMIN</option>
+                </select>
+                <p class="input-hint">(UI) Dùng để hiển thị ở danh sách. Mapping qua DTO.</p>
               </div>
             </div>
           </div>
@@ -233,15 +247,14 @@
             </div>
             <div class="row g-3">
               <div class="col-12 col-md-6">
-                <label class="form-label-s" for="password">Mật khẩu *</label>
+                <label class="form-label-s" for="password">Mật khẩu</label>
                 <div class="pwd-wrap">
                   <input class="input-f" type="password" id="password" name="password" placeholder="••••••••"/>
                   <button type="button" class="toggle-eye" id="togglePwd1" aria-label="Hiện mật khẩu">
                     <i class="bi bi-eye" id="eyeIcon1"></i>
                   </button>
                 </div>
-                <p class="input-hint">Sẽ được hash thành <strong>password_hash</strong> trong DB. Tối thiểu 6 ký tự.</p>
-                <p class="error-msg" style="display:block;" id="errPassword" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Mật khẩu phải có ít nhất 6 ký tự.</p>
+                <p class="input-hint">(Demo) sẽ lưu vào cột <strong>password_hash</strong>.</p>
               </div>
               <div class="col-12 col-md-6">
                 <label class="form-label-s" for="confirmPassword">Nhập lại mật khẩu</label>
@@ -251,7 +264,6 @@
                     <i class="bi bi-eye" id="eyeIcon2"></i>
                   </button>
                 </div>
-                <p class="error-msg" style="display:block;" id="errConfirm" th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}">Mật khẩu không khớp.</p>
               </div>
             </div>
           </div>
@@ -260,7 +272,7 @@
           <div class="form-footer">
             <div class="form-footer-note">
               <i class="bi bi-info-circle me-1"></i>
-              Trường có dấu * là bắt buộc. Server sẽ validate và hash mật khẩu.
+              Trường có dấu * là bắt buộc (UI).
             </div>
             <div style="display:flex;gap:10px;">
               <a class="btn-t" th:href="@{/users}"><i class="bi bi-x-circle"></i> Huỷ</a>
@@ -277,7 +289,7 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
+  <script th:inline="none">
     // ── Avatar preview ──
     function setAvatarPreview(url) {
       const ids = [['avatarPreviewImg','avatarInitial'], ['avatarPreviewImg2','avatarInitial2']];
