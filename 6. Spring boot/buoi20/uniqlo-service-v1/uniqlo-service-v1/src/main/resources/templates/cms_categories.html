@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8"/>
@@ -23,7 +23,7 @@
     .nav-section-label{color:var(--sidebar-muted);font-size:.65rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:0 12px;margin-bottom:8px;margin-top:8px;}
     .nav-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;color:var(--sidebar-text);text-decoration:none;font-size:.875rem;font-weight:600;margin-bottom:2px;transition:all .18s;border-left:3px solid transparent;}
     .nav-item:hover{background:var(--sidebar-hover);color:#fff;}.nav-item.active{background:var(--sidebar-active);color:#fff;border-left-color:var(--sidebar-active-border);}
-    .nav-item .nav-icon{font-size:1rem;flex-shrink:0;}.nav-item .nav-badge{margin-left:auto;padding:2px 8px;border-radius:999px;background:rgba(229,0,18,.2);color:var(--brand);font-size:.7rem;font-weight:700;}
+    .nav-item .nav-icon{font-size:1rem;flex-shrink:0;}
     .sidebar-footer{padding:16px;border-top:1px solid rgba(255,255,255,.07);}.btn-logout{display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:10px;background:rgba(229,0,18,.1);border:1px solid rgba(229,0,18,.2);color:#ff6565;font-size:.85rem;font-weight:700;text-decoration:none;width:100%;transition:all .18s;}
     .btn-logout:hover{background:rgba(229,0,18,.18);}
     .main-content{flex:1;min-height:100vh;display:flex;flex-direction:column;overflow-y:auto;}
@@ -60,14 +60,25 @@
     .btn-act-del{border-color:rgba(229,0,18,.2);background:rgba(229,0,18,.06);color:var(--brand);}.btn-act-del:hover{background:rgba(229,0,18,.12);}
     .level-indent{display:inline-flex;align-items:center;gap:8px;}
     .level-dot{width:8px;height:8px;border-radius:50%;}
-    .level-0 .level-dot{background:#10b981;}.level-1 .level-dot{background:#3b82f6;}
-    .pagination-wrap{padding:14px 22px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:.82rem;color:var(--muted);}
-    .pag{display:flex;gap:4px;}.pag-btn{width:34px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:9px;border:1.5px solid rgba(15,23,42,.1);background:transparent;color:var(--ink);font-size:.82rem;font-weight:600;cursor:pointer;text-decoration:none;transition:all .15s;}
-    .pag-btn:hover{background:var(--bg);}.pag-btn.active{background:var(--brand);border-color:var(--brand);color:#fff;}.pag-btn.disabled{opacity:.4;pointer-events:none;}
+    .level-0 .level-dot{background:#10b981;}
+    .level-1 .level-dot{background:#3b82f6;}
+    .level-2 .level-dot{background:#f59e0b;}
+    .level-3 .level-dot{background:#8b5cf6;}
     @media(max-width:991px){.sidebar{display:none;}.topbar{padding:0 16px;}.page-body{padding:20px 16px;}}
   </style>
 </head>
 <body>
+
+  <!-- Flash Messages -->
+  <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show fixed-top m-3" role="alert" style="z-index: 1050; max-width: 400px; margin-left: auto !important;">
+    <i class="bi bi-check-circle-fill me-2"></i> <span th:text="${successMessage}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show fixed-top m-3" role="alert" style="z-index: 1050; max-width: 400px; margin-left: auto !important;">
+    <i class="bi bi-exclamation-triangle-fill me-2"></i> <span th:text="${errorMessage}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+
   <aside class="sidebar">
     <div class="sidebar-logo">
       <div class="logo-text">UNIQLO<em>.</em>CMS</div>
@@ -80,11 +91,11 @@
     <nav class="sidebar-nav">
       <div class="nav-section-label">Menu chính</div>
       <a class="nav-item" th:href="@{/cms}"><i class="bi bi-grid-1x2-fill nav-icon"></i> Dashboard</a>
-      <a class="nav-item" th:href="@{/users}"><i class="bi bi-people-fill nav-icon"></i> Người dùng <span class="nav-badge">8</span></a>
+      <a class="nav-item" th:href="@{/users}"><i class="bi bi-people-fill nav-icon"></i> Người dùng</a>
       <div class="nav-section-label" style="margin-top:16px;">Sản phẩm</div>
       <a class="nav-item active" th:href="@{/cms/categories}"><i class="bi bi-diagram-3-fill nav-icon"></i> Danh mục</a>
-      <a class="nav-item" th:href="@{/cms/products}"><i class="bi bi-bag-fill nav-icon"></i> Sản phẩm <span class="nav-badge">15</span></a>
-      <a class="nav-item" th:href="@{/cms/skus}"><i class="bi bi-upc-scan nav-icon"></i> SKUs <span class="nav-badge">46</span></a>
+      <a class="nav-item" th:href="@{/cms/products}"><i class="bi bi-bag-fill nav-icon"></i> Sản phẩm</a>
+      <a class="nav-item" th:href="@{/cms/skus}"><i class="bi bi-upc-scan nav-icon"></i> SKUs</a>
       <a class="nav-item" th:href="@{/cms/reviews}"><i class="bi bi-chat-quote-fill nav-icon"></i> Đánh giá</a>
       <div class="nav-section-label" style="margin-top:16px;">Thống kê</div>
       <a class="nav-item" th:href="@{/cms/visit-stats}"><i class="bi bi-graph-up-arrow nav-icon"></i> Visit Stats</a>
@@ -100,11 +111,13 @@
     <header class="topbar">
       <div>
         <div class="topbar-title">Danh mục sản phẩm</div>
-        <div class="topbar-sub">Quản lý <strong>categories</strong> · cây danh mục theo <code>parent_id</code></div>
+        <div class="topbar-sub">Quản lý <strong>categories</strong> · hiển thị dạng cây phân cấp (Tree View)</div>
       </div>
       <div class="topbar-right">
         <a class="btn-topbar" th:href="@{/cms}"><i class="bi bi-grid-1x2"></i> Dashboard</a>
-        <a class="btn-topbar btn-topbar-red" href="#"><i class="bi bi-plus-lg"></i> Thêm danh mục</a>
+        <button type="button" class="btn-topbar btn-topbar-red" data-bs-toggle="modal" data-bs-target="#categoryModal" onclick="openCreateModal()">
+          <i class="bi bi-plus-lg"></i> Thêm danh mục
+        </button>
       </div>
     </header>
 
@@ -113,30 +126,34 @@
         <div class="d-flex align-items-start justify-content-between flex-wrap gap-3 mb-4">
           <div>
             <div class="filter-title">Bộ lọc danh mục</div>
-            <div class="filter-sub">Hiển thị theo cây danh mục (parent_id)</div>
+            <div class="filter-sub">Hiển thị theo cây danh mục từ Root đến Child (Tìm kiếm đệ quy)</div>
           </div>
-          <span class="pill"><i class="bi bi-diagram-3"></i> 12 danh mục</span>
+          <span class="pill"><i class="bi bi-diagram-3"></i> <span th:text="${categoryCount} + ' danh mục'"></span></span>
         </div>
-        <form class="row g-3">
+        <form class="row g-3" th:action="@{/cms/categories}" method="get">
           <div class="col-12 col-lg-6">
             <label class="form-label-s">Tìm kiếm</label>
             <div class="input-group-icon">
               <span class="ig-addon"><i class="bi bi-search"></i></span>
-              <input type="text" class="input-field ig-field" placeholder="Tên danh mục..."/>
+              <input type="text" class="input-field ig-field" name="keyword" th:value="${keyword}" placeholder="Tên danh mục..."/>
             </div>
           </div>
           <div class="col-12 col-lg-3">
             <label class="form-label-s">Danh mục cha</label>
-            <select class="form-select-s">
-              <option selected>Tất cả</option>
-              <option>Nam (id=1)</option>
-              <option>Nữ (id=2)</option>
-              <option>Trẻ em (id=3)</option>
+            <select class="form-select-s" name="parentId">
+              <option value="">Tất cả</option>
+              <th:block th:fragment="selectOptionFragment(nodes, selectedId, level)">
+                <th:block th:each="node : ${nodes}">
+                  <option th:value="${node.id}" th:selected="${node.id == selectedId}" th:text="${#strings.repeat('- ', level) + node.name}"></option>
+                  <th:block th:unless="${#lists.isEmpty(node.children)}" th:include="this :: selectOptionFragment(${node.children}, ${selectedId}, ${level + 1})"></th:block>
+                </th:block>
+              </th:block>
+              <th:block th:include="this :: selectOptionFragment(${allCategoriesTree}, ${parentId}, 0)"></th:block>
             </select>
           </div>
           <div class="col-12 col-lg-3 d-flex align-items-end">
-            <button type="button" class="btn-topbar" style="width:100%;justify-content:center;">
-              <i class="bi bi-funnel"></i> Lọc
+            <button type="submit" class="btn-topbar" style="width:100%;justify-content:center;">
+              <i class="bi bi-funnel"></i> Lọc Tree
             </button>
           </div>
         </form>
@@ -144,8 +161,8 @@
 
       <div class="table-card">
         <div class="table-card-head">
-          <span class="title"><i class="bi bi-diagram-3-fill me-2" style="color:#10b981;"></i>Danh sách danh mục</span>
-          <span style="font-size:.78rem;color:var(--muted);">Cây phân cấp Nam / Nữ / Trẻ em</span>
+          <span class="title"><i class="bi bi-diagram-3-fill me-2" style="color:#10b981;"></i>Cây danh mục</span>
+          <span style="font-size:.78rem;color:var(--muted);">Tất cả dữ liệu</span>
         </div>
         <div class="table-responsive">
           <table class="data-table">
@@ -154,85 +171,174 @@
                 <th style="width:80px;">ID</th>
                 <th>Tên danh mục</th>
                 <th>Danh mục cha</th>
-                <th style="width:120px;">Ngày tạo</th>
-                <th>Người tạo</th>
-                <th class="text-end" style="width:160px;">Thao tác</th>
+                <th style="width:150px;">Ngày tạo</th>
+                <th class="text-end" style="width:180px;">Thao tác</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td><span class="pill pill-root">#1</span></td>
-                <td><div class="level-indent level-0"><div class="level-dot"></div><strong>Nam</strong></div></td>
-                <td><span style="color:var(--muted); font-style:italic; font-size:.82rem;">(gốc)</span></td>
-                <td>22/03/2026</td>
-                <td><span class="pill"><i class="bi bi-person"></i> admin (id=1)</span></td>
-                <td><div class="action-group"><a class="btn-act btn-act-edit" href="#"><i class="bi bi-pencil-square"></i> Sửa</a><button class="btn-act btn-act-del"><i class="bi bi-trash3"></i> Xoá</button></div></td>
+              <!-- Empty state -->
+              <tr th:if="${#lists.isEmpty(categoryTree)}">
+                <td colspan="5" class="text-center py-4 text-muted">Không tìm thấy danh mục nào.</td>
               </tr>
-              <tr>
-                <td><span class="pill pill-root">#2</span></td>
-                <td><div class="level-indent level-0"><div class="level-dot"></div><strong>Nữ</strong></div></td>
-                <td><span style="color:var(--muted); font-style:italic; font-size:.82rem;">(gốc)</span></td>
-                <td>22/03/2026</td>
-                <td><span class="pill"><i class="bi bi-person"></i> admin (id=1)</span></td>
-                <td><div class="action-group"><a class="btn-act btn-act-edit" href="#"><i class="bi bi-pencil-square"></i> Sửa</a><button class="btn-act btn-act-del"><i class="bi bi-trash3"></i> Xoá</button></div></td>
-              </tr>
-              <tr>
-                <td><span class="pill pill-root">#3</span></td>
-                <td><div class="level-indent level-0"><div class="level-dot"></div><strong>Trẻ em</strong></div></td>
-                <td><span style="color:var(--muted); font-style:italic; font-size:.82rem;">(gốc)</span></td>
-                <td>22/03/2026</td>
-                <td><span class="pill"><i class="bi bi-person"></i> admin (id=1)</span></td>
-                <td><div class="action-group"><a class="btn-act btn-act-edit" href="#"><i class="bi bi-pencil-square"></i> Sửa</a><button class="btn-act btn-act-del"><i class="bi bi-trash3"></i> Xoá</button></div></td>
-              </tr>
-              <tr style="background:rgba(59,130,246,.02);">
-                <td><span class="pill pill-child">#11</span></td>
-                <td><div class="level-indent level-1" style="padding-left:20px;"><div class="level-dot"></div>Áo thun</div></td>
-                <td><span class="pill pill-child"><i class="bi bi-diagram-2"></i> Nam (#1)</span></td>
-                <td>23/03/2026</td>
-                <td><span class="pill"><i class="bi bi-person"></i> admin (id=1)</span></td>
-                <td><div class="action-group"><a class="btn-act btn-act-edit" href="#"><i class="bi bi-pencil-square"></i> Sửa</a><button class="btn-act btn-act-del"><i class="bi bi-trash3"></i> Xoá</button></div></td>
-              </tr>
-              <tr style="background:rgba(59,130,246,.02);">
-                <td><span class="pill pill-child">#12</span></td>
-                <td><div class="level-indent level-1" style="padding-left:20px;"><div class="level-dot"></div>Quần jeans</div></td>
-                <td><span class="pill pill-child"><i class="bi bi-diagram-2"></i> Nam (#1)</span></td>
-                <td>23/03/2026</td>
-                <td><span class="pill"><i class="bi bi-person"></i> admin (id=1)</span></td>
-                <td><div class="action-group"><a class="btn-act btn-act-edit" href="#"><i class="bi bi-pencil-square"></i> Sửa</a><button class="btn-act btn-act-del"><i class="bi bi-trash3"></i> Xoá</button></div></td>
-              </tr>
-              <tr style="background:rgba(59,130,246,.02);">
-                <td><span class="pill pill-child">#21</span></td>
-                <td><div class="level-indent level-1" style="padding-left:20px;"><div class="level-dot"></div>Váy & Đầm</div></td>
-                <td><span class="pill pill-child"><i class="bi bi-diagram-2"></i> Nữ (#2)</span></td>
-                <td>23/03/2026</td>
-                <td><span class="pill"><i class="bi bi-person"></i> admin (id=1)</span></td>
-                <td><div class="action-group"><a class="btn-act btn-act-edit" href="#"><i class="bi bi-pencil-square"></i> Sửa</a><button class="btn-act btn-act-del"><i class="bi bi-trash3"></i> Xoá</button></div></td>
-              </tr>
-              <tr style="background:rgba(59,130,246,.02);">
-                <td><span class="pill pill-child">#31</span></td>
-                <td><div class="level-indent level-1" style="padding-left:20px;"><div class="level-dot"></div>Áo khoác</div></td>
-                <td><span class="pill pill-child"><i class="bi bi-diagram-2"></i> Trẻ em (#3)</span></td>
-                <td>23/03/2026</td>
-                <td><span class="pill"><i class="bi bi-person"></i> admin (id=1)</span></td>
-                <td><div class="action-group"><a class="btn-act btn-act-edit" href="#"><i class="bi bi-pencil-square"></i> Sửa</a><button class="btn-act btn-act-del"><i class="bi bi-trash3"></i> Xoá</button></div></td>
-              </tr>
+              <!-- Recursive tree fragment -->
+              <th:block th:fragment="categoryRowFragment(nodes)">
+                <th:block th:each="cat : ${nodes}">
+                  <tr th:data-id="${cat.id}" th:data-parent="${cat.parentId}" class="tree-row" th:style="${cat.depth > 0 ? 'background:rgba(59,130,246,0.02);' : ''}">
+                    <td><span th:class="${cat.depth == 0 ? 'pill pill-root' : 'pill pill-child'}" th:text="'#' + ${cat.id}"></span></td>
+                    <td>
+                      <div th:class="${'level-indent level-' + (cat.depth % 4)}" th:style="${'padding-left:' + (cat.depth * 25) + 'px;'}">
+                        <button type="button" th:if="${!#lists.isEmpty(cat.children)}" class="toggle-btn" th:attr="onclick='toggleNode('+${cat.id}+', this)'" style="border:none;background:none;padding:0;margin-right:5px;font-size:0.85rem;">
+                          <i class="bi bi-chevron-down"></i>
+                        </button>
+                        <span th:if="${#lists.isEmpty(cat.children)}" style="display:inline-block;width:16px;margin-right:5px;"></span>
+                        <div class="level-dot"></div>
+                        <strong th:if="${cat.depth == 0}" th:text="${cat.name}"></strong>
+                        <span th:unless="${cat.depth == 0}" th:text="${cat.name}"></span>
+                      </div>
+                    </td>
+                    <td>
+                      <span th:if="${cat.parentId == null}" style="color:var(--muted); font-style:italic; font-size:.82rem;">(gốc)</span>
+                      <span th:unless="${cat.parentId == null}" class="pill pill-child"><i class="bi bi-diagram-2"></i> <span th:text="${cat.parentName + ' (#' + cat.parentId + ')'}"></span></span>
+                    </td>
+                    <td th:text="${cat.createdAt != null ? #temporals.format(cat.createdAt, 'dd/MM/yyyy HH:mm') : ''}"></td>
+                    <td>
+                      <div class="action-group">
+                        <button type="button" class="btn-act btn-act-edit" th:onclick="openEditModal([[${cat.id}]], [[${cat.name}]], [[${cat.parentId}]])">
+                          <i class="bi bi-pencil-square"></i> Sửa
+                        </button>
+                        <button type="button" class="btn-act btn-act-del" th:onclick="openDeleteModal([[${cat.id}]], [[${cat.name}]])">
+                          <i class="bi bi-trash3"></i> Xoá
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                  <th:block th:unless="${#lists.isEmpty(cat.children)}" th:include="this :: categoryRowFragment(${cat.children})"></th:block>
+                </th:block>
+              </th:block>
+              
+              <!-- Call fragment for roots -->
+              <th:block th:include="this :: categoryRowFragment(${categoryTree})"></th:block>
+
             </tbody>
           </table>
-        </div>
-        <div class="pagination-wrap">
-          <span>Hiển thị 7/12 danh mục</span>
-          <div class="pag">
-            <a class="pag-btn disabled" href="#"><i class="bi bi-chevron-left"></i></a>
-            <a class="pag-btn active" href="#">1</a>
-            <a class="pag-btn" href="#">2</a>
-            <a class="pag-btn" href="#"><i class="bi bi-chevron-right"></i></a>
-          </div>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- Create/Edit Modal -->
+  <div class="modal fade" id="categoryModal" tabindex="-1" aria-labelledby="categoryModalTitle" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form id="categoryForm" method="post" th:action="@{/cms/categories/new}">
+          <div class="modal-header">
+            <h5 class="modal-title" id="categoryModalTitle" style="font-weight: 800; font-family:'Sarabun',sans-serif;">Thêm danh mục</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body" style="font-family:'Sarabun',sans-serif;">
+            <div class="mb-3">
+              <label class="form-label form-label-s">Tên danh mục</label>
+              <input type="text" class="input-field" id="catName" name="name" required placeholder="Nhập tên...">
+            </div>
+            <div class="mb-3">
+              <label class="form-label form-label-s">Danh mục cha</label>
+              <select class="form-select-s" id="catParentId" name="parentId">
+                <option value="">(Không có - Làm danh mục gốc)</option>
+                <th:block th:include="this :: selectOptionFragment(${allCategoriesTree}, null, 0)"></th:block>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius:10px; font-weight:600;">Đóng</button>
+            <button type="submit" class="btn btn-primary" style="background:#e50012; border:none; border-radius:10px; font-weight:600;">Lưu thay đổi</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Modal -->
+  <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form id="deleteForm" method="post" th:action="@{/cms/categories/delete}">
+          <input type="hidden" id="delCatId" name="id">
+          <div class="modal-header">
+            <h5 class="modal-title" style="font-weight: 800; color:#e50012; font-family:'Sarabun',sans-serif;">Xác nhận xoá</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body" style="font-family:'Sarabun',sans-serif;">
+            Bạn có chắc chắn muốn xoá danh mục <strong id="delCatName"></strong> không?<br>
+            <span class="text-danger" style="font-size:0.85rem;">Cảnh báo: Nếu đây là thư mục gốc, các danh mục con và sản phẩm có thể bị xoá theo.</span>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius:10px; font-weight:600;">Huỷ</button>
+            <button type="submit" class="btn btn-danger" style="background:#e50012; border:none; border-radius:10px; font-weight:600;">Đồng ý Xoá</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function openCreateModal() {
+      document.getElementById('categoryModalTitle').innerText = 'Thêm danh mục';
+      document.getElementById('categoryForm').action = '/cms/categories/new';
+      document.getElementById('catName').value = '';
+      document.getElementById('catParentId').value = '';
+    }
+
+    function openEditModal(id, name, parentId) {
+      document.getElementById('categoryModalTitle').innerText = 'Sửa danh mục #' + id;
+      document.getElementById('categoryForm').action = '/cms/categories/' + id + '/edit';
+      document.getElementById('catName').value = name;
+      document.getElementById('catParentId').value = parentId || '';
+      var modal = new bootstrap.Modal(document.getElementById('categoryModal'));
+      modal.show();
+    }
+
+    function openDeleteModal(id, name) {
+      document.getElementById('delCatId').value = id;
+      document.getElementById('delCatName').innerText = name;
+      var modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+      modal.show();
+    }
+
+    function toggleNode(id, btn) {
+      const isExpanded = !btn.classList.contains('collapsed');
+      
+      if (isExpanded) {
+          btn.classList.add('collapsed');
+          btn.innerHTML = '<i class="bi bi-chevron-right"></i>';
+          hideDescendants(id);
+      } else {
+          btn.classList.remove('collapsed');
+          btn.innerHTML = '<i class="bi bi-chevron-down"></i>';
+          showImmediateChildren(id);
+      }
+    }
+
+    function hideDescendants(parentId) {
+      const children = document.querySelectorAll('tr[data-parent="' + parentId + '"]');
+      children.forEach(child => {
+          child.style.display = 'none';
+          const childId = child.getAttribute('data-id');
+          hideDescendants(childId);
+      });
+    }
+
+    function showImmediateChildren(parentId) {
+      const children = document.querySelectorAll('tr[data-parent="' + parentId + '"]');
+      children.forEach(child => {
+          child.style.display = '';
+          const btn = child.querySelector('.toggle-btn');
+          if (btn && !btn.classList.contains('collapsed')) {
+              const childId = child.getAttribute('data-id');
+              showImmediateChildren(childId);
+          }
+      });
+    }
+  </script>
 </body>
 </html>
-

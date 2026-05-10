@@ -89,14 +89,14 @@ public class Category extends BaseEntity {
 
 
     public static void main(String[] args) {
-
         Category category = new Category();
         Category parent = new Category();
         Product product = new Product();
         category.setParent(parent);
         category.setProducts(Arrays.asList(product));
-        CategoryRepository categoryRepository = new CategoryRepositoryImpl();
-        categoryRepository.save(category);
+        
+        // CategoryRepository categoryRepository = new CategoryRepositoryImpl();
+        // categoryRepository.save(category);
         /**
          CascadeType.ALL:
             - khi save category con thì
@@ -105,7 +105,7 @@ public class Category extends BaseEntity {
            nếu không có cascade thì khi save category con mà category cha chưa tồn tại trong database thì sẽ bị lỗi do ràng buộc khóa ngoại (foreign key constraint) của database,
          */
 
-        categoryRepository.delete(parent);
+        // categoryRepository.deleteById(parent.getId());
          /**
          CascadeType.ALL:
             khi xóa category cha thì sẽ tự động xóa tất cả category con của category cũng sẽ bị xóa theo, nếu không có cascade thì khi xóa category cha mà vẫn còn category con thì sẽ bị lỗi do ràng buộc khóa ngoại (foreign key constraint) của database, vì category con vẫn còn tham chiếu đến category cha đã bị xóa

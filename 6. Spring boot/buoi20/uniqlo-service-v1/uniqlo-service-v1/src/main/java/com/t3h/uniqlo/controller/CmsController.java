@@ -13,10 +13,6 @@ public class CmsController {
         return "cms_dashboard";
     }
 
-    @GetMapping("/categories")
-    public String categories() {
-        return "cms_categories";
-    }
 
     @GetMapping("/products")
     public String products() {
