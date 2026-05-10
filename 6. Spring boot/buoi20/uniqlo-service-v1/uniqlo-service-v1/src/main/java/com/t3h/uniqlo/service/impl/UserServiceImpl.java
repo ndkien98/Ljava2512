@@ -8,8 +8,10 @@ import com.t3h.uniqlo.mapper.UserMapper;
 import com.t3h.uniqlo.repository.RoleRepository;
 import com.t3h.uniqlo.repository.UserRepository;
 import com.t3h.uniqlo.service.UserService;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.List;
@@ -17,77 +19,127 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final SessionFactory sessionFactory;
 
-    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository) {
+    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, SessionFactory sessionFactory) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.sessionFactory = sessionFactory;
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<UserListItemDto> getUsers(String keyword, String role, int page, int size) {
-        return userRepository.findAll(keyword, role, page, size)
-                .stream()
-                .map(UserMapper::toListItemDto)
-                .collect(Collectors.toList());
+        Transaction tx = null;
+        try {
+            Session session = sessionFactory.getCurrentSession();
+            tx = session.beginTransaction();
+            List<UserListItemDto> result = userRepository.findAll(keyword, role, page, size)
+                    .stream()
+                    .map(UserMapper::toListItemDto)
+                    .collect(Collectors.toList());
+            tx.commit();
+            return result;
+        } catch (Exception e) {
+            if (tx != null && tx.isActive()) tx.rollback();
+            throw e;
+        }
     }
 
     @Override
-    @Transactional(readOnly = true)
     public long countUsers(String keyword, String role) {
-        return userRepository.countAll(keyword, role);
+        Transaction tx = null;
+        try {
+            Session session = sessionFactory.getCurrentSession();
+            tx = session.beginTransaction();
+            long result = userRepository.countAll(keyword, role);
+            tx.commit();
+            return result;
+        } catch (Exception e) {
+            if (tx != null && tx.isActive()) tx.rollback();
+            throw e;
+        }
     }
 
     @Override
-    @Transactional(readOnly = true)
     public UserFormDto getUserForm(Integer id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("User not found: " + id));
-        return UserMapper.toFormDto(user);
+        Transaction tx = null;
+        try {
+            Session session = sessionFactory.getCurrentSession();
+            tx = session.beginTransaction();
+            User user = userRepository.findById(id)
+                    .orElseThrow(() -> new IllegalArgumentException("User not found: " + id));
+            UserFormDto result = UserMapper.toFormDto(user);
+            tx.commit();
+            return result;
+        } catch (Exception e) {
+            if (tx != null && tx.isActive()) tx.rollback();
+            throw e;
+        }
     }
 
     @Override
     public void createUser(UserFormDto dto) {
-        User user = new User();
-        UserMapper.copyFormToEntity(dto, user);
+        Transaction tx = null;
+        try {
+            Session session = sessionFactory.getCurrentSession();
+            tx = session.beginTransaction();
 
-        if (user.getEmail() == null || user.getEmail().isBlank()) {
-            throw new IllegalArgumentException("Email is required");
+            User user = new User();
+            UserMapper.copyFormToEntity(dto, user);
+
+            if (user.getEmail() == null || user.getEmail().isBlank()) {
+                throw new IllegalArgumentException("Email is required");
+            }
+            userRepository.findByEmail(user.getEmail()).ifPresent(u -> {
+                throw new IllegalArgumentException("Email already exists");
+            });
+            if (dto.getPassword() == null || dto.getPassword().isBlank()) {
+                throw new IllegalArgumentException("Password is required");
+            }
+
+            user.setPasswordHash(dto.getPassword());
+            user.setDeleted((byte) 0);
+
+            applyRoleFromDto(user, dto.getRole());
+
+            userRepository.save(user);
+
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null && tx.isActive()) tx.rollback();
+            throw e;
         }
-        userRepository.findByEmail(user.getEmail()).ifPresent(u -> {
-            throw new IllegalArgumentException("Email already exists");
-        });
-        if (dto.getPassword() == null || dto.getPassword().isBlank()) {
-            throw new IllegalArgumentException("Password is required");
-        }
-
-        user.setPasswordHash(dto.getPassword());
-        user.setDeleted((byte) 0);
-
-        applyRoleFromDto(user, dto.getRole());
-
-        userRepository.save(user);
     }
 
     @Override
     public void updateUser(Integer id, UserFormDto dto) {
-        User existing = userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("User not found: " + id));
+        Transaction tx = null;
+        try {
+            Session session = sessionFactory.getCurrentSession();
+            tx = session.beginTransaction();
 
-        UserMapper.copyFormToEntity(dto, existing);
+            User existing = userRepository.findById(id)
+                    .orElseThrow(() -> new IllegalArgumentException("User not found: " + id));
 
-        if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
-            existing.setPasswordHash(dto.getPassword());
+            UserMapper.copyFormToEntity(dto, existing);
+
+            if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
+                existing.setPasswordHash(dto.getPassword());
+            }
+
+            applyRoleFromDto(existing, dto.getRole());
+
+            userRepository.save(existing);
+
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null && tx.isActive()) tx.rollback();
+            throw e;
         }
-
-        applyRoleFromDto(existing, dto.getRole());
-
-        userRepository.save(existing);
     }
 
     private void applyRoleFromDto(User user, String roleName) {
@@ -108,9 +160,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUser(Integer id) {
-        int updated = userRepository.softDeleteById(id);
-        if (updated == 0) {
-            throw new IllegalArgumentException("User not found: " + id);
+        Transaction tx = null;
+        try {
+            Session session = sessionFactory.getCurrentSession();
+            tx = session.beginTransaction();
+
+            int updated = userRepository.softDeleteById(id);
+            if (updated == 0) {
+                throw new IllegalArgumentException("User not found: " + id);
+            }
+
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null && tx.isActive()) tx.rollback();
+            throw e;
         }
     }
 }

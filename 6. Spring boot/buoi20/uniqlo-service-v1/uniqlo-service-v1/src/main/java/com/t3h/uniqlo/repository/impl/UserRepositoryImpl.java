@@ -3,7 +3,7 @@ package com.t3h.uniqlo.repository.impl;
 import com.t3h.uniqlo.entity.Role;
 import com.t3h.uniqlo.entity.User;
 import com.t3h.uniqlo.repository.UserRepository;
-import jakarta.transaction.Transactional;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.MutationQuery;
@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-@Transactional
+
 public class UserRepositoryImpl implements UserRepository {
 
     private static final String ATTR_DELETED = "deleted";
