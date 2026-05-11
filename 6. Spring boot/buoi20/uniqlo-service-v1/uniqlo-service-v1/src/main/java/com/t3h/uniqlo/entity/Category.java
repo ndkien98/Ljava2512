@@ -13,6 +13,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "categories")
+// lombok
 @Getter
 @Setter
 @Builder
@@ -87,6 +88,7 @@ public class Category extends BaseEntity {
             fetch = FetchType.LAZY)
     private List<Product> products;
 
+    private String description;
 
     public static void main(String[] args) {
         Category category = new Category();

@@ -24,20 +24,20 @@ DROP TABLE IF EXISTS `cart_items`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `cart_items` (
                               `id` int NOT NULL AUTO_INCREMENT,
-                              `user_id` int NOT NULL,
-                              `sku_id` int NOT NULL,
-                              `quantity` int NOT NULL DEFAULT '1',
-                              `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-                              `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                              `created_at` datetime(6) DEFAULT NULL,
                               `created_by` varchar(255) DEFAULT NULL,
                               `deleted` tinyint NOT NULL,
+                              `updated_at` datetime(6) DEFAULT NULL,
                               `updated_by` varchar(255) DEFAULT NULL,
+                              `quantity` int NOT NULL,
+                              `sku_id` int NOT NULL,
+                              `user_id` int NOT NULL,
                               PRIMARY KEY (`id`),
-                              KEY `user_id` (`user_id`),
-                              KEY `sku_id` (`sku_id`),
-                              CONSTRAINT `cart_items_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
-                              CONSTRAINT `cart_items_ibfk_2` FOREIGN KEY (`sku_id`) REFERENCES `product_skus` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+                              KEY `FKia2f7yq196srm6ya3v96wafy6` (`sku_id`),
+                              KEY `FK709eickf3kc0dujx3ub9i7btf` (`user_id`),
+                              CONSTRAINT `FK709eickf3kc0dujx3ub9i7btf` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+                              CONSTRAINT `FKia2f7yq196srm6ya3v96wafy6` FOREIGN KEY (`sku_id`) REFERENCES `product_skus` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -57,10 +57,11 @@ CREATE TABLE `categories` (
                               `is_deleted` tinyint(1) DEFAULT NULL,
                               `deleted` tinyint NOT NULL,
                               `created_by` varchar(255) DEFAULT NULL,
+                              `description` varchar(255) DEFAULT NULL,
                               PRIMARY KEY (`id`),
                               KEY `parent_id` (`parent_id`),
                               CONSTRAINT `categories_ibfk_1` FOREIGN KEY (`parent_id`) REFERENCES `categories` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -176,28 +177,27 @@ DROP TABLE IF EXISTS `reviews`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `reviews` (
                            `id` int NOT NULL AUTO_INCREMENT,
-                           `product_id` int NOT NULL,
-                           `user_id` int NOT NULL,
-                           `sku_id` int DEFAULT NULL,
-                           `rating` tinyint NOT NULL,
-                           `comment` text,
-                           `user_height` varchar(50) DEFAULT NULL,
-                           `user_weight` varchar(50) DEFAULT NULL,
-                           `fit_status` varchar(50) DEFAULT NULL,
-                           `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-                           `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                           `created_at` datetime(6) DEFAULT NULL,
                            `created_by` varchar(255) DEFAULT NULL,
                            `deleted` tinyint NOT NULL,
+                           `updated_at` datetime(6) DEFAULT NULL,
                            `updated_by` varchar(255) DEFAULT NULL,
+                           `comment` text,
+                           `fit_status` varchar(50) DEFAULT NULL,
+                           `rating` tinyint NOT NULL,
+                           `user_height` varchar(50) DEFAULT NULL,
+                           `user_weight` varchar(50) DEFAULT NULL,
+                           `product_id` int NOT NULL,
+                           `sku_id` int DEFAULT NULL,
+                           `user_id` int NOT NULL,
                            PRIMARY KEY (`id`),
-                           KEY `product_id` (`product_id`),
-                           KEY `user_id` (`user_id`),
-                           KEY `sku_id` (`sku_id`),
-                           CONSTRAINT `reviews_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`),
-                           CONSTRAINT `reviews_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
-                           CONSTRAINT `reviews_ibfk_3` FOREIGN KEY (`sku_id`) REFERENCES `product_skus` (`id`),
-                           CONSTRAINT `reviews_chk_1` CHECK ((`rating` between 1 and 5))
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+                           KEY `FKpl51cejpw4gy5swfar8br9ngi` (`product_id`),
+                           KEY `FK93fml08nhqydik8y9s2mp7yfx` (`sku_id`),
+                           KEY `FKcgy7qjc1r99dp117y9en6lxye` (`user_id`),
+                           CONSTRAINT `FK93fml08nhqydik8y9s2mp7yfx` FOREIGN KEY (`sku_id`) REFERENCES `product_skus` (`id`),
+                           CONSTRAINT `FKcgy7qjc1r99dp117y9en6lxye` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+                           CONSTRAINT `FKpl51cejpw4gy5swfar8br9ngi` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -216,7 +216,7 @@ CREATE TABLE `roles` (
                          `updated_by` varchar(255) DEFAULT NULL,
                          `name` varchar(255) DEFAULT NULL,
                          PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -265,22 +265,21 @@ DROP TABLE IF EXISTS `users`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `users` (
                          `id` int NOT NULL AUTO_INCREMENT,
-                         `full_name` varchar(100) DEFAULT NULL,
-                         `email` varchar(255) NOT NULL,
-                         `password_hash` varchar(255) NOT NULL,
-                         `birthday` date DEFAULT NULL,
-                         `gender` enum('Male','Female','Decline to state') DEFAULT NULL,
-                         `role` varchar(20) DEFAULT 'USER',
-                         `remember_token` varchar(255) DEFAULT NULL,
-                         `avatar` varchar(500) DEFAULT NULL,
-                         `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-                         `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                         `created_at` datetime(6) DEFAULT NULL,
                          `created_by` varchar(255) DEFAULT NULL,
                          `deleted` tinyint NOT NULL,
+                         `updated_at` datetime(6) DEFAULT NULL,
                          `updated_by` varchar(255) DEFAULT NULL,
+                         `avatar` varchar(500) DEFAULT NULL,
+                         `birthday` date DEFAULT NULL,
+                         `email` varchar(255) NOT NULL,
+                         `full_name` varchar(100) DEFAULT NULL,
+                         `gender` enum('Male','Female','Decline to state') DEFAULT NULL,
+                         `password_hash` varchar(255) NOT NULL,
+                         `remember_token` varchar(255) DEFAULT NULL,
                          PRIMARY KEY (`id`),
-                         UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+                         UNIQUE KEY `UK6dotkott2kjsp8vw4d0m25fb7` (`email`)
+) ENGINE=InnoDB AUTO_INCREMENT=48 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -316,4 +315,4 @@ CREATE TABLE `visit_stats` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-05-06 21:43:59
+-- Dump completed on 2026-05-11 21:03:34
