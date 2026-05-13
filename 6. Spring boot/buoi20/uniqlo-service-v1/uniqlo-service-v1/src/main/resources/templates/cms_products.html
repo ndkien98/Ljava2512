@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8"/>
@@ -12,6 +12,7 @@
     :root{--brand:#e50012;--brand-dark:#b0000e;--sidebar-bg:#0b1220;--sidebar-hover:rgba(255,255,255,.07);--sidebar-active:rgba(229,0,18,.15);--sidebar-active-border:#e50012;--sidebar-text:rgba(255,255,255,.65);--sidebar-muted:rgba(255,255,255,.35);--ink:#0f172a;--muted:#64748b;--bg:#f1f5f9;--card:#ffffff;--border:rgba(15,23,42,.07);--shadow-md:0 8px 28px rgba(15,23,42,.10);--shadow-sm:0 4px 12px rgba(15,23,42,.06);--radius-lg:14px;--radius-md:10px;}
     *,*::before,*::after{box-sizing:border-box;}html,body{height:100%;margin:0;padding:0;}
     body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;display:flex;}
+    .fw-800{font-weight:800;}
     /* SIDEBAR */
     .sidebar{width:260px;min-height:100vh;background:var(--sidebar-bg);display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto;}
     .sidebar::-webkit-scrollbar{width:4px;}.sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:4px;}
@@ -74,6 +75,20 @@
     .pag{display:flex;gap:4px;}.pag-btn{width:34px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:9px;border:1.5px solid rgba(15,23,42,.1);background:transparent;color:var(--ink);font-size:.82rem;font-weight:600;cursor:pointer;text-decoration:none;transition:all .15s;}
     .pag-btn:hover{background:var(--bg);}.pag-btn.active{background:var(--brand);border-color:var(--brand);color:#fff;}
     .pag-btn.disabled{opacity:.4;pointer-events:none;}
+    /* PREMIUM MODAL */
+    .modal-content-premium{border-radius:20px;border:none;box-shadow:0 25px 50px -12px rgba(0,0,0,0.25);overflow:hidden;}
+    .modal-header-premium{background:#f8fafc;padding:24px 32px;border-bottom:1px solid #e2e8f0;}
+    .nav-tabs-premium{border-bottom:none;gap:8px;margin-bottom:24px;}
+    .nav-tabs-premium .nav-link{border:none;border-radius:10px;padding:10px 20px;font-size:.85rem;font-weight:700;color:var(--muted);transition:all .2s;}
+    .nav-tabs-premium .nav-link:hover{background:#f1f5f9;color:var(--ink);}
+    .nav-tabs-premium .nav-link.active{background:var(--brand);color:#fff;box-shadow:0 4px 12px rgba(229,0,18,0.25);}
+    .image-upload-zone{border:2px dashed #e2e8f0;border-radius:16px;padding:24px;text-align:center;background:#f8fafc;transition:all .2s;cursor:pointer;position:relative;overflow:hidden;min-height:280px;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+    .image-upload-zone:hover{border-color:var(--brand);background:#fff1f2;}
+    .image-upload-zone img{max-width:100%;max-height:240px;border-radius:12px;object-fit:contain;box-shadow:var(--shadow-md);display:none;}
+    .image-upload-zone.has-image img{display:block;}
+    .image-upload-zone.has-image .upload-placeholder{display:none;}
+    .upload-placeholder i{font-size:2.5rem;color:#cbd5e1;margin-bottom:12px;display:block;}
+    .upload-placeholder span{font-size:.85rem;color:var(--muted);font-weight:600;}
     @media(max-width:991px){.sidebar{display:none;}.topbar{padding:0 16px;}.page-body{padding:20px 16px;}}
   </style>
 </head>
@@ -119,7 +134,7 @@
       </div>
       <div class="topbar-right">
         <a class="btn-topbar" th:href="@{/cms}"><i class="bi bi-grid-1x2"></i> Dashboard</a>
-        <a class="btn-topbar btn-topbar-red" href="#"><i class="bi bi-plus-lg"></i> Thêm sản phẩm</a>
+        <button class="btn-topbar btn-topbar-red" id="addProductBtn"><i class="bi bi-plus-lg"></i> Thêm sản phẩm</button>
       </div>
     </header>
 
@@ -140,29 +155,23 @@
             <label class="form-label-s">Tìm kiếm</label>
             <div class="input-group-icon">
               <span class="ig-addon"><i class="bi bi-search"></i></span>
-              <input type="text" class="input-field ig-field" placeholder="Tên sản phẩm..."/>
+              <input type="text" id="searchInput" class="input-field ig-field" placeholder="Tên sản phẩm..."/>
             </div>
           </div>
           <div class="col-12 col-lg-3">
             <label class="form-label-s">Danh mục</label>
-            <select class="form-select-s">
-              <option selected>Tất cả</option>
-              <option>Nam / Áo thun</option>
-              <option>Nam / Quần</option>
-              <option>Nữ / Váy</option>
-              <option>Trẻ em / Áo khoác</option>
+            <select id="categoryFilter" class="form-select-s">
+              <option value="">Tất cả</option>
             </select>
           </div>
           <div class="col-12 col-lg-2">
             <label class="form-label-s">Người tạo</label>
-            <select class="form-select-s">
-              <option selected>Tất cả</option>
-              <option>admin (id=1)</option>
-              <option>staff (id=7)</option>
+            <select id="creatorFilter" class="form-select-s">
+              <option value="">Tất cả</option>
             </select>
           </div>
           <div class="col-12 col-lg-2 d-flex align-items-end">
-            <button type="button" class="btn-topbar" style="width:100%; justify-content:center;">
+            <button type="button" id="filterBtn" class="btn-topbar" style="width:100%; justify-content:center;">
               <i class="bi bi-funnel"></i> Lọc
             </button>
           </div>
@@ -188,114 +197,146 @@
                 <th class="text-end" style="width:230px;">Thao tác</th>
               </tr>
             </thead>
-            <tbody>
-              <!-- Row: th:each="product : ${products}" -->
-              <tr th:each="product : ${products}">
-                <td>
-                  <div class="prod-avatar">
-                    <img th:if="${product.avatar}" th:src="${product.avatar}" th:alt="${product.name}"/>
-                    <span th:unless="${product.avatar}" th:text="${#strings.substring(product.name,0,2)}">PR</span>
-                  </div>
-                </td>
-                <td><span class="pill"><i class="bi bi-hash"></i> <span th:text="${product.id}"></span></span></td>
-                <td>
-                  <div style="font-weight:700;" th:text="${product.name}"></div>
-                  <div style="font-size:.75rem;color:var(--muted);" th:text="${#strings.abbreviate(product.description ?: '—', 60)}"></div>
-                </td>
-                <td><span class="pill pill-cat"><i class="bi bi-diagram-3"></i> <span th:text="${product.categoryName ?: '—'}"></span></span></td>
-                <td th:text="${#temporals.format(product.createdAt,'dd/MM/yyyy')}"></td>
-                <td th:text="${#temporals.format(product.updatedAt,'dd/MM/yyyy')}"></td>
-                <td>
-                  <div class="action-group">
-                    <a class="btn-act btn-act-edit" href="#"><i class="bi bi-pencil-square"></i> Sửa</a>
-                    <a class="btn-act btn-act-img" href="#"><i class="bi bi-images"></i> Ảnh</a>
-                    <a class="btn-act btn-act-sku" href="#"><i class="bi bi-upc-scan"></i> SKU</a>
-                    <button class="btn-act btn-act-del"><i class="bi bi-trash3"></i> Xoá</button>
-                  </div>
-                </td>
-              </tr>
-              <!-- Fallback mock rows when no Thymeleaf data -->
-              <tr th:if="${#lists.isEmpty(products)}">
-                <td><div class="prod-avatar"><img src="https://images.unsplash.com/photo-1523381294911-8d3cead13475?w=90&q=75" alt="AIRism"/></div></td>
-                <td><span class="pill"><i class="bi bi-hash"></i> 482557</span></td>
-                <td>
-                  <div style="font-weight:700;">Áo thun AIRism cổ tròn (Nam)</div>
-                  <div style="font-size:.75rem;color:var(--muted);">Chất liệu: Cotton pha · Form: Regular Fit</div>
-                </td>
-                <td><span class="pill pill-cat"><i class="bi bi-diagram-3"></i> Nam / Áo thun</span></td>
-                <td>22/03/2026</td><td>25/03/2026</td>
-                <td><div class="action-group">
-                  <a class="btn-act btn-act-edit" href="#"><i class="bi bi-pencil-square"></i> Sửa</a>
-                  <a class="btn-act btn-act-img" href="#"><i class="bi bi-images"></i> Ảnh</a>
-                  <a class="btn-act btn-act-sku" href="#"><i class="bi bi-upc-scan"></i> SKU</a>
-                  <button class="btn-act btn-act-del"><i class="bi bi-trash3"></i> Xoá</button>
-                </div></td>
-              </tr>
-              <tr th:if="${#lists.isEmpty(products)}">
-                <td><div class="prod-avatar"><img src="https://images.unsplash.com/photo-1542272604-787c3835535d?w=90&q=75" alt="Jeans"/></div></td>
-                <td><span class="pill"><i class="bi bi-hash"></i> 482558</span></td>
-                <td>
-                  <div style="font-weight:700;">Quần jeans slim fit (Nam)</div>
-                  <div style="font-size:.75rem;color:var(--muted);">Co giãn nhẹ · Màu: Xanh đậm</div>
-                </td>
-                <td><span class="pill pill-cat"><i class="bi bi-diagram-3"></i> Nam / Quần</span></td>
-                <td>22/03/2026</td><td>25/03/2026</td>
-                <td><div class="action-group">
-                  <a class="btn-act btn-act-edit" href="#"><i class="bi bi-pencil-square"></i> Sửa</a>
-                  <a class="btn-act btn-act-img" href="#"><i class="bi bi-images"></i> Ảnh</a>
-                  <a class="btn-act btn-act-sku" href="#"><i class="bi bi-upc-scan"></i> SKU</a>
-                  <button class="btn-act btn-act-del"><i class="bi bi-trash3"></i> Xoá</button>
-                </div></td>
-              </tr>
-              <tr th:if="${#lists.isEmpty(products)}">
-                <td><div class="prod-avatar"><img src="https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=90&q=75" alt="Dress"/></div></td>
-                <td><span class="pill"><i class="bi bi-hash"></i> 482565</span></td>
-                <td>
-                  <div style="font-weight:700;">Váy suông mềm mại elegant (Nữ)</div>
-                  <div style="font-size:.75rem;color:var(--muted);">Thoáng mát · Dễ phối · Polyester blend</div>
-                </td>
-                <td><span class="pill pill-cat"><i class="bi bi-diagram-3"></i> Nữ / Váy</span></td>
-                <td>22/03/2026</td><td>26/03/2026</td>
-                <td><div class="action-group">
-                  <a class="btn-act btn-act-edit" href="#"><i class="bi bi-pencil-square"></i> Sửa</a>
-                  <a class="btn-act btn-act-img" href="#"><i class="bi bi-images"></i> Ảnh</a>
-                  <a class="btn-act btn-act-sku" href="#"><i class="bi bi-upc-scan"></i> SKU</a>
-                  <button class="btn-act btn-act-del"><i class="bi bi-trash3"></i> Xoá</button>
-                </div></td>
-              </tr>
-              <tr th:if="${#lists.isEmpty(products)}">
-                <td><div class="prod-avatar"><img src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=90&q=75" alt="Kids"/></div></td>
-                <td><span class="pill"><i class="bi bi-hash"></i> 482570</span></td>
-                <td>
-                  <div style="font-weight:700;">Áo khoác nhẹ trẻ em (8-12 tuổi)</div>
-                  <div style="font-size:.75rem;color:var(--muted);">Chống gió · Nhẹ · Nhiều màu</div>
-                </td>
-                <td><span class="pill pill-cat"><i class="bi bi-diagram-3"></i> Trẻ em / Áo khoác</span></td>
-                <td>23/03/2026</td><td>25/03/2026</td>
-                <td><div class="action-group">
-                  <a class="btn-act btn-act-edit" href="#"><i class="bi bi-pencil-square"></i> Sửa</a>
-                  <a class="btn-act btn-act-img" href="#"><i class="bi bi-images"></i> Ảnh</a>
-                  <a class="btn-act btn-act-sku" href="#"><i class="bi bi-upc-scan"></i> SKU</a>
-                  <button class="btn-act btn-act-del"><i class="bi bi-trash3"></i> Xoá</button>
-                </div></td>
-              </tr>
+            <tbody id="productTableBody">
             </tbody>
           </table>
         </div>
-        <div class="pagination-wrap">
-          <span>Hiển thị 1-8 / 15 sản phẩm</span>
-          <div class="pag">
-            <a class="pag-btn disabled" href="#"><i class="bi bi-chevron-left"></i></a>
-            <a class="pag-btn active" href="#">1</a>
-            <a class="pag-btn" href="#">2</a>
-            <a class="pag-btn" href="#"><i class="bi bi-chevron-right"></i></a>
+        <div class="pagination-wrap" id="paginationWrap">
+          <!-- JS dynamic content -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL SẢN PHẨM -->
+  <div class="modal fade" id="productModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+      <div class="modal-content modal-content-premium">
+        <div class="modal-header modal-header-premium border-0">
+          <div>
+            <h5 class="modal-title fw-800 mb-1" id="modalTitle">Thêm sản phẩm mới</h5>
+            <p class="text-muted mb-0" style="font-size: .8rem;">Vui lòng điền đầy đủ các thông tin chi tiết của sản phẩm</p>
           </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body p-4 px-5">
+          <!-- TABS -->
+          <ul class="nav nav-tabs nav-tabs-premium mb-4" id="productTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active" id="basic-tab" data-bs-toggle="tab" data-bs-target="#basic-panel" type="button" role="tab">Thông tin cơ bản</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="sku-tab" data-bs-toggle="tab" data-bs-target="#sku-panel" type="button" role="tab">Biến thể & Kho hàng</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="image-tab" data-bs-toggle="tab" data-bs-target="#image-panel" type="button" role="tab">Bộ sưu tập ảnh</button>
+            </li>
+          </ul>
+
+          <div class="tab-content" id="productTabsContent">
+            <!-- PANEL THÔNG TIN CƠ BẢN -->
+            <div class="tab-pane fade show active" id="basic-panel" role="tabpanel">
+              <form id="productForm">
+                <input type="hidden" id="prodId"/>
+                <div class="row g-4">
+                  <div class="col-lg-7">
+                    <div class="row g-3">
+                      <div class="col-12">
+                        <label class="form-label-s">Tên sản phẩm</label>
+                        <input type="text" id="prodName" class="input-field" required placeholder="Nhập tên sản phẩm đầy đủ..."/>
+                      </div>
+                      <div class="col-md-12">
+                        <label class="form-label-s">Danh mục</label>
+                        <select id="prodCategory" class="form-select-s" required>
+                          <option value="">Chọn danh mục cấp sản phẩm</option>
+                        </select>
+                      </div>
+                      <div class="col-12">
+                        <label class="form-label-s">Đường dẫn ảnh đại diện (Tùy chọn)</label>
+                        <input type="text" id="prodAvatar" class="input-field" placeholder="https://example.com/image.jpg"/>
+                      </div>
+                      <div class="col-12">
+                        <label class="form-label-s">Mô tả sản phẩm</label>
+                        <textarea id="prodDescription" class="input-field" rows="4" placeholder="Mô tả các đặc điểm nổi bật..."></textarea>
+                      </div>
+                      <div class="col-12">
+                        <label class="form-label-s">Thông tin chất liệu & Bảo quản</label>
+                        <textarea id="prodMaterial" class="input-field" rows="2" placeholder="Ví dụ: 100% Cotton, giặt máy ở nhiệt độ thường..."></textarea>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-5">
+                    <label class="form-label-s">Ảnh đại diện sản phẩm</label>
+                    <div class="image-upload-zone" id="avatarZone" onclick="document.getElementById('prodAvatarFile').click()">
+                      <div class="upload-placeholder">
+                        <i class="bi bi-cloud-arrow-up"></i>
+                        <span>Tải ảnh đại diện lên</span>
+                        <p class="mt-2 text-muted" style="font-size: .7rem;">Hỗ trợ JPG, PNG, WEBP (Tối đa 5MB)</p>
+                      </div>
+                      <img id="avatarPreview" src="" alt="Xem trước"/>
+                      <input type="file" id="prodAvatarFile" class="d-none" accept="image/*"/>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+
+            <!-- PANEL BIẾN THỂ -->
+            <div class="tab-pane fade" id="sku-panel" role="tabpanel">
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Màu sắc</th>
+                      <th>Kích cỡ</th>
+                      <th>Giá gốc (VNĐ)</th>
+                      <th>Giá khuyến mãi</th>
+                      <th>Số lượng kho</th>
+                      <th>Mã SKU</th>
+                      <th style="width:50px;"></th>
+                    </tr>
+                  </thead>
+                  <tbody id="skuTableBody">
+                    <!-- Các hàng dữ liệu được sinh tự động -->
+                  </tbody>
+                </table>
+              </div>
+              <button class="btn-topbar mt-3" type="button" onclick="addSkuRow()"><i class="bi bi-plus-circle me-1"></i> Thêm biến thể mới</button>
+            </div>
+
+            <!-- PANEL HÌNH ẢNH -->
+            <div class="tab-pane fade" id="image-panel" role="tabpanel">
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th style="width: 150px;">Màu sắc</th>
+                      <th>Chi tiết hình ảnh</th>
+                      <th style="width: 100px;" class="text-center">Ảnh chính</th>
+                      <th style="width: 100px;">Thứ tự</th>
+                      <th style="width: 50px;"></th>
+                    </tr>
+                  </thead>
+                  <tbody id="imageTableBody">
+                    <!-- Các hàng dữ liệu được sinh tự động -->
+                  </tbody>
+                </table>
+              </div>
+              <button class="btn-topbar mt-3" type="button" onclick="addImageRow()"><i class="bi bi-images me-1"></i> Thêm ảnh bộ sưu tập</button>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer modal-header-premium border-0 p-4">
+          <button type="button" class="btn-topbar px-4" data-bs-dismiss="modal">Đóng</button>
+          <button type="button" class="btn-topbar btn-topbar-red px-5" id="saveProductBtn">Lưu thay đổi</button>
         </div>
       </div>
     </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script th:src="@{/js/cms_products.js}"></script>
 </body>
 </html>
 
