@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/products")
+// tự động inject các servce qua contructor cho các thuộc tính final, vs dụ là productService, thay vì phải dùng @autowired
 @RequiredArgsConstructor
 public class ProductResource {
 
@@ -20,8 +21,15 @@ public class ProductResource {
 
     /**
      * Lay danh sach san pham theo phan trang va bo loc.
+     *
+     * API: GET /api/products
+     * @GetMapping: chỉ đjnh method GET
+     * ResponseEntity: class chứa cả body và status code của response trả về cho client, giúp dễ dàng kiểm soát response.
+     * bao gôm
+     *      1. status code
+     *      2. body (dữ liệu trả về)
+     *      3. message
      */
-
     @GetMapping
     public ResponseEntity<Page<ProductResponseDto>> getAllProducts(
             @RequestParam(name = "keyword", required = false) String keyword,
@@ -31,7 +39,7 @@ public class ProductResource {
             @RequestParam(name = "size", defaultValue = "8") int size
     ) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
-        return ResponseEntity.ok(productService.getAllProducts(keyword, categoryId, createdBy, pageable));
+        return ResponseEntity.ok(productService.getAllProducts2(keyword, categoryId, createdBy, pageable));
     }
 
     @GetMapping("/{id}")

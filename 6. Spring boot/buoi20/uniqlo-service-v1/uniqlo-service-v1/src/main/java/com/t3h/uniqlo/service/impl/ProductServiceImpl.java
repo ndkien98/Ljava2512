@@ -64,6 +64,22 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findAll(spec, pageable).map(productMapper::toResponseDto);
     }
 
+    public Page<ProductResponseDto> getAllProducts2(String keyword, Integer categoryId, String createdBy, Pageable pageable) {
+
+        if (keyword != null && !keyword.isEmpty()) {
+            keyword = "%" + keyword + "%";
+        } else {
+            keyword = null;
+        }
+        if (createdBy != null && createdBy.isEmpty()) {
+            createdBy = null;
+        }
+        if (categoryId != null && categoryId <= 0) {
+            categoryId = null;
+        }
+        return productRepository.getAllProductsNativeQuery(keyword,categoryId,createdBy,pageable).map(productMapper::toResponseDto);
+    }
+
     /**
      * Lay chi tiet san pham theo ID.
      */
