@@ -23,10 +23,5 @@ public class AuthUiController {
     public String fakeLoginRedirect() {
         return "redirect:/cms";
     }
-
-    @GetMapping("/logout")
-    public String logout() {
-        return "redirect:/";
-    }
 }
 

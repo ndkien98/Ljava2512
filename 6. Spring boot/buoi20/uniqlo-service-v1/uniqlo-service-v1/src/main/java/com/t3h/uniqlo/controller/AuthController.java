@@ -35,4 +35,7 @@ public class AuthController {
     ) throws IOException {
         authService.refreshToken(request, response);
     }
+
+    // POST /api/v1/auth/logout duoc xu ly boi Spring Security LogoutFilter + CustomLogoutHandler
+    // Khong can endpoint rieng trong Controller
 }

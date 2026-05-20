@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -552,8 +552,11 @@
         <a class="btn-ghost" th:href="@{/users}">
           <i class="bi bi-people"></i> Users
         </a>
-        <a class="btn-primary-nav" th:href="@{/login}">
+        <a sec:authorize="!isAuthenticated()" class="btn-primary-nav" th:href="@{/login}">
           <i class="bi bi-box-arrow-in-right"></i> Đăng nhập
+        </a>
+        <a sec:authorize="isAuthenticated()" class="btn-ghost" th:href="@{/logout}" style="border-color:rgba(229,0,18,.2);color:#e50012;">
+          <i class="bi bi-box-arrow-right"></i> Đăng xuất
         </a>
       </div>
     </div>

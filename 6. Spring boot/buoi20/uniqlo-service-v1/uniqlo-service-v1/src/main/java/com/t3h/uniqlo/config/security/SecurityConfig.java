@@ -17,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -61,13 +62,18 @@ public class SecurityConfig {
                 .requestMatchers("/api/v1/auth/**").permitAll() // Cho phep public cac URL dang nhap/refresh
                 .anyRequest().authenticated() // Cac API khac phai co JWT hop le
             )
-            .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Khong luu trang thai session
+            .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.NEVER)) // Khong tao session moi, nhung van doc session co san (ho tro form login goi API)
             .authenticationProvider(authenticationProvider()) // Cung cap co che xac thuc
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class) // Them filter JWT vao truoc filter dang nhap mac dinh
             .logout(logout -> logout
                 .logoutUrl("/api/v1/auth/logout") // API de dang xuat
                 .addLogoutHandler(logoutHandler) // Xu ly thu hoi token
-                .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext()) // Xoa context sau khi dang xuat
+                .logoutSuccessHandler((request, response, authentication) -> {
+                    SecurityContextHolder.clearContext();
+                    response.setContentType("application/json");
+                    response.setCharacterEncoding("UTF-8");
+                    response.getWriter().write("{\"message\":\"Logout successful\"}");
+                })
             );
 
         return http.build();
@@ -94,7 +100,10 @@ public class SecurityConfig {
             )
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class) // Cho phep Web UI nhan dien JWT tu Cookie
             .logout(logout -> logout
-                .logoutUrl("/logout") // URL xu ly dang xuat cho Web
+                .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET")) // Cho phep GET request logout (vi CSRF da tat)
+                .addLogoutHandler(logoutHandler) // Thu hoi JWT token neu co
+                .invalidateHttpSession(true) // Huy session
+                .deleteCookies("JSESSIONID", "jwt_token") // Xoa cookie
                 .logoutSuccessUrl("/login?logout=true") // Chuyen huong ve trang login sau khi dang xuat
                 .permitAll()
             );

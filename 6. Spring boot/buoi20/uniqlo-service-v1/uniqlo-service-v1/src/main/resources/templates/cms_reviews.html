@@ -79,33 +79,7 @@
   </style>
 </head>
 <body>
-  <aside class="sidebar">
-    <div class="sidebar-logo">
-      <div class="logo-text">UNIQLO<em>.</em>CMS</div>
-      <div class="logo-badge"><i class="bi bi-database"></i> uniqlo_education</div>
-    </div>
-    <div class="sidebar-user">
-      <div class="sidebar-avatar">A</div>
-      <div class="sidebar-user-info"><div class="name">Admin Uniqlo</div><div class="role">ADMIN</div></div>
-    </div>
-    <nav class="sidebar-nav">
-      <div class="nav-section-label">Menu chính</div>
-      <a class="nav-item" th:href="@{/cms}"><i class="bi bi-grid-1x2-fill nav-icon"></i> Dashboard</a>
-      <a class="nav-item" th:href="@{/users}"><i class="bi bi-people-fill nav-icon"></i> Người dùng <span class="nav-badge">8</span></a>
-      <div class="nav-section-label" style="margin-top:16px;">Sản phẩm</div>
-      <a class="nav-item" th:href="@{/cms/categories}"><i class="bi bi-diagram-3-fill nav-icon"></i> Danh mục</a>
-      <a class="nav-item" th:href="@{/cms/products}"><i class="bi bi-bag-fill nav-icon"></i> Sản phẩm <span class="nav-badge">15</span></a>
-      <a class="nav-item" th:href="@{/cms/skus}"><i class="bi bi-upc-scan nav-icon"></i> SKUs <span class="nav-badge">46</span></a>
-      <a class="nav-item active" th:href="@{/cms/reviews}"><i class="bi bi-chat-quote-fill nav-icon"></i> Đánh giá</a>
-      <div class="nav-section-label" style="margin-top:16px;">Thống kê</div>
-      <a class="nav-item" th:href="@{/cms/visit-stats}"><i class="bi bi-graph-up-arrow nav-icon"></i> Visit Stats</a>
-      <div class="nav-section-label" style="margin-top:16px;">Điều hướng</div>
-      <a class="nav-item" th:href="@{/}"><i class="bi bi-house-fill nav-icon"></i> Trang chủ</a>
-    </nav>
-    <div class="sidebar-footer">
-      <a class="btn-logout" th:href="@{/logout}"><i class="bi bi-box-arrow-right"></i> Đăng xuất</a>
-    </div>
-  </aside>
+  <aside th:replace="~{fragments/cms_layout :: sidebar(activePage='reviews')}"></aside>
 
   <div class="main-content">
     <header class="topbar">
@@ -116,6 +90,9 @@
       <div class="topbar-right">
         <a class="btn-t" th:href="@{/cms}"><i class="bi bi-grid-1x2"></i> Dashboard</a>
         <a class="btn-t btn-t-red" href="#"><i class="bi bi-download"></i> Xuất báo cáo</a>
+        <a class="btn-t btn-topbar-logout" th:href="@{/logout}">
+          <i class="bi bi-box-arrow-right"></i> Đăng xuất
+        </a>
       </div>
     </header>
 
