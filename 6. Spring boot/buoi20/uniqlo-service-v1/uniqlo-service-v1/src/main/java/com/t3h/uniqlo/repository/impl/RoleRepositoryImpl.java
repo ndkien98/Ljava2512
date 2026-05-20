@@ -4,24 +4,25 @@ import com.t3h.uniqlo.entity.Role;
 import com.t3h.uniqlo.repository.RoleRepository;
 
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+import jakarta.persistence.EntityManager;
 
 import java.util.Optional;
 
 @Repository
-
+@Transactional
 public class RoleRepositoryImpl implements RoleRepository {
 
-    private final SessionFactory sessionFactory;
+    private final EntityManager entityManager;
 
-    public RoleRepositoryImpl(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
+    public RoleRepositoryImpl(EntityManager entityManager) {
+        this.entityManager = entityManager;
     }
 
     private Session session() {
-        return sessionFactory.getCurrentSession();
+        return entityManager.unwrap(Session.class);
     }
 
     @Override

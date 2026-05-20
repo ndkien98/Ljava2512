@@ -4,11 +4,12 @@ import com.t3h.uniqlo.entity.Role;
 import com.t3h.uniqlo.entity.User;
 import com.t3h.uniqlo.repository.UserRepository;
 
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.query.MutationQuery;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
+import jakarta.persistence.EntityManager;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -20,9 +21,11 @@ import jakarta.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-
+@Transactional
+@Slf4j
 public class UserRepositoryImpl implements UserRepository {
 
     private static final String ATTR_DELETED = "deleted";
@@ -32,14 +35,14 @@ public class UserRepositoryImpl implements UserRepository {
     private static final String ATTR_ROLES = "roles";
     private static final String ATTR_ROLE_NAME = "name";
 
-    private final SessionFactory sessionFactory;
+    private final EntityManager entityManager;
 
-    public UserRepositoryImpl(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
+    public UserRepositoryImpl(EntityManager entityManager) {
+        this.entityManager = entityManager;
     }
 
     private Session session() {
-        return sessionFactory.getCurrentSession();
+        return entityManager.unwrap(Session.class);
     }
 
     @Override
@@ -134,7 +137,12 @@ public class UserRepositoryImpl implements UserRepository {
         String hql = "select u from User u where u." + ATTR_DELETED + " = 0 and lower(u." + ATTR_EMAIL + ") = :email";
         Query<User> q = session().createQuery(hql, User.class);
         q.setParameter("email", email.trim().toLowerCase());
-        return q.uniqueResultOptional();
+        Optional<User> user =  q.uniqueResultOptional();
+        user.ifPresent(u -> {
+            // initialize roles collection for authentication mapping
+            u.getRoles().size();
+        });
+        return user;
     }
 
     @Override
