@@ -1,0 +1,862 @@
+﻿<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Uniqlo CMS — Trang chủ</title>
+  <meta name="description" content="Hệ thống quản trị Uniqlo CMS — sản phẩm, SKU, danh mục, người dùng"/>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,800&display=swap" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
+
+  <style>
+    :root {
+      --brand: #e50012;
+      --brand-dark: #b0000e;
+      --ink: #0b1220;
+      --muted: #64748b;
+      --bg: #f1f5f9;
+      --card: #ffffff;
+      --glass: rgba(255,255,255,0.82);
+      --glass-border: rgba(255,255,255,0.5);
+      --shadow-xl: 0 32px 80px rgba(11,18,32,.16);
+      --shadow-md: 0 8px 28px rgba(11,18,32,.1);
+      --shadow-sm: 0 4px 12px rgba(11,18,32,.07);
+      --radius-xl: 24px;
+      --radius-lg: 16px;
+      --radius-md: 12px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Sarabun', sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── NAV ── */
+    .topnav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255,255,255,.85);
+      backdrop-filter: blur(16px) saturate(180%);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(11,18,32,.07);
+      box-shadow: 0 1px 24px rgba(11,18,32,.06);
+    }
+    .nav-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 32px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      font-size: 1.4rem;
+      font-weight: 900;
+      letter-spacing: -0.8px;
+      color: var(--ink);
+      text-decoration: none;
+    }
+    .nav-logo em {
+      font-style: normal;
+      color: var(--brand);
+    }
+    .nav-logo sup {
+      font-size: .5em;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: rgba(11,18,32,.4);
+      text-transform: uppercase;
+      vertical-align: super;
+    }
+    .nav-actions { display: flex; align-items: center; gap: 10px; }
+    .btn-ghost {
+      padding: 9px 18px;
+      border-radius: 10px;
+      border: 1.5px solid rgba(11,18,32,.12);
+      background: transparent;
+      color: var(--ink);
+      font-family: 'Sarabun', sans-serif;
+      font-size: .875rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all .18s;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .btn-ghost:hover { background: rgba(11,18,32,.05); border-color: rgba(11,18,32,.2); color: var(--ink); }
+    .btn-primary-nav {
+      padding: 9px 20px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #e50012, #b0000e);
+      border: none;
+      color: #fff;
+      font-family: 'Sarabun', sans-serif;
+      font-size: .875rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all .18s;
+      display: inline-flex; align-items: center; gap: 6px;
+      box-shadow: 0 4px 16px rgba(229,0,18,.3);
+    }
+    .btn-primary-nav:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(229,0,18,.4);
+      color: #fff;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      height: 600px;
+      overflow: hidden;
+      margin: 24px auto;
+      max-width: 1280px;
+      padding: 0 32px;
+    }
+    @media (max-width: 768px) { .hero { height: 480px; padding: 0 16px; } }
+
+    .hero-img-wrap {
+      position: absolute;
+      inset: 0;
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+    }
+    .hero-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 30%;
+      transition: transform 8s ease;
+    }
+    .hero-img-wrap:hover .hero-img { transform: scale(1.04); }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      border-radius: var(--radius-xl);
+      background: linear-gradient(
+        120deg,
+        rgba(11,18,32,.82) 0%,
+        rgba(11,18,32,.4) 55%,
+        rgba(229,0,18,.15) 100%
+      );
+    }
+
+    .hero-content {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 60px;
+      z-index: 2;
+    }
+    @media (max-width: 768px) { .hero-content { padding: 32px 28px; } }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 16px;
+      border-radius: 999px;
+      background: rgba(229,0,18,.18);
+      border: 1px solid rgba(229,0,18,.35);
+      color: #ff6565;
+      font-size: .76rem;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      width: fit-content;
+    }
+
+    .hero-title {
+      font-size: clamp(2.2rem, 5vw, 3.6rem);
+      font-weight: 900;
+      letter-spacing: -2px;
+      line-height: 1.1;
+      color: #fff;
+      margin-bottom: 20px;
+      max-width: 600px;
+    }
+    .hero-title em {
+      font-style: italic;
+      background: linear-gradient(90deg, #ff8080, #e50012);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-sub {
+      color: rgba(255,255,255,.72);
+      font-size: 1.05rem;
+      line-height: 1.7;
+      max-width: 480px;
+      margin-bottom: 36px;
+    }
+
+    .hero-cta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .btn-hero-primary {
+      padding: 15px 30px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #e50012, #b0000e);
+      color: #fff;
+      font-family: 'Sarabun', sans-serif;
+      font-size: 1rem;
+      font-weight: 800;
+      border: none;
+      text-decoration: none;
+      display: inline-flex; align-items: center; gap: 8px;
+      box-shadow: 0 8px 24px rgba(229,0,18,.4);
+      transition: all .2s;
+    }
+    .btn-hero-primary:hover {
+      color: #fff;
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(229,0,18,.5);
+    }
+    .btn-hero-secondary {
+      padding: 15px 30px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.12);
+      backdrop-filter: blur(10px);
+      border: 1.5px solid rgba(255,255,255,.25);
+      color: #fff;
+      font-family: 'Sarabun', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      text-decoration: none;
+      display: inline-flex; align-items: center; gap: 8px;
+      transition: all .2s;
+    }
+    .btn-hero-secondary:hover {
+      color: #fff;
+      background: rgba(255,255,255,.2);
+      border-color: rgba(255,255,255,.4);
+    }
+
+    /* Hero floating stats card */
+    .hero-stats-card {
+      position: absolute;
+      right: 48px;
+      bottom: 40px;
+      background: rgba(255,255,255,.12);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,.22);
+      border-radius: 20px;
+      padding: 20px 28px;
+      display: flex;
+      gap: 32px;
+      z-index: 3;
+    }
+    @media (max-width: 768px) { .hero-stats-card { display: none; } }
+    .hstat .num {
+      font-size: 1.7rem;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: -1px;
+      line-height: 1;
+    }
+    .hstat .lbl {
+      font-size: .72rem;
+      font-weight: 600;
+      color: rgba(255,255,255,.6);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 4px;
+    }
+
+    /* ── SHELL ── */
+    .shell {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 32px;
+    }
+    @media (max-width: 576px) { .shell { padding: 0 16px; } }
+
+    /* ── SECTION TITLE ── */
+    .section-title {
+      font-size: 1.6rem;
+      font-weight: 900;
+      letter-spacing: -0.8px;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+    .section-sub {
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    /* ── MODULE CARDS ── */
+    .module-card {
+      background: var(--card);
+      border: 1px solid rgba(11,18,32,.07);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      padding: 24px;
+      text-decoration: none;
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      transition: all .22s cubic-bezier(.22,1,.36,1);
+      position: relative;
+      overflow: hidden;
+    }
+    .module-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--brand), #ff6b6b);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform .25s;
+    }
+    .module-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+      color: var(--ink);
+      border-color: rgba(229,0,18,.15);
+    }
+    .module-card:hover::before { transform: scaleX(1); }
+
+    .module-icon {
+      width: 52px; height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      flex-shrink: 0;
+    }
+    .module-icon.red   { background: rgba(229,0,18,.1);  color: var(--brand);  }
+    .module-icon.blue  { background: rgba(59,130,246,.1); color: #3b82f6; }
+    .module-icon.green { background: rgba(16,185,129,.1); color: #10b981; }
+    .module-icon.amber { background: rgba(245,158,11,.1); color: #f59e0b; }
+    .module-icon.violet{ background: rgba(139,92,246,.1); color: #8b5cf6; }
+
+    .module-info .module-name {
+      font-weight: 800;
+      font-size: 1rem;
+      margin-bottom: 3px;
+    }
+    .module-info .module-desc {
+      font-size: .8rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .module-arrow {
+      color: rgba(11,18,32,.25);
+      font-size: 1.1rem;
+      transition: transform .2s, color .2s;
+    }
+    .module-card:hover .module-arrow {
+      transform: translateX(4px);
+      color: var(--brand);
+    }
+
+    /* ── KPI CARDS ── */
+    .kpi-card {
+      background: var(--card);
+      border: 1px solid rgba(11,18,32,.07);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .kpi-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+    .kpi-card::after {
+      content: '';
+      position: absolute;
+      top: -40px; right: -40px;
+      width: 140px; height: 140px;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .kpi-card.kpi-red::after    { background: radial-gradient(circle, rgba(229,0,18,.15), transparent 70%); }
+    .kpi-card.kpi-blue::after   { background: radial-gradient(circle, rgba(59,130,246,.12), transparent 70%); }
+    .kpi-card.kpi-green::after  { background: radial-gradient(circle, rgba(16,185,129,.12), transparent 70%); }
+    .kpi-card.kpi-amber::after  { background: radial-gradient(circle, rgba(245,158,11,.12), transparent 70%); }
+
+    .kpi-label {
+      font-size: .75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .kpi-value {
+      font-size: 2.4rem;
+      font-weight: 900;
+      letter-spacing: -1.5px;
+      line-height: 1;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+    .kpi-sub {
+      font-size: .78rem;
+      color: var(--muted);
+    }
+    .kpi-icon {
+      position: absolute;
+      top: 20px; right: 20px;
+      width: 40px; height: 40px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+    }
+    .kpi-red .kpi-icon   { background: rgba(229,0,18,.1);  color: var(--brand); }
+    .kpi-blue .kpi-icon  { background: rgba(59,130,246,.1); color: #3b82f6; }
+    .kpi-green .kpi-icon { background: rgba(16,185,129,.1); color: #10b981; }
+    .kpi-amber .kpi-icon { background: rgba(245,158,11,.1); color: #f59e0b; }
+
+    /* ── FEATURE BANNER ── */
+    .feature-banner {
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      position: relative;
+      height: 260px;
+    }
+    .feature-banner img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 40%;
+    }
+    .feature-banner-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(11,18,32,.88) 0%, rgba(11,18,32,.2) 100%);
+      display: flex;
+      align-items: center;
+      padding: 40px 44px;
+    }
+    .feature-banner-content { color: #fff; }
+    .feature-banner-content h3 {
+      font-size: 1.8rem;
+      font-weight: 900;
+      letter-spacing: -0.8px;
+      margin-bottom: 8px;
+    }
+    .feature-banner-content p {
+      color: rgba(255,255,255,.7);
+      font-size: .95rem;
+      line-height: 1.6;
+      max-width: 360px;
+      margin-bottom: 20px;
+    }
+
+    /* ── DB SCHEMA TABLE ── */
+    .schema-card {
+      background: var(--card);
+      border: 1px solid rgba(11,18,32,.07);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+    .schema-card-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid rgba(11,18,32,.06);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .schema-card-header .title {
+      font-weight: 800;
+      font-size: 1rem;
+    }
+    .schema-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .schema-table th {
+      padding: 10px 20px;
+      font-size: .72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+      border-bottom: 1px solid rgba(11,18,32,.06);
+      text-align: left;
+    }
+    .schema-table td {
+      padding: 12px 20px;
+      border-bottom: 1px solid rgba(11,18,32,.04);
+      font-size: .88rem;
+    }
+    .schema-table tr:last-child td { border-bottom: none; }
+    .schema-table tr:hover td { background: rgba(11,18,32,.02); }
+    .schema-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: .72rem;
+      font-weight: 700;
+      border: 1px solid rgba(11,18,32,.1);
+      background: rgba(11,18,32,.04);
+    }
+
+    /* ── FOOTER ── */
+    .site-footer {
+      margin-top: 64px;
+      padding: 32px;
+      text-align: center;
+      color: var(--muted);
+      font-size: .82rem;
+      border-top: 1px solid rgba(11,18,32,.07);
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .animate { animation: fadeInUp .6s cubic-bezier(.22,1,.36,1) both; }
+    .delay-1 { animation-delay: .1s; }
+    .delay-2 { animation-delay: .2s; }
+    .delay-3 { animation-delay: .3s; }
+  </style>
+</head>
+<body>
+
+  <!-- ── NAV ── -->
+  <nav class="topnav">
+    <div class="nav-inner">
+      <a class="nav-logo" th:href="@{/}">UNIQLO<em>.</em>CMS<sup>admin</sup></a>
+      <div class="nav-actions">
+        <a class="btn-ghost" th:href="@{/cms}">
+          <i class="bi bi-grid-1x2"></i> Dashboard
+        </a>
+        <a class="btn-ghost" th:href="@{/users}">
+          <i class="bi bi-people"></i> Users
+        </a>
+        <a sec:authorize="!isAuthenticated()" class="btn-primary-nav" th:href="@{/login}">
+          <i class="bi bi-box-arrow-in-right"></i> Đăng nhập
+        </a>
+        <a sec:authorize="isAuthenticated()" class="btn-ghost" th:href="@{/logout}" style="border-color:rgba(229,0,18,.2);color:#e50012;">
+          <i class="bi bi-box-arrow-right"></i> Đăng xuất
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ── HERO ── -->
+  <div class="hero animate">
+    <div class="hero-img-wrap">
+      <img class="hero-img"
+           src="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=1600&q=85&auto=format&fit=crop"
+           alt="Uniqlo fashion store"/>
+    </div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow">
+        <i class="bi bi-stars"></i>
+        Uniqlo Management System
+      </div>
+      <h1 class="hero-title">
+        Quản trị thời trang<br/>
+        <em>thông minh & nhanh.</em>
+      </h1>
+      <p class="hero-sub">
+        Nền tảng CMS nội bộ chuẩn doanh nghiệp — quản lý sản phẩm, SKU, danh mục, đánh giá và người dùng tập trung tại một nơi.
+      </p>
+      <div class="hero-cta">
+        <a class="btn-hero-primary" th:href="@{/login}">
+          <i class="bi bi-box-arrow-in-right"></i> Đăng nhập CMS
+        </a>
+        <a class="btn-hero-secondary" th:href="@{/cms}">
+          <i class="bi bi-grid-1x2"></i> Xem Dashboard
+        </a>
+      </div>
+    </div>
+    <!-- Floating stats -->
+    <div class="hero-stats-card">
+      <div class="hstat">
+        <div class="num">15</div>
+        <div class="lbl">Sản phẩm</div>
+      </div>
+      <div class="hstat">
+        <div class="num">46</div>
+        <div class="lbl">SKUs</div>
+      </div>
+      <div class="hstat">
+        <div class="num">8</div>
+        <div class="lbl">Users</div>
+      </div>
+      <div class="hstat">
+        <div class="num">12</div>
+        <div class="lbl">Danh mục</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── KPI SECTION ── -->
+  <section class="shell" style="margin-top: 40px;">
+    <div class="d-flex align-items-start justify-content-between flex-wrap gap-3 mb-4">
+      <div>
+        <div class="section-title animate delay-1">Tổng quan hệ thống</div>
+        <div class="section-sub animate delay-1">Dữ liệu từ schema <code>uniqlo_education</code></div>
+      </div>
+    </div>
+    <div class="row g-3">
+      <div class="col-6 col-lg-3 animate delay-1">
+        <div class="kpi-card kpi-red">
+          <div class="kpi-icon"><i class="bi bi-bag-heart-fill"></i></div>
+          <div class="kpi-label">Sản phẩm</div>
+          <div class="kpi-value" th:text="${productCount ?: 15}">15</div>
+          <div class="kpi-sub">table: products</div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3 animate delay-2">
+        <div class="kpi-card kpi-blue">
+          <div class="kpi-icon"><i class="bi bi-upc-scan"></i></div>
+          <div class="kpi-label">SKUs</div>
+          <div class="kpi-value" th:text="${skuCount ?: 46}">46</div>
+          <div class="kpi-sub">table: product_skus</div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3 animate delay-2">
+        <div class="kpi-card kpi-green">
+          <div class="kpi-icon"><i class="bi bi-people-fill"></i></div>
+          <div class="kpi-label">Người dùng</div>
+          <div class="kpi-value" th:text="${userCount ?: 8}">8</div>
+          <div class="kpi-sub">table: users</div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3 animate delay-3">
+        <div class="kpi-card kpi-amber">
+          <div class="kpi-icon"><i class="bi bi-graph-up-arrow"></i></div>
+          <div class="kpi-label">Lượt truy cập</div>
+          <div class="kpi-value" th:text="${visitCount ?: 25}">25</div>
+          <div class="kpi-sub">table: visit_stats</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── MODULES ── -->
+  <section class="shell" style="margin-top: 48px;">
+    <div class="section-title animate">Điều hướng nhanh</div>
+    <div class="section-sub animate" style="margin-bottom:24px;">Truy cập các module quản trị</div>
+
+    <div class="row g-3">
+      <div class="col-12 col-md-6 col-lg-4 animate delay-1">
+        <a class="module-card" th:href="@{/cms}">
+          <div class="module-icon red"><i class="bi bi-grid-1x2-fill"></i></div>
+          <div class="module-info">
+            <div class="module-name">Dashboard</div>
+            <div class="module-desc">Tổng quan KPI và điều hướng trung tâm</div>
+          </div>
+          <i class="bi bi-chevron-right module-arrow"></i>
+        </a>
+      </div>
+      <div class="col-12 col-md-6 col-lg-4 animate delay-1">
+        <a class="module-card" th:href="@{/cms/products}">
+          <div class="module-icon blue"><i class="bi bi-bag-fill"></i></div>
+          <div class="module-info">
+            <div class="module-name">Sản phẩm</div>
+            <div class="module-desc">Thêm, sửa, xoá sản phẩm + quản lý ảnh</div>
+          </div>
+          <i class="bi bi-chevron-right module-arrow"></i>
+        </a>
+      </div>
+      <div class="col-12 col-md-6 col-lg-4 animate delay-2">
+        <a class="module-card" th:href="@{/cms/categories}">
+          <div class="module-icon green"><i class="bi bi-diagram-3-fill"></i></div>
+          <div class="module-info">
+            <div class="module-name">Danh mục</div>
+            <div class="module-desc">Cây danh mục Nam / Nữ / Trẻ em (parent_id)</div>
+          </div>
+          <i class="bi bi-chevron-right module-arrow"></i>
+        </a>
+      </div>
+      <div class="col-12 col-md-6 col-lg-4 animate delay-2">
+        <a class="module-card" th:href="@{/cms/skus}">
+          <div class="module-icon violet"><i class="bi bi-upc-scan"></i></div>
+          <div class="module-info">
+            <div class="module-name">SKUs</div>
+            <div class="module-desc">Biến thể sản phẩm (màu sắc, kích cỡ, giá)</div>
+          </div>
+          <i class="bi bi-chevron-right module-arrow"></i>
+        </a>
+      </div>
+      <div class="col-12 col-md-6 col-lg-4 animate delay-3">
+        <a class="module-card" th:href="@{/cms/reviews}">
+          <div class="module-icon amber"><i class="bi bi-chat-quote-fill"></i></div>
+          <div class="module-info">
+            <div class="module-name">Đánh giá</div>
+            <div class="module-desc">Xem và kiểm duyệt đánh giá sản phẩm</div>
+          </div>
+          <i class="bi bi-chevron-right module-arrow"></i>
+        </a>
+      </div>
+      <div class="col-12 col-md-6 col-lg-4 animate delay-3">
+        <a class="module-card" th:href="@{/users}">
+          <div class="module-icon red"><i class="bi bi-people-fill"></i></div>
+          <div class="module-info">
+            <div class="module-name">Người dùng</div>
+            <div class="module-desc">Quản lý tài khoản, phân quyền ADMIN / USER</div>
+          </div>
+          <i class="bi bi-chevron-right module-arrow"></i>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FEATURE BANNER ── -->
+  <section class="shell" style="margin-top: 48px;">
+    <div class="feature-banner animate">
+      <img src="https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?w=1400&q=80&auto=format&fit=crop"
+           alt="Fashion Collection"/>
+      <div class="feature-banner-overlay">
+        <div class="feature-banner-content">
+          <h3>Quản lý bộ sưu tập mùa mới</h3>
+          <p>Cập nhật sản phẩm, điều chỉnh SKU theo màu sắc và size, và theo dõi đánh giá khách hàng — tất cả trong một nền tảng.</p>
+          <a class="btn-hero-primary" th:href="@{/cms/products}">
+            <i class="bi bi-bag-plus"></i> Quản lý sản phẩm
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── DB SCHEMA OVERVIEW ── -->
+  <section class="shell" style="margin-top: 48px;">
+    <div class="row g-4 align-items-start">
+      <div class="col-12 col-lg-6 animate delay-1">
+        <div class="section-title mb-1">Schema Database</div>
+        <div class="section-sub mb-4">Cấu trúc bảng chính trong <code>uniqlo_education</code></div>
+        <div class="schema-card">
+          <div class="schema-card-header">
+            <span class="title"><i class="bi bi-database me-2"></i>Các bảng chính</span>
+            <span style="font-size:.75rem; color:var(--muted); font-weight:600;">MySQL</span>
+          </div>
+          <table class="schema-table">
+            <thead>
+              <tr>
+                <th>Bảng</th>
+                <th>Cột đặc biệt</th>
+                <th>Liên kết</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>users</strong></td>
+                <td><span class="schema-badge">role</span> <span class="schema-badge">avatar</span></td>
+                <td style="color:var(--muted)">—</td>
+              </tr>
+              <tr>
+                <td><strong>categories</strong></td>
+                <td><span class="schema-badge">parent_id</span></td>
+                <td style="color:var(--muted)">→ categories</td>
+              </tr>
+              <tr>
+                <td><strong>products</strong></td>
+                <td><span class="schema-badge">avatar</span></td>
+                <td style="color:var(--muted)">→ categories</td>
+              </tr>
+              <tr>
+                <td><strong>product_skus</strong></td>
+                <td><span class="schema-badge">original_price</span> <span class="schema-badge">sale_price</span></td>
+                <td style="color:var(--muted)">→ colors, sizes</td>
+              </tr>
+              <tr>
+                <td><strong>reviews</strong></td>
+                <td><span class="schema-badge">rating 1‑5</span></td>
+                <td style="color:var(--muted)">→ products, users</td>
+              </tr>
+              <tr>
+                <td><strong>visit_stats</strong></td>
+                <td><span class="schema-badge">visit_count</span></td>
+                <td style="color:var(--muted)">—</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-6 animate delay-2">
+        <div class="section-title mb-1">Tài khoản mặc định</div>
+        <div class="section-sub mb-4">Dùng để đăng nhập và test hệ thống</div>
+        <div style="background: var(--card); border: 1px solid rgba(11,18,32,.07); border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow-sm);">
+          <div style="display:flex; align-items:center; gap:16px; padding-bottom:20px; border-bottom: 1px solid rgba(11,18,32,.06); margin-bottom:20px;">
+            <div style="width:52px;height:52px;border-radius:16px;background:rgba(229,0,18,.1);color:var(--brand);display:flex;align-items:center;justify-content:center;font-size:1.5rem;">
+              <i class="bi bi-person-badge-fill"></i>
+            </div>
+            <div>
+              <div style="font-weight:800; font-size:1rem;">Admin Uniqlo</div>
+              <div style="color:var(--muted); font-size:.85rem;">admin@uniqlo.com</div>
+            </div>
+            <span style="margin-left:auto; background:rgba(229,0,18,.1); color:var(--brand); border:1px solid rgba(229,0,18,.2); border-radius:999px; padding:4px 12px; font-size:.75rem; font-weight:700;">ADMIN</span>
+          </div>
+          <div class="row g-3">
+            <div class="col-6">
+              <div style="background:var(--bg); border-radius:12px; padding:14px;">
+                <div style="font-size:.75rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px;">Email</div>
+                <div style="font-weight:700; font-size:.9rem;">admin@uniqlo.com</div>
+              </div>
+            </div>
+            <div class="col-6">
+              <div style="background:var(--bg); border-radius:12px; padding:14px;">
+                <div style="font-size:.75rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px;">Password</div>
+                <div style="font-weight:700; font-size:.9rem;">admin123</div>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:20px;">
+            <a class="btn-hero-primary" th:href="@{/login}" style="box-shadow:none; font-size:.9rem; padding:12px 24px;">
+              <i class="bi bi-box-arrow-in-right"></i> Đăng nhập ngay
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ── -->
+  <footer class="site-footer">
+    © 2026 Uniqlo CMS — Dự án học tập Java Spring Boot · Thymeleaf · MySQL
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Intersection Observer for scroll animations
+    const animEls = document.querySelectorAll('.animate');
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if(e.isIntersecting) {
+          e.target.style.animationPlayState = 'running';
+          obs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    animEls.forEach(el => {
+      el.style.animationPlayState = 'paused';
+      obs.observe(el);
+    });
+  </script>
+</body>
+</html>
+

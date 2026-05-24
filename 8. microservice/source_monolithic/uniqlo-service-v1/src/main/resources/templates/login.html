@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Uniqlo CMS — Đăng nhập</title>
+  <meta name="description" content="Trang đăng nhập quản trị Uniqlo CMS"/>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
+
+  <style>
+    :root {
+      --brand: #e50012;
+      --brand-dark: #b0000e;
+      --ink: #0b1220;
+      --muted: #64748b;
+      --bg: #f1f5f9;
+      --glass: rgba(255,255,255,0.88);
+      --glass-border: rgba(255,255,255,0.5);
+      --ring: rgba(229,0,18,.25);
+      --shadow-xl: 0 32px 80px rgba(11,18,32,0.22);
+      --shadow-md: 0 8px 32px rgba(11,18,32,0.12);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body { height: 100%; font-family: 'Sarabun', sans-serif; }
+
+    body {
+      display: flex;
+      min-height: 100vh;
+      background: var(--ink);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Left photo panel ── */
+    .photo-panel {
+      position: relative;
+      flex: 0 0 55%;
+      overflow: hidden;
+      display: none;
+    }
+    @media (min-width: 992px) { .photo-panel { display: block; } }
+
+    .photo-panel img.bg-photo {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      transform: scale(1.03);
+      transition: transform 8s ease;
+    }
+    .photo-panel:hover img.bg-photo { transform: scale(1.08); }
+
+    .photo-panel::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        135deg,
+        rgba(11,18,32,.72) 0%,
+        rgba(229,0,18,.28) 50%,
+        rgba(11,18,32,.55) 100%
+      );
+    }
+
+    .photo-overlay-content {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 48px;
+      color: #fff;
+    }
+
+    .photo-logo {
+      font-size: 1.6rem;
+      font-weight: 900;
+      letter-spacing: -1px;
+    }
+    .photo-logo span { color: var(--brand); }
+
+    .photo-tagline {
+      font-size: 2.6rem;
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -1.2px;
+    }
+    .photo-tagline em {
+      font-style: normal;
+      background: linear-gradient(90deg, #ff6b6b, #e50012);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .photo-stats {
+      display: flex;
+      gap: 32px;
+    }
+    .photo-stat { }
+    .photo-stat .num {
+      font-size: 1.9rem;
+      font-weight: 900;
+      letter-spacing: -1px;
+      line-height: 1;
+    }
+    .photo-stat .lbl {
+      font-size: .78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      opacity: .7;
+      margin-top: 4px;
+    }
+
+    /* ── Right form panel ── */
+    .form-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 24px;
+      background: var(--bg);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .form-panel::before {
+      content: '';
+      position: absolute;
+      top: -200px; right: -200px;
+      width: 600px; height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(229,0,18,.12), transparent 70%);
+      pointer-events: none;
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 440px;
+      background: var(--glass);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      box-shadow: var(--shadow-xl);
+      padding: 48px 44px;
+      position: relative;
+      z-index: 1;
+      animation: slideUp .5s cubic-bezier(.22,1,.36,1) both;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* mobile logo */
+    .mobile-logo {
+      font-size: 1.5rem;
+      font-weight: 900;
+      letter-spacing: -0.8px;
+      color: var(--ink);
+      margin-bottom: 28px;
+    }
+    .mobile-logo span { color: var(--brand); }
+    @media (min-width: 992px) { .mobile-logo { display: none; } }
+
+    .login-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(229,0,18,.1);
+      color: var(--brand);
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .login-title {
+      font-size: 2rem;
+      font-weight: 900;
+      letter-spacing: -1px;
+      color: var(--ink);
+      line-height: 1.2;
+      margin-bottom: 6px;
+    }
+
+    .login-sub {
+      font-size: .9rem;
+      color: var(--muted);
+      margin-bottom: 32px;
+    }
+
+    /* Alert */
+    .alert-error {
+      background: rgba(229,0,18,.08);
+      border: 1px solid rgba(229,0,18,.25);
+      border-radius: 14px;
+      color: #b0000e;
+      padding: 12px 16px;
+      font-size: .88rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .alert-success {
+      background: rgba(16,185,129,.08);
+      border: 1px solid rgba(16,185,129,.25);
+      border-radius: 14px;
+      color: #047857;
+      padding: 12px 16px;
+      font-size: .88rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      display: none; /* hidden by default */
+    }
+
+    /* Form */
+    .form-group { margin-bottom: 20px; }
+
+    .form-label-custom {
+      display: block;
+      font-size: .82rem;
+      font-weight: 700;
+      letter-spacing: .3px;
+      color: var(--ink);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+    .input-wrap .input-icon {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      font-size: 1.05rem;
+      pointer-events: none;
+    }
+    .input-field {
+      width: 100%;
+      padding: 14px 16px 14px 44px;
+      border-radius: 14px;
+      border: 1.5px solid rgba(11,18,32,.12);
+      background: rgba(255,255,255,.95);
+      font-family: 'Sarabun', sans-serif;
+      font-size: .95rem;
+      font-weight: 500;
+      color: var(--ink);
+      transition: border-color .2s, box-shadow .2s;
+      outline: none;
+    }
+    .input-field::placeholder { color: rgba(100,116,139,.6); }
+    .input-field:focus {
+      border-color: var(--brand);
+      box-shadow: 0 0 0 4px var(--ring);
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      padding: 4px;
+      font-size: 1rem;
+    }
+    .toggle-password:hover { color: var(--ink); }
+
+    .form-helpers {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 28px;
+      font-size: .85rem;
+    }
+    .remember-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      color: var(--ink);
+    }
+    .remember-label input[type=checkbox] {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--brand);
+    }
+    .forgot-link {
+      color: var(--brand);
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .forgot-link:hover { text-decoration: underline; }
+
+    .login-type-toggle {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 24px;
+      padding: 8px;
+      background: rgba(11,18,32,.04);
+      border-radius: 12px;
+    }
+    .login-type-toggle label {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 8px 12px;
+      font-size: .85rem;
+      font-weight: 700;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+    .login-type-toggle input[type="radio"] {
+      display: none;
+    }
+    .login-type-toggle input[type="radio"]:checked + span {
+      color: var(--brand);
+    }
+    .login-type-toggle label:has(input:checked) {
+      background: #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,.08);
+    }
+
+    .btn-login {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(135deg, #e50012, #b0000e);
+      color: #fff;
+      border: none;
+      border-radius: 14px;
+      font-family: 'Sarabun', sans-serif;
+      font-size: 1rem;
+      font-weight: 800;
+      letter-spacing: .3px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all .2s;
+      box-shadow: 0 8px 24px rgba(229,0,18,.35);
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-login::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,.12), transparent);
+    }
+    .btn-login:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(229,0,18,.45);
+    }
+    .btn-login:active { transform: translateY(0); }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 24px 0;
+      color: var(--muted);
+      font-size: .8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(11,18,32,.1);
+    }
+
+    .quick-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .quick-link {
+      flex: 1;
+      min-width: 100px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1.5px solid rgba(11,18,32,.1);
+      background: rgba(255,255,255,.7);
+      color: var(--ink);
+      font-size: .82rem;
+      font-weight: 700;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all .18s;
+    }
+    .quick-link:hover {
+      border-color: var(--brand);
+      color: var(--brand);
+      background: rgba(229,0,18,.04);
+      transform: translateY(-1px);
+    }
+
+    .login-footer {
+      text-align: center;
+      margin-top: 28px;
+      font-size: .82rem;
+      color: var(--muted);
+    }
+
+    /* floating particles */
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      animation: float linear infinite;
+      opacity: .3;
+    }
+    @keyframes float {
+      0%   { transform: translateY(100vh) scale(0); opacity: 0; }
+      10%  { opacity: .3; }
+      90%  { opacity: .3; }
+      100% { transform: translateY(-100px) scale(1); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Left photo panel ── -->
+  <div class="photo-panel">
+    <img class="bg-photo"
+         src="https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=1200&q=85&auto=format&fit=crop"
+         alt="Uniqlo Fashion"/>
+
+    <div class="photo-overlay-content">
+      <!-- Logo -->
+      <div class="photo-logo">UNIQLO<span>.</span>CMS</div>
+
+      <!-- Tagline -->
+      <div>
+        <div class="photo-tagline">
+          Quản trị<br/><em>thời trang</em><br/>hiệu quả &amp; đẹp.
+        </div>
+        <p style="color:rgba(255,255,255,.65); margin-top:16px; font-size:.95rem; max-width:320px; line-height:1.7;">
+          Hệ thống CMS nội bộ giúp quản lý sản phẩm, SKU, danh mục và người dùng một cách trực quan.
+        </p>
+      </div>
+
+      <!-- Stats -->
+      <div class="photo-stats">
+        <div class="photo-stat">
+          <div class="num">15+</div>
+          <div class="lbl">Sản phẩm</div>
+        </div>
+        <div class="photo-stat">
+          <div class="num">46</div>
+          <div class="lbl">SKU</div>
+        </div>
+        <div class="photo-stat">
+          <div class="num">8</div>
+          <div class="lbl">Users</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Right form panel ── -->
+  <div class="form-panel">
+
+    <div class="login-card">
+      <!-- Mobile logo -->
+      <div class="mobile-logo">UNIQLO<span>.</span>CMS</div>
+
+      <!-- Eyebrow -->
+      <div class="login-eyebrow">
+        <i class="bi bi-shield-lock-fill"></i>
+        Admin Portal
+      </div>
+
+      <h1 class="login-title">Đăng nhập</h1>
+      <p class="login-sub">Chào mừng trở lại — hãy nhập thông tin để tiếp tục.</p>
+
+      <!-- Error alert (Thymeleaf) -->
+      <div class="alert-error" th:if="${param.error}">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        Email hoặc mật khẩu không đúng.
+      </div>
+
+      <!-- Success alert (JS) -->
+      <div class="alert-success" id="jsSuccessAlert">
+        <i class="bi bi-check-circle-fill"></i>
+        <span>Đăng nhập JWT thành công!</span>
+      </div>
+
+      <!-- Error alert (JS) -->
+      <div class="alert-error" id="jsErrorAlert" style="display: none;">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <span>Lỗi đăng nhập qua API.</span>
+      </div>
+
+      <!-- Form -->
+      <form th:action="@{/login}" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" th:if="${_csrf}"/>
+
+        <div class="form-group">
+          <label class="form-label-custom" for="email">Email</label>
+          <div class="input-wrap">
+            <i class="bi bi-envelope input-icon"></i>
+            <input id="email" name="email" type="email" class="input-field"
+                   placeholder="admin@uniqlo.com" value="admin@uniqlo.com" required autocomplete="email"/>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label-custom" for="password">Mật khẩu</label>
+          <div class="input-wrap">
+            <i class="bi bi-lock input-icon"></i>
+            <input id="password" name="password" type="password" class="input-field"
+                   placeholder="••••••••" value="admin123" required autocomplete="current-password"/>
+            <button type="button" class="toggle-password" id="togglePwd" aria-label="Hiện mật khẩu">
+              <i class="bi bi-eye" id="eyeIcon"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="form-helpers">
+          <label class="remember-label">
+            <input type="checkbox" name="remember-me" id="rememberMe" checked/>
+            Nhớ đăng nhập
+          </label>
+          <a href="#" class="forgot-link">Quên mật khẩu?</a>
+        </div>
+
+        <div class="login-type-toggle">
+          <label>
+            <input type="radio" name="loginType" value="session" checked/>
+            <span><i class="bi bi-browser-chrome"></i> Session</span>
+          </label>
+          <label>
+            <input type="radio" name="loginType" value="jwt"/>
+            <span><i class="bi bi-key-fill"></i> JWT API</span>
+          </label>
+        </div>
+
+        <button type="submit" class="btn-login" id="loginBtn">
+          <i class="bi bi-box-arrow-in-right"></i>
+          Đăng nhập
+        </button>
+      </form>
+
+      <div class="divider">Điều hướng nhanh</div>
+
+      <div class="quick-links">
+        <a class="quick-link" th:href="@{/}"><i class="bi bi-house"></i> Trang chủ</a>
+        <a class="quick-link" th:href="@{/cms}"><i class="bi bi-grid-1x2"></i> Dashboard</a>
+        <a class="quick-link" th:href="@{/users}"><i class="bi bi-people"></i> Users</a>
+        <a class="quick-link" th:href="@{/cms/products}"><i class="bi bi-bag"></i> Sản phẩm</a>
+      </div>
+
+      <div class="login-footer">
+        © 2026 Uniqlo CMS — Dành cho mục đích học tập.
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Toggle password visibility
+    const toggleBtn = document.getElementById('togglePwd');
+    const pwdInput  = document.getElementById('password');
+    const eyeIcon   = document.getElementById('eyeIcon');
+    if (toggleBtn) {
+      toggleBtn.addEventListener('click', () => {
+        const isText = pwdInput.type === 'text';
+        pwdInput.type = isText ? 'password' : 'text';
+        eyeIcon.className = isText ? 'bi bi-eye' : 'bi bi-eye-slash';
+      });
+    }
+
+    // Handle form submit based on login type
+    const loginForm = document.querySelector('form');
+    const loginBtn = document.getElementById('loginBtn');
+    const jsSuccessAlert = document.getElementById('jsSuccessAlert');
+    const jsErrorAlert = document.getElementById('jsErrorAlert');
+
+    loginForm.addEventListener('submit', async (e) => {
+      const loginType = document.querySelector('input[name="loginType"]:checked').value;
+
+      if (loginType === 'jwt') {
+        e.preventDefault(); // Prevent standard form submit
+        
+        loginBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Đang đăng nhập API...';
+        loginBtn.disabled = true;
+        jsErrorAlert.style.display = 'none';
+
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        try {
+          const response = await fetch('/api/v1/auth/login', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email, password })
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            // Lưu token vào sessionStorage de call API
+            sessionStorage.setItem('access_token', data.access_token);
+            sessionStorage.setItem('refresh_token', data.refresh_token);
+            
+            // Lưu them vao Cookie de trinh duyet tu dong gui len Server khi vao trang Web UI (/cms)
+            document.cookie = "jwt_token=" + data.access_token + "; path=/; max-age=3600";
+            
+            jsSuccessAlert.style.display = 'flex';
+            jsSuccessAlert.querySelector('span').innerHTML = 'Đăng nhập API thành công!<br/>Đang chuyển hướng sang Web UI...';
+            
+            setTimeout(() => {
+              window.location.href = '/cms';
+            }, 1000);
+          } else {
+            jsErrorAlert.querySelector('span').textContent = 'Email hoặc mật khẩu không đúng.';
+            jsErrorAlert.style.display = 'flex';
+            loginBtn.innerHTML = '<i class="bi bi-box-arrow-in-right"></i> Đăng nhập';
+            loginBtn.disabled = false;
+          }
+        } catch (error) {
+          jsErrorAlert.querySelector('span').textContent = 'Lỗi kết nối máy chủ.';
+          jsErrorAlert.style.display = 'flex';
+          loginBtn.innerHTML = '<i class="bi bi-box-arrow-in-right"></i> Đăng nhập';
+          loginBtn.disabled = false;
+        }
+      } else {
+        // Standard Session Login
+        loginBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Đang đăng nhập...';
+        loginBtn.disabled = true;
+      }
+    });
+  </script>
+</body>
+</html>
+

@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Uniqlo CMS — Sản phẩm</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
+  <style>
+    :root{--brand:#e50012;--brand-dark:#b0000e;--sidebar-bg:#0b1220;--sidebar-hover:rgba(255,255,255,.07);--sidebar-active:rgba(229,0,18,.15);--sidebar-active-border:#e50012;--sidebar-text:rgba(255,255,255,.65);--sidebar-muted:rgba(255,255,255,.35);--ink:#0f172a;--muted:#64748b;--bg:#f1f5f9;--card:#ffffff;--border:rgba(15,23,42,.07);--shadow-md:0 8px 28px rgba(15,23,42,.10);--shadow-sm:0 4px 12px rgba(15,23,42,.06);--radius-lg:14px;--radius-md:10px;}
+    *,*::before,*::after{box-sizing:border-box;}html,body{height:100%;margin:0;padding:0;}
+    body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;display:flex;}
+    .fw-800{font-weight:800;}
+    /* SIDEBAR */
+    .sidebar{width:260px;min-height:100vh;background:var(--sidebar-bg);display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto;}
+    .sidebar::-webkit-scrollbar{width:4px;}.sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:4px;}
+    .sidebar-logo{padding:28px 24px 20px;border-bottom:1px solid rgba(255,255,255,.07);}
+    .logo-text{font-size:1.3rem;font-weight:900;letter-spacing:-0.7px;color:#fff;}.logo-text em{font-style:normal;color:var(--brand);}
+    .logo-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;background:rgba(229,0,18,.18);border:1px solid rgba(229,0,18,.3);color:#ff6565;font-size:.68rem;font-weight:700;letter-spacing:.8px;text-transform:uppercase;margin-top:6px;}
+    .sidebar-user{margin:16px 16px 0;padding:14px;border-radius:var(--radius-lg);background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:12px;}
+    .sidebar-avatar{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,rgba(229,0,18,.6),rgba(176,0,14,.4));display:flex;align-items:center;justify-content:center;color:#fff;font-size:1rem;font-weight:800;flex-shrink:0;}
+    .sidebar-user-info .name{color:#fff;font-weight:700;font-size:.88rem;line-height:1.3;}.sidebar-user-info .role{color:var(--sidebar-muted);font-size:.72rem;font-weight:600;}
+    .sidebar-nav{padding:20px 12px;flex:1;}
+    .nav-section-label{color:var(--sidebar-muted);font-size:.65rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:0 12px;margin-bottom:8px;margin-top:8px;}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;color:var(--sidebar-text);text-decoration:none;font-size:.875rem;font-weight:600;margin-bottom:2px;transition:all .18s;border-left:3px solid transparent;}
+    .nav-item:hover{background:var(--sidebar-hover);color:#fff;}.nav-item.active{background:var(--sidebar-active);color:#fff;border-left-color:var(--sidebar-active-border);}
+    .nav-item .nav-icon{font-size:1rem;flex-shrink:0;}.nav-item .nav-badge{margin-left:auto;padding:2px 8px;border-radius:999px;background:rgba(229,0,18,.2);color:var(--brand);font-size:.7rem;font-weight:700;}
+    .sidebar-footer{padding:16px;border-top:1px solid rgba(255,255,255,.07);}.sidebar-footer .btn-logout{display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:10px;background:rgba(229,0,18,.1);border:1px solid rgba(229,0,18,.2);color:#ff6565;font-size:.85rem;font-weight:700;text-decoration:none;width:100%;transition:all .18s;}
+    .sidebar-footer .btn-logout:hover{background:rgba(229,0,18,.18);color:#ff8080;}
+    /* MAIN */
+    .main-content{flex:1;min-height:100vh;display:flex;flex-direction:column;overflow-y:auto;}
+    .topbar{background:rgba(255,255,255,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 32px;height:68px;display:flex;align-items:center;justify-content:space-between;gap:16px;position:sticky;top:0;z-index:50;box-shadow:0 1px 12px rgba(15,23,42,.05);}
+    .topbar-title{font-size:1.2rem;font-weight:900;letter-spacing:-0.5px;}.topbar-sub{font-size:.78rem;color:var(--muted);font-weight:500;}
+    .topbar-right{display:flex;align-items:center;gap:10px;}
+    .btn-topbar{padding:8px 16px;border-radius:10px;border:1.5px solid rgba(15,23,42,.1);background:transparent;color:var(--ink);font-family:'Sarabun',sans-serif;font-size:.82rem;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:all .18s;cursor:pointer;}
+    .btn-topbar:hover{background:var(--bg);color:var(--ink);}
+    .btn-topbar-red{background:linear-gradient(135deg,#e50012,#b0000e);border-color:transparent;color:#fff;box-shadow:0 4px 12px rgba(229,0,18,.3);}
+    .btn-topbar-red:hover{color:#fff;box-shadow:0 6px 16px rgba(229,0,18,.4);transform:translateY(-1px);}
+    .page-body{padding:28px 32px;flex:1;}
+    /* FILTER CARD */
+    .filter-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:24px;margin-bottom:20px;}
+    .filter-title{font-weight:800;font-size:1rem;margin-bottom:4px;}.filter-sub{font-size:.8rem;color:var(--muted);}
+    .input-field{width:100%;padding:11px 16px;border-radius:10px;border:1.5px solid rgba(15,23,42,.1);background:#fff;font-family:'Sarabun',sans-serif;font-size:.875rem;color:var(--ink);outline:none;transition:border-color .2s,box-shadow .2s;}
+    .input-field:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(229,0,18,.15);}
+    .input-group-icon{display:flex;align-items:center;gap:0;}.input-group-icon .ig-addon{padding:11px 14px;border-radius:10px 0 0 10px;border:1.5px solid rgba(15,23,42,.1);border-right:0;background:var(--bg);color:var(--muted);font-size:.9rem;}
+    .input-group-icon .ig-field{border-radius:0 10px 10px 0;}
+    .form-label-s{display:block;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:6px;}
+    .form-select-s{width:100%;padding:11px 16px;border-radius:10px;border:1.5px solid rgba(15,23,42,.1);background:#fff;font-family:'Sarabun',sans-serif;font-size:.875rem;color:var(--ink);outline:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 16 16'%3E%3Cpath fill='%2364748b' d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;cursor:pointer;}
+    .form-select-s:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(229,0,18,.15);}
+    /* TABLE */
+    .table-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);overflow:hidden;}
+    .table-card-head{padding:16px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+    .table-card-head .title{font-weight:800;font-size:.95rem;}
+    .data-table{width:100%;border-collapse:collapse;}
+    .data-table thead th{padding:11px 18px;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);border-bottom:1px solid var(--border);text-align:left;background:var(--bg);white-space:nowrap;}
+    .data-table tbody td{padding:14px 18px;border-bottom:1px solid rgba(15,23,42,.04);font-size:.85rem;vertical-align:middle;}
+    .data-table tbody tr:last-child td{border-bottom:none;}.data-table tbody tr:hover td{background:rgba(15,23,42,.02);}
+    /* AVATAR */
+    .prod-avatar{width:46px;height:46px;border-radius:12px;overflow:hidden;border:1px solid rgba(15,23,42,.08);background:linear-gradient(135deg,rgba(229,0,18,.15),rgba(15,23,42,.05));display:inline-flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:800;color:var(--muted);}
+    .prod-avatar img{width:100%;height:100%;object-fit:cover;}
+    /* BADGES */
+    .pill{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:999px;font-size:.72rem;font-weight:700;border:1px solid rgba(15,23,42,.1);background:rgba(15,23,42,.04);}
+    .pill-cat{background:rgba(59,130,246,.08);border-color:rgba(59,130,246,.2);color:#2563eb;}
+    /* ACTION BUTTONS */
+    .action-group{display:flex;gap:6px;justify-content:flex-end;}
+    .btn-act{padding:7px 13px;border-radius:9px;font-size:.78rem;font-weight:700;border:1.5px solid;cursor:pointer;font-family:'Sarabun',sans-serif;text-decoration:none;display:inline-flex;align-items:center;gap:5px;transition:all .15s;}
+    .btn-act-edit{border-color:rgba(15,23,42,.15);background:transparent;color:var(--ink);}.btn-act-edit:hover{background:rgba(15,23,42,.06);}
+    .btn-act-img{border-color:rgba(59,130,246,.2);background:rgba(59,130,246,.06);color:#2563eb;}.btn-act-img:hover{background:rgba(59,130,246,.12);}
+    .btn-act-sku{border-color:rgba(139,92,246,.2);background:rgba(139,92,246,.06);color:#7c3aed;}.btn-act-sku:hover{background:rgba(139,92,246,.12);}
+    .btn-act-del{border-color:rgba(229,0,18,.2);background:rgba(229,0,18,.06);color:var(--brand);}.btn-act-del:hover{background:rgba(229,0,18,.12);}
+    /* PAGINATION */
+    .pagination-wrap{padding:14px 22px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:.82rem;color:var(--muted);}
+    .pag{display:flex;gap:4px;}.pag-btn{width:34px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:9px;border:1.5px solid rgba(15,23,42,.1);background:transparent;color:var(--ink);font-size:.82rem;font-weight:600;cursor:pointer;text-decoration:none;transition:all .15s;}
+    .pag-btn:hover{background:var(--bg);}.pag-btn.active{background:var(--brand);border-color:var(--brand);color:#fff;}
+    .pag-btn.disabled{opacity:.4;pointer-events:none;}
+    /* PREMIUM MODAL */
+    .modal-content-premium{border-radius:20px;border:none;box-shadow:0 25px 50px -12px rgba(0,0,0,0.25);overflow:hidden;}
+    .modal-header-premium{background:#f8fafc;padding:24px 32px;border-bottom:1px solid #e2e8f0;}
+    .nav-tabs-premium{border-bottom:none;gap:8px;margin-bottom:24px;}
+    .nav-tabs-premium .nav-link{border:none;border-radius:10px;padding:10px 20px;font-size:.85rem;font-weight:700;color:var(--muted);transition:all .2s;}
+    .nav-tabs-premium .nav-link:hover{background:#f1f5f9;color:var(--ink);}
+    .nav-tabs-premium .nav-link.active{background:var(--brand);color:#fff;box-shadow:0 4px 12px rgba(229,0,18,0.25);}
+    .image-upload-zone{border:2px dashed #e2e8f0;border-radius:16px;padding:24px;text-align:center;background:#f8fafc;transition:all .2s;cursor:pointer;position:relative;overflow:hidden;min-height:280px;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+    .image-upload-zone:hover{border-color:var(--brand);background:#fff1f2;}
+    .image-upload-zone img{max-width:100%;max-height:240px;border-radius:12px;object-fit:contain;box-shadow:var(--shadow-md);display:none;}
+    .image-upload-zone.has-image img{display:block;}
+    .image-upload-zone.has-image .upload-placeholder{display:none;}
+    .upload-placeholder i{font-size:2.5rem;color:#cbd5e1;margin-bottom:12px;display:block;}
+    .upload-placeholder span{font-size:.85rem;color:var(--muted);font-weight:600;}
+    @media(max-width:991px){.sidebar{display:none;}.topbar{padding:0 16px;}.page-body{padding:20px 16px;}}
+  </style>
+</head>
+<body>
+  <!-- SIDEBAR -->
+  <aside th:replace="~{fragments/cms_layout :: sidebar(activePage='products')}"></aside>
+
+  <!-- MAIN -->
+  <div class="main-content">
+    <header class="topbar">
+      <div>
+        <div class="topbar-title">Sản phẩm</div>
+        <div class="topbar-sub">Quản lý <strong>products</strong> · ảnh · biến thể SKU</div>
+      </div>
+      <div class="topbar-right">
+        <a class="btn-topbar" th:href="@{/cms}"><i class="bi bi-grid-1x2"></i> Dashboard</a>
+        <button class="btn-topbar btn-topbar-red" id="addProductBtn"><i class="bi bi-plus-lg"></i> Thêm sản phẩm</button>
+        <a class="btn-topbar btn-topbar-logout" th:href="@{/logout}">
+          <i class="bi bi-box-arrow-right"></i> Đăng xuất
+        </a>
+      </div>
+    </header>
+
+    <div class="page-body">
+      <!-- Filter -->
+      <div class="filter-card">
+        <div class="d-flex align-items-start justify-content-between flex-wrap gap-3 mb-4">
+          <div>
+            <div class="filter-title">Bộ lọc sản phẩm</div>
+            <div class="filter-sub">Tìm kiếm và lọc danh sách sản phẩm</div>
+          </div>
+          <span style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:999px;font-size:.75rem;font-weight:700;border:1px solid rgba(15,23,42,.1);background:rgba(15,23,42,.04);">
+            <i class="bi bi-bag"></i> 15 sản phẩm
+          </span>
+        </div>
+        <form class="row g-3">
+          <div class="col-12 col-lg-5">
+            <label class="form-label-s">Tìm kiếm</label>
+            <div class="input-group-icon">
+              <span class="ig-addon"><i class="bi bi-search"></i></span>
+              <input type="text" id="searchInput" class="input-field ig-field" placeholder="Tên sản phẩm..."/>
+            </div>
+          </div>
+          <div class="col-12 col-lg-3">
+            <label class="form-label-s">Danh mục</label>
+            <select id="categoryFilter" class="form-select-s">
+              <option value="">Tất cả</option>
+            </select>
+          </div>
+          <div class="col-12 col-lg-2">
+            <label class="form-label-s">Người tạo</label>
+            <select id="creatorFilter" class="form-select-s">
+              <option value="">Tất cả</option>
+            </select>
+          </div>
+          <div class="col-12 col-lg-2 d-flex align-items-end">
+            <button type="button" id="filterBtn" class="btn-topbar" style="width:100%; justify-content:center;">
+              <i class="bi bi-funnel"></i> Lọc
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Products table -->
+      <div class="table-card">
+        <div class="table-card-head">
+          <span class="title"><i class="bi bi-bag-fill me-2" style="color:var(--brand);"></i>Danh sách sản phẩm</span>
+          <span style="font-size:.78rem;color:var(--muted);">15 sản phẩm · Trang 1/2</span>
+        </div>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th style="width:60px;">Ảnh</th>
+                <th style="width:110px;">Mã SP</th>
+                <th>Tên sản phẩm</th>
+                <th>Danh mục</th>
+                <th style="width:110px;">Ngày tạo</th>
+                <th style="width:110px;">Cập nhật</th>
+                <th class="text-end" style="width:230px;">Thao tác</th>
+              </tr>
+            </thead>
+            <tbody id="productTableBody">
+            </tbody>
+          </table>
+        </div>
+        <div class="pagination-wrap" id="paginationWrap">
+          <!-- JS dynamic content -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL SẢN PHẨM -->
+  <div class="modal fade" id="productModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+      <div class="modal-content modal-content-premium">
+        <div class="modal-header modal-header-premium border-0">
+          <div>
+            <h5 class="modal-title fw-800 mb-1" id="modalTitle">Thêm sản phẩm mới</h5>
+            <p class="text-muted mb-0" style="font-size: .8rem;">Vui lòng điền đầy đủ các thông tin chi tiết của sản phẩm</p>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body p-4 px-5">
+          <!-- TABS -->
+          <ul class="nav nav-tabs nav-tabs-premium mb-4" id="productTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active" id="basic-tab" data-bs-toggle="tab" data-bs-target="#basic-panel" type="button" role="tab">Thông tin cơ bản</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="sku-tab" data-bs-toggle="tab" data-bs-target="#sku-panel" type="button" role="tab">Biến thể & Kho hàng</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="image-tab" data-bs-toggle="tab" data-bs-target="#image-panel" type="button" role="tab">Bộ sưu tập ảnh</button>
+            </li>
+          </ul>
+
+          <div class="tab-content" id="productTabsContent">
+            <!-- PANEL THÔNG TIN CƠ BẢN -->
+            <div class="tab-pane fade show active" id="basic-panel" role="tabpanel">
+              <form id="productForm">
+                <input type="hidden" id="prodId"/>
+                <div class="row g-4">
+                  <div class="col-lg-7">
+                    <div class="row g-3">
+                      <div class="col-12">
+                        <label class="form-label-s">Tên sản phẩm</label>
+                        <input type="text" id="prodName" class="input-field" required placeholder="Nhập tên sản phẩm đầy đủ..."/>
+                      </div>
+                      <div class="col-md-12">
+                        <label class="form-label-s">Danh mục</label>
+                        <select id="prodCategory" class="form-select-s" required>
+                          <option value="">Chọn danh mục cấp sản phẩm</option>
+                        </select>
+                      </div>
+                      <div class="col-12">
+                        <label class="form-label-s">Đường dẫn ảnh đại diện (Tùy chọn)</label>
+                        <input type="text" id="prodAvatar" class="input-field" placeholder="https://example.com/image.jpg"/>
+                      </div>
+                      <div class="col-12">
+                        <label class="form-label-s">Mô tả sản phẩm</label>
+                        <textarea id="prodDescription" class="input-field" rows="4" placeholder="Mô tả các đặc điểm nổi bật..."></textarea>
+                      </div>
+                      <div class="col-12">
+                        <label class="form-label-s">Thông tin chất liệu & Bảo quản</label>
+                        <textarea id="prodMaterial" class="input-field" rows="2" placeholder="Ví dụ: 100% Cotton, giặt máy ở nhiệt độ thường..."></textarea>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-5">
+                    <label class="form-label-s">Ảnh đại diện sản phẩm</label>
+                    <div class="image-upload-zone" id="avatarZone" onclick="document.getElementById('prodAvatarFile').click()">
+                      <div class="upload-placeholder">
+                        <i class="bi bi-cloud-arrow-up"></i>
+                        <span>Tải ảnh đại diện lên</span>
+                        <p class="mt-2 text-muted" style="font-size: .7rem;">Hỗ trợ JPG, PNG, WEBP (Tối đa 5MB)</p>
+                      </div>
+                      <img id="avatarPreview" src="" alt="Xem trước"/>
+                      <input type="file" id="prodAvatarFile" class="d-none" accept="image/*"/>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+
+            <!-- PANEL BIẾN THỂ -->
+            <div class="tab-pane fade" id="sku-panel" role="tabpanel">
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Màu sắc</th>
+                      <th>Kích cỡ</th>
+                      <th>Giá gốc (VNĐ)</th>
+                      <th>Giá khuyến mãi</th>
+                      <th>Số lượng kho</th>
+                      <th>Mã SKU</th>
+                      <th style="width:50px;"></th>
+                    </tr>
+                  </thead>
+                  <tbody id="skuTableBody">
+                    <!-- Các hàng dữ liệu được sinh tự động -->
+                  </tbody>
+                </table>
+              </div>
+              <button class="btn-topbar mt-3" type="button" onclick="addSkuRow()"><i class="bi bi-plus-circle me-1"></i> Thêm biến thể mới</button>
+            </div>
+
+            <!-- PANEL HÌNH ẢNH -->
+            <div class="tab-pane fade" id="image-panel" role="tabpanel">
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th style="width: 150px;">Màu sắc</th>
+                      <th>Chi tiết hình ảnh</th>
+                      <th style="width: 100px;" class="text-center">Ảnh chính</th>
+                      <th style="width: 100px;">Thứ tự</th>
+                      <th style="width: 50px;"></th>
+                    </tr>
+                  </thead>
+                  <tbody id="imageTableBody">
+                    <!-- Các hàng dữ liệu được sinh tự động -->
+                  </tbody>
+                </table>
+              </div>
+              <button class="btn-topbar mt-3" type="button" onclick="addImageRow()"><i class="bi bi-images me-1"></i> Thêm ảnh bộ sưu tập</button>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer modal-header-premium border-0 p-4">
+          <button type="button" class="btn-topbar px-4" data-bs-dismiss="modal">Đóng</button>
+          <button type="button" class="btn-topbar btn-topbar-red px-5" id="saveProductBtn">Lưu thay đổi</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script th:src="@{/js/cms_products.js}"></script>
+</body>
+</html>
+

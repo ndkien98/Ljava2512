@@ -1,0 +1,9 @@
+- Hiểu sự khác biệt giữa Monolithic và Microservice.
+- Tạo kiến trúc tổng quan dự án chia thành các microservice
+- Sử dụng Eureka Server & Eureka Client để
+   + Tạo server đăng ký
+   + Các service tự động đăng ký và gọi nhau qua @LoadBalanced RestTemplate
+- Cấu hình Spring Cloud Config để
+  + Làm Config Server
+  + Git repo làm nơi lưu config
+  + Client load cấu hình từ config server

@@ -1,0 +1,64 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: eureka-gateway
+  # Cấu hình routing cho Gateway
+  cloud:
+    gateway:
+      # Cho phép CORS từ React frontend
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "http://localhost:3000"
+            allowedMethods: "GET,POST,PUT,DELETE,OPTIONS"
+            allowedHeaders: "*"
+            allowCredentials: true
+      routes:
+        # Route đến User Service (auth + user management)
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/api/v1/auth/**,/api/users/**
+
+        # Route đến Product Service
+        - id: product-service
+          uri: lb://PRODUCT-SERVICE
+          predicates:
+            - Path=/api/products/**
+
+        # Route đến Master Data Service (categories, colors, sizes)
+        - id: master-data-service
+          uri: lb://MASTER-DATA-SERVICE
+          predicates:
+            - Path=/api/categories/**,/api/colors/**,/api/sizes/**
+
+        # Route đến Order Service (cart, orders, reviews)
+        - id: order-service
+          uri: lb://ORDER-SERVICE
+          predicates:
+            - Path=/api/orders/**,/api/cart/**,/api/reviews/**
+
+# Cấu hình Eureka Server
+eureka:
+  client:
+    # Gateway là Eureka Server, không cần tự đăng ký với chính mình
+    register-with-eureka: false
+    fetch-registry: false
+    service-url:
+      defaultZone: http://localhost:8080/eureka/
+  server:
+    # Không đợi sync khi khởi động (tăng tốc startup)
+    wait-time-in-ms-when-sync-empty: 0
+    # Thời gian trước khi xóa instance bị lỗi (ms)
+    eviction-interval-timer-in-ms: 5000
+
+# JWT Secret Key (phải giống nhau ở tất cả các service)
+jwt:
+  secret: 5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    com.netflix.eureka: WARN
