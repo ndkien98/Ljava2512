@@ -133,3 +133,14 @@ set MAVEN_OPTS=-Xms64m -Xmx256m
 mvn spring-boot:run
 ```
 (File `start_all.bat` đã tích hợp sẵn tính năng này).
+
+## 6. Hướng Dẫn Tắt Toàn Bộ Hệ Thống
+
+Để dừng tất cả các service (bao gồm cả backend và frontend), bạn có thể sử dụng file `end_all.bat` trong thư mục `source_microservice`:
+
+```bash
+cd source_microservice
+end_all.bat
+```
+
+Script này sẽ tự động tìm và tắt các tiến trình Java Spring Boot và frontend React đang chạy. Nếu có service nào vẫn còn chạy, hãy kiểm tra lại các cửa sổ terminal hoặc tắt thủ công.
