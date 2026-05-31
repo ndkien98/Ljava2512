@@ -1,0 +1,13 @@
+server:
+  port: 19088
+
+spring:
+  application:
+    name: config-server
+  cloud:
+    config:
+      server:
+        git:
+          uri: file:///${user.dir}/../config-repo
+          default-label: main
+          search-paths: .
