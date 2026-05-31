@@ -40,19 +40,13 @@ spring:
           predicates:
             - Path=/api/orders/**,/api/cart/**,/api/reviews/**
 
-# Cấu hình Eureka Server
+# Cấu hình Eureka Client
 eureka:
   client:
-    # Gateway là Eureka Server, không cần tự đăng ký với chính mình
-    register-with-eureka: false
-    fetch-registry: false
+    register-with-eureka: true
+    fetch-registry: true
     service-url:
-      defaultZone: http://localhost:8080/eureka/
-  server:
-    # Không đợi sync khi khởi động (tăng tốc startup)
-    wait-time-in-ms-when-sync-empty: 0
-    # Thời gian trước khi xóa instance bị lỗi (ms)
-    eviction-interval-timer-in-ms: 5000
+      defaultZone: http://localhost:19089/eureka/
 
 # JWT Secret Key (phải giống nhau ở tất cả các service)
 jwt:

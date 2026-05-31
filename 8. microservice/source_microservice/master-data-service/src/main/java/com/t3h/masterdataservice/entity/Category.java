@@ -25,6 +25,7 @@ public class Category extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id", insertable = false, updatable = false)
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private Category parent;
 
     @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY)

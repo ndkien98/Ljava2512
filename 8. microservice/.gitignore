@@ -7,6 +7,8 @@
 # Logs
 **/*.log
 
+source_microservice/log/
+
 # IDE files
 **/.idea/
 **/.vscode/

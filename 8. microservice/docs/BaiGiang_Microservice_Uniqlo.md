@@ -1,397 +1,107 @@
 # BÀI GIẢNG: KIẾN TRÚC MICROSERVICE
-## Chuyển đổi từ Monolithic sang Microservice với Spring Cloud & React
+## Chuyển Đổi Từ Monolithic Sang Microservice Với Spring Cloud Và React
 
-> **Đối tượng:** Lập trình viên Java đã biết Spring Boot  
-> **Thời lượng:** 8-10 tiết  
-> **Dự án thực hành:** Hệ thống thương mại điện tử Uniqlo
+**Đối tượng:** Lập trình viên Java đã có nền tảng Spring Boot.
+**Thời lượng:** 8-10 tiết.
+**Dự án thực hành:** Hệ thống thương mại điện tử Uniqlo.
 
 ---
 
 ## MỤC LỤC
 
-1. [Monolithic vs Microservice – Hiểu từ thực tế](#1-monolithic-vs-microservice)
-2. [Thiết kế kiến trúc Microservice cho Uniqlo](#2-thiết-kế-kiến-trúc)
-3. [Eureka Server – Trung tâm đăng ký service](#3-eureka-server)
-4. [API Gateway với Spring Cloud Gateway](#4-api-gateway)
-5. [Spring Cloud Config – Quản lý cấu hình tập trung](#5-spring-cloud-config)
-6. [Các Backend Microservice](#6-các-backend-microservice)
-7. [Frontend với ReactJS](#7-frontend-reactjs)
-8. [Giao tiếp giữa các service (@LoadBalanced RestTemplate)](#8-giao-tiếp-giữa-services)
-9. [Demo toàn bộ hệ thống](#9-demo-hệ-thống)
+1. [Monolithic vs Microservice – Khái Niệm Cơ Bản](#1-monolithic-vs-microservice)
+2. [Thiết Kế Kiến Trúc Microservice Cho Hệ Thống Uniqlo](#2-thiết-kế-kiến-trúc-microservice-cho-hệ-thống-uniqlo)
+3. [Spring Cloud Config – Quản Lý Cấu Hình Tập Trung](#3-spring-cloud-config--quản-lý-cấu-hình-tập-trung)
+4. [Eureka Server – Trung Tâm Đăng Ký Service](#4-eureka-server--trung-tâm-đăng-ký-service)
+5. [API Gateway – Cửa Ngõ Giao Tiếp Duy Nhất](#5-api-gateway--cửa-ngõ-giao-tiếp-duy-nhất)
+6. [Giao Tiếp Giữa Các Service Backend](#6-giao-tiếp-giữa-các-service-backend)
+7. [Mô Hình Dữ Liệu Và Các Backend Microservice](#7-mô-hình-dữ-liệu-và-các-backend-microservice)
+8. [Tích Hợp Frontend ReactJS](#8-tích-hợp-frontend-reactjs)
 
 ---
 
-## 1. MONOLITHIC vs MICROSERVICE
+## 1. MONOLITHIC VS MICROSERVICE
 
-### 1.1 Kiến trúc Monolithic – Phân tích dự án Uniqlo hiện tại
+### 1.1 Vấn Đề Của Kiến Trúc Monolithic
 
-```
-uniqlo-service-v1/ (Monolithic)
-├── controller/
-│   ├── AuthController.java
-│   ├── CategoryController.java
-│   ├── UserController.java
-│   └── resource/
-│       ├── ProductResource.java
-│       ├── UserResource.java
-│       └── MasterDataResource.java
-├── service/
-│   ├── AuthService.java
-│   ├── ProductService.java
-│   ├── UserService.java
-│   └── CategoryService.java
-├── entity/ (14 entities dùng chung)
-│   ├── Product.java, ProductSku.java, ProductImage.java
-│   ├── User.java, Role.java, Token.java
-│   ├── Category.java, Color.java, Size.java
-│   ├── CartItem.java, Review.java
-│   └── ...
-└── resources/
-    └── db/database.sql (1 database duy nhất)
+Trong giai đoạn đầu, dự án Uniqlo được xây dựng theo kiến trúc Monolithic (nguyên khối). Tất cả các module như Quản lý người dùng, Sản phẩm, Giỏ hàng, Đơn hàng đều được gói gọn trong một file `.jar` hoặc `.war` duy nhất và kết nối chung vào một cơ sở dữ liệu.
+
+```mermaid
+graph TD
+    Client[Client Browser / Mobile] --> App
+    subgraph Monolithic Application
+        App[Uniqlo Application]
+        App --> UserController
+        App --> ProductController
+        App --> OrderController
+    end
+    App --> DB[(MySQL Database)]
 ```
 
-**Vấn đề của Monolithic khi scale:**
+Khi hệ thống phát triển, kiến trúc Monolithic bộc lộ nhiều nhược điểm chí mạng:
+- **Rủi ro triển khai cao:** Một thay đổi nhỏ ở tính năng đánh giá sản phẩm cũng yêu cầu phải khởi động lại toàn bộ hệ thống.
+- **Không thể mở rộng cục bộ:** Trong dịp Black Friday, lượng truy cập xem sản phẩm tăng vọt nhưng tính năng thanh toán lại ít dùng. Tuy nhiên, hệ thống bắt buộc phải nhân bản toàn bộ cả khối ứng dụng thay vì chỉ nhân bản module quản lý sản phẩm, gây lãng phí tài nguyên máy chủ.
+- **Lỗi dây chuyền (Single Point of Failure):** Một vòng lặp vô hạn ở module giỏ hàng có thể tiêu thụ toàn bộ CPU, khiến cả hệ thống tê liệt.
 
-| Vấn đề | Ảnh hưởng |
-|--------|-----------|
-| Deploy toàn bộ ứng dụng khi thay đổi 1 module | Downtime, rủi ro cao |
-| Không thể scale riêng từng tính năng | Lãng phí tài nguyên |
-| Team lớn khó làm việc song song | Conflict code thường xuyên |
-| Technology lock-in | Không thể dùng công nghệ phù hợp cho từng domain |
-| Một bug trong 1 service → toàn bộ hệ thống sập | Single point of failure |
+### 1.2 Giải Pháp Microservice
 
-### 1.2 Kiến trúc Microservice – Giải pháp
+Kiến trúc Microservice chia nhỏ hệ thống thành các ứng dụng độc lập, giao tiếp với nhau qua mạng (thường là HTTP/REST). Mỗi service đảm nhận một nghiệp vụ (domain) riêng biệt.
 
-```
-                           ┌─────────────────────────────────────────────┐
-                           │              Uniqlo Ecosystem                │
-                           │                                              │
-  React Frontend           │  ┌──────────────────────────────────────┐   │
-  (port 3000)  ─────────►  │  │   API Gateway + Eureka Server        │   │
-                           │  │         (port 8080)                  │   │
-                           │  └──────────────────────────────────────┘   │
-                           │           │         │         │         │    │
-                           │     ┌─────┘    ┌────┘    ┌───┘    ┌────┘   │
-                           │     ▼          ▼         ▼        ▼        │
-                           │  user-     product-  master-   order-      │
-                           │  service   service   data-svc  service     │
-                           │  (8081)    (8082)    (8083)    (8084)      │
-                           │     │          │         │        │        │
-                           │     └──────────┴─────────┴────────┘        │
-                           │                    │                        │
-                           │           MySQL: uniqlo_education           │
-                           └─────────────────────────────────────────────┘
-```
-
-**Lợi ích của Microservice:**
-
-| Lợi ích | Mô tả |
-|---------|-------|
-| Independent Deploy | Deploy từng service riêng lẻ, không ảnh hưởng service khác |
-| Scale độc lập | Product service nhận nhiều traffic → scale riêng product service |
-| Team autonomy | Team product, team user làm việc độc lập |
-| Technology flexibility | Product service dùng Java, frontend dùng React |
-| Fault isolation | User service sập → các service khác vẫn hoạt động |
+- **Triển khai độc lập:** Có thể cập nhật Product Service mà không làm gián đoạn User Service.
+- **Mở rộng linh hoạt:** Khi cần thiết, có thể chạy 5 instances của Product Service và chỉ 1 instance của Master Data Service.
+- **Cô lập lỗi:** Lỗi ở module Đơn hàng không làm sập module Người dùng.
 
 ---
 
-## 2. THIẾT KẾ KIẾN TRÚC
+## 2. THIẾT KẾ KIẾN TRÚC MICROSERVICE CHO HỆ THỐNG UNIQLO
 
-### 2.1 Phân tích Domain và Microservice
+Hệ thống Uniqlo được chia thành các thành phần chính sau:
 
-Dựa trên database hiện tại (`uniqlo_education`), ta chia domain như sau:
-
+```mermaid
+flowchart TD
+    Client[React Frontend] -->|HTTP Request| Gateway[API Gateway - Port 8080]
+    
+    Gateway -.->|Tìm kiếm địa chỉ| Eureka[Eureka Server - Port 19089]
+    Gateway -->|Định tuyến| User[User Service - Port 8081]
+    Gateway -->|Định tuyến| Product[Product Service - Port 8082]
+    Gateway -->|Định tuyến| MasterData[Master Data Service - Port 8083]
+    Gateway -->|Định tuyến| Order[Order Service - Port 8084]
+    
+    User -.->|Đăng ký/Tìm kiếm| Eureka
+    Product -.->|Đăng ký/Tìm kiếm| Eureka
+    MasterData -.->|Đăng ký/Tìm kiếm| Eureka
+    Order -.->|Đăng ký/Tìm kiếm| Eureka
+    
+    User -->|Cấu hình| Config[Config Server - Port 19088]
+    Product -->|Cấu hình| Config
+    MasterData -->|Cấu hình| Config
+    Order -->|Cấu hình| Config
+    
+    User --> Database[(MySQL Database)]
+    Product --> Database
+    MasterData --> Database
+    Order --> Database
 ```
-Database Tables → Domain → Service
-─────────────────────────────────────────────────────────────────
-users, roles, user_roles, tokens          → USER DOMAIN      → user-service
-products, product_skus, product_images    → PRODUCT DOMAIN   → product-service  
-categories, colors, sizes                 → MASTER DATA      → master-data-service
-cart_items, reviews, visit_stats          → ORDER/CART       → order-service
-```
 
-### 2.2 Cấu trúc dự án hoàn chỉnh
-
-```
-source_microservice/
-├── config-server/          # Spring Cloud Config Server (port 8888)
-├── eureka-gateway/         # Eureka Server + API Gateway (port 8080)
-├── user-service/           # User management (port 8081)
-├── product-service/        # Product & SKU (port 8082)
-├── master-data-service/    # Category, Color, Size (port 8083)
-├── order-service/          # Cart, Orders (port 8084)
-└── frontend/               # React app (port 3000)
-```
-
-### 2.3 Technology Stack
-
-```yaml
-Backend:
-  - Spring Boot: 3.5.x
-  - Spring Cloud: 2024.0.x
-  - Spring Cloud Netflix Eureka: Service Discovery
-  - Spring Cloud Gateway: API Gateway + Load Balancer
-  - Spring Cloud Config: Centralized Configuration
-  - Spring Security + JWT: Authentication
-  - Spring Data JPA: ORM
-  - MySQL 8: Database
-
-Frontend:
-  - React 18: UI Framework
-  - Axios: HTTP Client
-  - React Router: Navigation
-  - TailwindCSS: Styling
-
-Infrastructure:
-  - Maven: Build tool
-  - Git: Config repository
-```
+*Lưu ý: Để đơn giản hóa môi trường học tập, hệ thống vẫn dùng chung một Database. Trong thực tế (Production), mỗi microservice nên sở hữu một Database độc lập để đảm bảo tính cô lập dữ liệu tuyệt đối.*
 
 ---
 
-## 3. EUREKA SERVER
+## 3. SPRING CLOUD CONFIG – QUẢN LÝ CẤU HÌNH TẬP TRUNG
 
-### 3.1 Eureka Server là gì?
+Khi có 5-10 microservice, việc thay đổi mật khẩu database trong 10 file `application.yml` rất dễ sai sót. Spring Cloud Config Server giải quyết vấn đề này bằng cách kéo cấu hình từ một kho lưu trữ Git và cung cấp tập trung cho các service.
 
-Eureka Server là **Service Registry** – một "cuốn sổ danh bạ" nơi:
-- Mỗi microservice **tự đăng ký** tên và địa chỉ của mình khi khởi động
-- Các service khác **tra cứu** địa chỉ của service cần gọi
-- Tự động **phát hiện** service bị lỗi và loại khỏi danh sách
+### 3.1 Cấu hình Config Server
 
-```
-user-service khởi động → đăng ký với Eureka: "Tôi là USER-SERVICE, đang ở localhost:8081"
-product-service muốn gọi user-service → hỏi Eureka: "USER-SERVICE đang ở đâu?"
-Eureka trả lời: "USER-SERVICE đang ở localhost:8081"
-```
-
-### 3.2 Tích hợp Eureka vào API Gateway
-
-Trong dự án này ta **nhúng Eureka Server vào API Gateway** để giảm số lượng service cần quản lý.
-
-**pom.xml cho eureka-gateway:**
-
+**Thêm Dependency (pom.xml):**
 ```xml
-<dependencies>
-    <!-- Spring Cloud Gateway -->
-    <dependency>
-        <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-starter-gateway</artifactId>
-    </dependency>
-    
-    <!-- Eureka Server (nhúng vào gateway) -->
-    <dependency>
-        <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
-    </dependency>
-    
-    <!-- Eureka Client (để gateway tự đăng ký với Eureka) -->
-    <dependency>
-        <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-    </dependency>
-    
-    <!-- Load Balancer -->
-    <dependency>
-        <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-starter-loadbalancer</artifactId>
-    </dependency>
-</dependencies>
-```
-
-**application.yml cho eureka-gateway:**
-
-```yaml
-server:
-  port: 8080
-
-spring:
-  application:
-    name: eureka-gateway
-  cloud:
-    gateway:
-      routes:
-        - id: user-service
-          uri: lb://USER-SERVICE          # lb:// = Load Balanced
-          predicates:
-            - Path=/api/users/**,/api/v1/auth/**
-            
-        - id: product-service
-          uri: lb://PRODUCT-SERVICE
-          predicates:
-            - Path=/api/products/**
-            
-        - id: master-data-service
-          uri: lb://MASTER-DATA-SERVICE
-          predicates:
-            - Path=/api/categories/**,/api/colors/**,/api/sizes/**
-            
-        - id: order-service
-          uri: lb://ORDER-SERVICE
-          predicates:
-            - Path=/api/orders/**,/api/cart/**
-
-# Eureka Server Configuration
-eureka:
-  client:
-    register-with-eureka: false    # Gateway không cần tự đăng ký
-    fetch-registry: false
-    service-url:
-      defaultZone: http://localhost:8080/eureka/
-  server:
-    wait-time-in-ms-when-sync-empty: 0  # Không đợi sync khi start
-```
-
-**Annotation kích hoạt Eureka Server:**
-
-```java
-@SpringBootApplication
-@EnableEurekaServer   // Kích hoạt Eureka Server
-public class EurekaGatewayApplication {
-    public static void main(String[] args) {
-        SpringApplication.run(EurekaGatewayApplication.class, args);
-    }
-}
-```
-
-### 3.3 Eureka Client – Cấu hình cho mỗi service
-
-Mỗi backend service cần:
-
-**pom.xml:**
-```xml
-<dependency>
-    <groupId>org.springframework.cloud</groupId>
-    <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-</dependency>
-```
-
-**application.yml:**
-```yaml
-spring:
-  application:
-    name: user-service    # Tên đăng ký với Eureka (phải viết hoa khi gọi lb://)
-
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8080/eureka/   # Địa chỉ Eureka Server
-  instance:
-    prefer-ip-address: true    # Đăng ký bằng IP thay vì hostname
-```
-
-**Annotation:**
-```java
-@SpringBootApplication
-@EnableDiscoveryClient   // Kích hoạt Eureka Client
-public class UserServiceApplication {
-    ...
-}
-```
-
----
-
-## 4. API GATEWAY
-
-### 4.1 API Gateway là gì?
-
-API Gateway là **cổng vào duy nhất** của toàn bộ hệ thống:
-- Client chỉ cần biết **1 địa chỉ** (gateway)
-- Gateway tự **định tuyến** request đến service phù hợp
-- Xử lý **Authentication** tập trung
-- **Load balancing** tự động
-- **Rate limiting**, logging tập trung
-
-### 4.2 Cơ chế định tuyến (Routing)
-
-```
-Client                     Gateway                    Services
-  │                           │                          │
-  │  GET /api/products/1      │                          │
-  ├──────────────────────────►│                          │
-  │                           │  Path matches            │
-  │                           │  /api/products/**        │
-  │                           │  → lb://PRODUCT-SERVICE  │
-  │                           ├─────────────────────────►│ product-service:8082
-  │                           │                          │
-  │       200 OK + data       │        200 OK + data     │
-  │◄──────────────────────────├◄─────────────────────────┤
-```
-
-### 4.3 JWT Filter trong Gateway
-
-```java
-@Component
-public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
-
-    private static final List<String> PUBLIC_PATHS = List.of(
-        "/api/v1/auth/login",
-        "/api/v1/auth/refresh"
-    );
-
-    @Override
-    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        String path = exchange.getRequest().getURI().getPath();
-        
-        // Cho phép public paths không cần token
-        if (PUBLIC_PATHS.stream().anyMatch(path::startsWith)) {
-            return chain.filter(exchange);
-        }
-        
-        // Kiểm tra JWT token
-        String authHeader = exchange.getRequest()
-            .getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
-            
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-            return exchange.getResponse().setComplete();
-        }
-        
-        // Validate token và forward request
-        String token = authHeader.substring(7);
-        if (jwtService.isTokenValid(token)) {
-            return chain.filter(exchange);
-        }
-        
-        exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-        return exchange.getResponse().setComplete();
-    }
-    
-    @Override
-    public int getOrder() { return -1; } // Chạy trước các filter khác
-}
-```
-
----
-
-## 5. SPRING CLOUD CONFIG
-
-### 5.1 Vấn đề khi không có Config Server
-
-Khi có nhiều microservice, mỗi service có file `application.yml` riêng:
-- Thay đổi DB password → phải vào từng service sửa → restart từng service
-- Khó quản lý cấu hình theo môi trường (dev/staging/prod)
-- Config bị phân tán, khó theo dõi lịch sử thay đổi
-
-### 5.2 Giải pháp: Spring Cloud Config
-
-```
-Git Repository (config-repo/)        Config Server        Microservices
-├── application.yml (chung)         ─────────────────►   user-service
-├── user-service.yml                     (8888)           product-service
-├── product-service.yml                                   master-data-service
-└── master-data-service.yml
-```
-
-**Config Server setup:**
-
-```xml
-<!-- pom.xml -->
 <dependency>
     <groupId>org.springframework.cloud</groupId>
     <artifactId>spring-cloud-config-server</artifactId>
 </dependency>
 ```
 
+**Kích hoạt Server:**
 ```java
 @SpringBootApplication
 @EnableConfigServer
@@ -402,196 +112,213 @@ public class ConfigServerApplication {
 }
 ```
 
+**application.yml (Config Server):**
 ```yaml
-# config-server/application.yml
 server:
-  port: 8888
+  port: 19088
 
 spring:
+  application:
+    name: config-server
   cloud:
     config:
       server:
         git:
-          uri: file:///D:/config-repo    # Local git repo (hoặc GitHub URL)
-          default-label: main
+          uri: file:///D:/t3h/java2512/core/java2512/8. microservice/config-repo
 ```
 
-**Client sử dụng Config Server:**
+### 3.2 Cấu hình Client (Microservice)
 
+Thay vì viết cấu hình dài dòng, các backend service chỉ cần khai báo địa chỉ của Config Server.
+
+**application.yml (User Service):**
 ```yaml
-# bootstrap.yml (đọc trước application.yml)
 spring:
   application:
     name: user-service
-  cloud:
-    config:
-      uri: http://localhost:8888
-      fail-fast: true
+  config:
+    import: "optional:configserver:http://localhost:19088"
 ```
 
 ---
 
-## 6. CÁC BACKEND MICROSERVICE
+## 4. EUREKA SERVER – TRUNG TÂM ĐĂNG KÝ SERVICE
 
-### 6.1 User Service (port 8081)
+Service Discovery là thành phần cốt lõi của microservice. Do các service có thể khởi động ở các port ngẫu nhiên hoặc ở nhiều máy chủ khác nhau, chúng không thể gọi nhau bằng IP tĩnh. Eureka Server đóng vai trò như một "cuốn bạ điện thoại".
 
-**Trách nhiệm:** Quản lý users, authentication, authorization  
-**Bảng DB:** users, roles, user_roles, tokens
+### 4.1 Cấu hình Eureka Server
 
-```
-user-service/
-├── controller/
-│   ├── AuthController.java     (POST /api/v1/auth/login, /refresh)
-│   └── UserController.java     (GET/POST/PUT/DELETE /api/users/**)
-├── service/
-│   ├── AuthService.java
-│   └── UserService.java
-├── entity/
-│   ├── User.java
-│   ├── Role.java
-│   └── Token.java
-├── security/
-│   ├── JwtService.java
-│   ├── SecurityConfig.java
-│   └── JwtAuthFilter.java
-└── repository/
-    ├── UserRepository.java
-    └── TokenRepository.java
+**pom.xml:**
+```xml
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
+</dependency>
 ```
 
-**Key API endpoints:**
-```
-POST /api/v1/auth/login       → Đăng nhập, trả về JWT
-POST /api/v1/auth/refresh     → Refresh access token
-GET  /api/users               → Danh sách users (phân trang)
-POST /api/users               → Tạo user mới
-PUT  /api/users/{id}          → Cập nhật user
-DELETE /api/users/{id}        → Xóa user
-```
-
-### 6.2 Product Service (port 8082)
-
-**Trách nhiệm:** Quản lý sản phẩm, SKU, images  
-**Bảng DB:** products, product_skus, product_images
-
-```
-product-service/
-├── controller/
-│   └── ProductController.java
-├── service/
-│   ├── ProductService.java
-│   └── impl/ProductServiceImpl.java
-├── entity/
-│   ├── Product.java
-│   ├── ProductSku.java
-│   └── ProductImage.java
-├── dto/
-│   ├── ProductRequestDto.java
-│   └── ProductResponseDto.java
-└── repository/
-    └── ProductRepository.java
-```
-
-**Gọi Master Data Service để lấy Colors/Sizes:**
-
+**Kích hoạt Server:**
 ```java
-@Service
-@RequiredArgsConstructor
-public class ProductServiceImpl implements ProductService {
-    
-    private final RestTemplate restTemplate;   // @LoadBalanced
-    
-    public List<ColorDto> getAvailableColors() {
-        // Gọi sang master-data-service qua Eureka
-        return restTemplate.getForObject(
-            "http://MASTER-DATA-SERVICE/api/colors",
-            List.class
-        );
+@SpringBootApplication
+@EnableEurekaServer
+public class EurekaServerApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(EurekaServerApplication.class, args);
     }
 }
 ```
 
-### 6.3 Master Data Service (port 8083)
+**application.yml:**
+```yaml
+server:
+  port: 19089
 
-**Trách nhiệm:** Quản lý dữ liệu danh mục (ít thay đổi)  
-**Bảng DB:** categories, colors, sizes
-
-```
-Key API endpoints:
-GET  /api/categories          → Danh sách categories (tree)
-POST /api/categories          → Tạo category
-GET  /api/colors              → Danh sách màu sắc
-POST /api/colors              → Thêm màu
-GET  /api/sizes               → Danh sách kích cỡ
-POST /api/sizes               → Thêm kích cỡ
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false
 ```
 
-### 6.4 Order Service (port 8084)
+### 4.2 Eureka Client (Đăng ký service)
 
-**Trách nhiệm:** Giỏ hàng, đặt hàng, reviews  
-**Bảng DB:** cart_items, reviews, visit_stats
+Bất kỳ service nào muốn tham gia mạng lưới đều phải khai báo dependency `spring-cloud-starter-netflix-eureka-client` và cấu hình địa chỉ Eureka Server.
 
-```
-Key API endpoints:
-GET  /api/cart/{userId}       → Giỏ hàng của user
-POST /api/cart                → Thêm vào giỏ
-DELETE /api/cart/{itemId}     → Xóa khỏi giỏ
-POST /api/orders              → Đặt hàng
-GET  /api/orders/{userId}     → Lịch sử đặt hàng
+**application.yml (Cho mọi Backend Service & Gateway):**
+```yaml
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:19089/eureka/
+  instance:
+    prefer-ip-address: true
 ```
 
 ---
 
-## 7. FRONTEND REACTJS
+## 5. API GATEWAY – CỬA NGÕ GIAO TIẾP DUY NHẤT
 
-### 7.1 Cấu trúc React App
+Nếu không có Gateway, Frontend React sẽ phải nhớ port 8081 để gọi API User, nhớ port 8082 để gọi API Product. Điều này dẫn đến sự ràng buộc cứng (tight coupling) và gặp vấn đề về bảo mật (CORS).
 
-```
-frontend/
-├── public/
-├── src/
-│   ├── api/
-│   │   ├── axiosConfig.js      # Cấu hình Axios + interceptors
-│   │   ├── authApi.js          # Auth API calls
-│   │   ├── productApi.js       # Product API calls
-│   │   ├── userApi.js          # User API calls
-│   │   └── masterDataApi.js    # Category/Color/Size APIs
-│   ├── components/
-│   │   ├── common/
-│   │   │   ├── Navbar.jsx
-│   │   │   ├── Sidebar.jsx
-│   │   │   └── Table.jsx
-│   │   ├── product/
-│   │   │   ├── ProductList.jsx
-│   │   │   └── ProductForm.jsx
-│   │   └── user/
-│   │       ├── UserList.jsx
-│   │       └── UserForm.jsx
-│   ├── pages/
-│   │   ├── LoginPage.jsx
-│   │   ├── DashboardPage.jsx
-│   │   ├── ProductPage.jsx
-│   │   └── UserPage.jsx
-│   ├── hooks/
-│   │   └── useAuth.js
-│   ├── context/
-│   │   └── AuthContext.jsx
-│   └── App.jsx
-└── package.json
+Spring Cloud Gateway tạo ra một điểm nghẽn duy nhất để kiểm soát lưu lượng, xác thực token và định tuyến.
+
+### 5.1 Cấu hình Gateway
+
+**pom.xml:**
+```xml
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-gateway</artifactId>
+</dependency>
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+</dependency>
 ```
 
-### 7.2 Axios Configuration với JWT
+**application.yml (Phân luồng định tuyến):**
+```yaml
+server:
+  port: 8080
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/api/users/**,/api/v1/auth/**
+            
+        - id: product-service
+          uri: lb://PRODUCT-SERVICE
+          predicates:
+            - Path=/api/products/**
+```
+Lưu ý cú pháp `lb://USER-SERVICE`: Gateway sẽ kết hợp với Eureka và Load Balancer để chuyển URL `/api/users/1` thành HTTP Request thật tới `http://192.168.1.10:8081/api/users/1`.
+
+---
+
+## 6. GIAO TIẾP GIỮA CÁC SERVICE BACKEND
+
+Khi Microservice bị chia nhỏ, dữ liệu cũng bị chia nhỏ. Ví dụ: Order Service giữ thông tin đơn hàng, nhưng lại cần thông tin chi tiết của người dùng. Để làm được điều này, Order Service phải thực hiện HTTP Call nội bộ sang User Service.
+
+Công cụ phổ biến nhất trong Spring Boot là `RestTemplate` kết hợp `@LoadBalanced`.
+
+### 6.1 Khởi tạo RestTemplate
+
+```java
+@Configuration
+public class RestTemplateConfig {
+
+    @Bean
+    @LoadBalanced
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
+}
+```
+Annotation `@LoadBalanced` vô cùng quan trọng. Nó chỉ thị cho Spring can thiệp vào RestTemplate, phân tích các URL có chứa tên service (như `USER-SERVICE`) và nhờ Eureka phân giải thành địa chỉ IP thực tế trước khi gửi yêu cầu.
+
+### 6.2 Code Demo Giao Tiếp
+
+**Ví dụ trong Product Service muốn lấy dữ liệu từ Master Data Service:**
+
+```java
+@Service
+@RequiredArgsConstructor
+public class ProductService {
+    
+    private final RestTemplate restTemplate;
+    
+    public List<CategoryDto> getAllCategoriesForProduct() {
+        // Địa chỉ URL dùng TÊN ỨNG DỤNG viết hoa, không dùng IP cục bộ.
+        String masterDataUrl = "http://MASTER-DATA-SERVICE/api/categories";
+        
+        CategoryDto[] response = restTemplate.getForObject(masterDataUrl, CategoryDto[].class);
+        
+        return Arrays.asList(response);
+    }
+}
+```
+
+---
+
+## 7. MÔ HÌNH DỮ LIệu VÀ CÁC BACKEND MICROSERVICE
+
+Cơ sở dữ liệu được phân tích và chia thành 4 nghiệp vụ chính:
+
+### 7.1 User Service (Quản Lý Người Dùng)
+- **Chức năng:** Đăng nhập, đăng ký, cấp phát JWT, xác thực, phân quyền, quản lý tài khoản.
+- **Entity:** `User`, `Role`, `Token`.
+
+### 7.2 Product Service (Quản Lý Sản Phẩm)
+- **Chức năng:** Hiển thị sản phẩm, lọc theo giá, xem chi tiết, biến thể (SKU), kho lưu trữ hình ảnh.
+- **Entity:** `Product`, `ProductSku`, `ProductImage`.
+
+### 7.3 Master Data Service (Dữ Liệu Danh Mục)
+- **Chức năng:** Cung cấp thông tin ít biến động nhưng dùng chung cho nhiều chỗ.
+- **Entity:** `Category`, `Color`, `Size`.
+
+### 7.4 Order Service (Giỏ Hàng & Đơn Hàng)
+- **Chức năng:** Thêm vào giỏ, thanh toán, quản lý đơn hàng, đánh giá sản phẩm, thống kê lượt truy cập.
+- **Entity:** `CartItem`, `Review`, `VisitStat`, (Order).
+
+---
+
+## 8. TÍCH HỢP FRONTEND REACTJS
+
+Bên phía Frontend, quá trình tích hợp trở nên cực kỳ đơn giản. Lập trình viên Frontend không cần quan tâm đằng sau có bao nhiêu microservice. Họ chỉ cần coi API Gateway như một backend duy nhất.
+
+### 8.1 Cấu hình Axios với Gateway
 
 ```javascript
-// src/api/axiosConfig.js
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:8080',  // Gateway URL
+  baseURL: 'http://localhost:8080',  // Chỉ gọi duy nhất vào cổng Gateway
   timeout: 10000,
 });
 
-// Request interceptor – tự động đính token
+// Interceptor tự động thêm JWT vào mọi Request
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('access_token');
   if (token) {
@@ -600,178 +327,19 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Response interceptor – tự động refresh token khi 401
-api.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    if (error.response?.status === 401) {
-      try {
-        const refreshToken = localStorage.getItem('refresh_token');
-        const res = await axios.post('/api/v1/auth/refresh', {}, {
-          headers: { Authorization: `Bearer ${refreshToken}` }
-        });
-        localStorage.setItem('access_token', res.data.access_token);
-        // Retry request gốc
-        error.config.headers.Authorization = `Bearer ${res.data.access_token}`;
-        return axios(error.config);
-      } catch {
-        localStorage.clear();
-        window.location.href = '/login';
-      }
-    }
-    return Promise.reject(error);
-  }
-);
-
 export default api;
 ```
 
----
+### 8.2 Gọi API Sản Phẩm
 
-## 8. GIAO TIẾP GIỮA SERVICES
+```javascript
+import api from './axiosConfig';
 
-### 8.1 @LoadBalanced RestTemplate
-
-Khi một service cần gọi sang service khác, ta dùng `RestTemplate` với annotation `@LoadBalanced`:
-
-```java
-// Cấu hình Bean trong mỗi service cần gọi service khác
-@Configuration
-public class RestTemplateConfig {
-
-    @Bean
-    @LoadBalanced   // Quan trọng! Cho phép dùng tên service thay vì IP:Port
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
-    }
-}
+export const fetchProducts = async () => {
+    // Frontend gọi /api/products -> Gateway nhận -> Forward sang Product Service
+    const response = await api.get('/api/products');
+    return response.data;
+};
 ```
 
-**Cách sử dụng:**
-
-```java
-@Service
-@RequiredArgsConstructor
-public class OrderServiceImpl {
-    
-    private final RestTemplate restTemplate;
-    
-    public CartItemResponseDto addToCart(CartItemRequest request) {
-        // Kiểm tra user tồn tại – gọi sang USER-SERVICE
-        UserDto user = restTemplate.getForObject(
-            "http://USER-SERVICE/api/users/" + request.getUserId(),
-            UserDto.class
-        );
-        
-        // Kiểm tra SKU tồn tại – gọi sang PRODUCT-SERVICE
-        SkuDto sku = restTemplate.getForObject(
-            "http://PRODUCT-SERVICE/api/products/skus/" + request.getSkuId(),
-            SkuDto.class
-        );
-        
-        // Tạo cart item...
-    }
-}
-```
-
-### 8.2 Luồng giao tiếp đầy đủ
-
-```
-React App (3000)
-    │
-    │ GET /api/products?page=0
-    ▼
-API Gateway (8080)
-    │ Path: /api/products/** → lb://PRODUCT-SERVICE
-    │ Load Balancer hỏi Eureka: PRODUCT-SERVICE ở đâu?
-    │ Eureka: 127.0.0.1:8082
-    ▼
-Product Service (8082)
-    │ Xử lý query, cần lấy category info
-    │ restTemplate.getForObject("http://MASTER-DATA-SERVICE/api/categories/5")
-    ▼
-Master Data Service (8083)
-    │ Trả về category data
-    ▼
-Product Service (8082)
-    │ Combine data, build response
-    ▼
-API Gateway (8080)
-    ▼
-React App (3000) ← JSON response
-```
-
----
-
-## 9. DEMO HỆ THỐNG
-
-### 9.1 Thứ tự khởi động
-
-```bash
-# 1. Khởi động Config Server (nếu dùng)
-cd config-server && mvn spring-boot:run
-
-# 2. Khởi động Eureka Gateway
-cd eureka-gateway && mvn spring-boot:run
-
-# 3. Khởi động các backend services (có thể song song)
-cd user-service && mvn spring-boot:run
-cd product-service && mvn spring-boot:run
-cd master-data-service && mvn spring-boot:run
-cd order-service && mvn spring-boot:run
-
-# 4. Khởi động Frontend
-cd frontend && npm install && npm start
-```
-
-### 9.2 Kiểm tra Eureka Dashboard
-
-Truy cập: http://localhost:8080/eureka
-
-Bạn sẽ thấy tất cả services đã đăng ký:
-```
-Application         AMIs    Availability Zones    Status
-USER-SERVICE        n/a     (1)                   UP (1) - localhost:8081
-PRODUCT-SERVICE     n/a     (1)                   UP (1) - localhost:8082
-MASTER-DATA-SERVICE n/a     (1)                   UP (1) - localhost:8083
-ORDER-SERVICE       n/a     (1)                   UP (1) - localhost:8084
-```
-
-### 9.3 Test API qua Gateway
-
-```bash
-# Đăng nhập
-curl -X POST http://localhost:8080/api/v1/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"email":"admin@uniqlo.com","password":"admin123"}'
-
-# Lấy danh sách sản phẩm (qua gateway → product-service)
-curl http://localhost:8080/api/products \
-  -H "Authorization: Bearer <your_token>"
-
-# Lấy categories (qua gateway → master-data-service)
-curl http://localhost:8080/api/categories \
-  -H "Authorization: Bearer <your_token>"
-```
-
----
-
-## SO SÁNH MONOLITHIC vs MICROSERVICE – TỔNG KẾT
-
-```
-                MONOLITHIC                   MICROSERVICE
-               ────────────                 ────────────────
-Deploy:        Toàn bộ app cùng lúc         Từng service độc lập
-Scale:         Scale toàn bộ                Scale từng service
-Database:      1 DB chung                   Mỗi service có thể có DB riêng
-Team:          1 team làm tất cả            Team theo domain
-Complexity:    Đơn giản khi nhỏ             Phức tạp hơn nhưng flexible
-Debug:         Dễ debug local               Cần distributed tracing
-Phù hợp:      Startup, MVP                 Enterprise, scale lớn
-```
-
-> **Lưu ý thực tế:** Trong bài học này ta dùng **1 database dùng chung** cho tất cả services (Shared Database Pattern) để đơn giản hóa việc học. Trong production thực tế, mỗi service nên có database riêng.
-
----
-
-*Bài giảng được xây dựng dựa trên dự án Uniqlo Education – T3H*
+Kiến trúc Microservice đem lại sự rạch ròi giữa các khâu phát triển, đặc biệt hiệu quả trong các hệ thống quy mô lớn, nhiều nghiệp vụ phức tạp. Việc triển khai thành công mô hình này đòi hỏi sự thiết lập nghiêm ngặt ngay từ đầu đối với Config Server, Service Registry, và API Gateway.
