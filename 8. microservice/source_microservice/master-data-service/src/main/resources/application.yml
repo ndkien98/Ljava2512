@@ -20,7 +20,7 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:19089/eureka/
+      defaultZone: http://localhost:19089/eureka/ # config đăng ký service này với eureka registry ở địa chỉ nào, ở đây là localhost cổng 19089
   instance:
     prefer-ip-address: true
-    instance-id: ${spring.application.name}:${server.port}
+    instance-id: ${spring.application.name}:${server.port} # config instance id của service này, thường là tên service + port

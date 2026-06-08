@@ -10,6 +10,6 @@ eureka:
     register-with-eureka: false
     fetch-registry: false
     service-url:
-      defaultZone: http://localhost:19089/eureka/
+      defaultZone: http://localhost:19089/eureka/ # config đăng ký chính servie này với chính nó 
   server:
     wait-time-in-ms-when-sync-empty: 0
