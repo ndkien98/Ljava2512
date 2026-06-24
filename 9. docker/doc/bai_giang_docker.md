@@ -189,7 +189,7 @@ stateDiagram-v2
 ### 3.2 Các Instruction cốt lõi
 
 - **FROM**: Định nghĩa Base Image (ảnh nền) để bắt đầu xây dựng (phải là lệnh đầu tiên). Khuyên dùng các bản rút gọn như `-alpine` hoặc `-slim` để giảm dung lượng image.
-  - _Ví dụ_: `FROM openjdk:17-jdk-alpine`
+  - _Ví dụ_: `FROM eclipse-temurin:17-jre-alpine`
 - **WORKDIR**: Thiết lập thư mục làm việc mặc định cho tất cả các câu lệnh tiếp theo (`RUN`, `CMD`, `ENTRYPOINT`, `COPY`, `ADD`). Nếu thư mục chưa tồn tại, Docker sẽ tự tạo.
   - _Ví dụ_: `WORKDIR /app`
 - **COPY**: Sao chép các file/thư mục từ máy host vào bên trong container.
@@ -223,13 +223,13 @@ Hãy viết Dockerfile theo thứ tự từ các chỉ thị ít thay đổi nh�
 
 ```dockerfile
 # Cách viết TỒI (Không tận dụng được cache)
-FROM maven:3.8.4-openjdk-17 AS build
+FROM maven:3.9.6-eclipse-temurin-17-alpine AS build
 WORKDIR /app
 COPY . .
 RUN mvn package  # Mỗi lần sửa 1 dòng code, Docker phải tải lại toàn bộ dependencies
 
 # Cách viết TỐT (Tận dụng cache dependency)
-FROM maven:3.8.4-openjdk-17 AS build
+FROM maven:3.9.6-eclipse-temurin-17-alpine AS build
 WORKDIR /app
 COPY pom.xml .
 RUN mvn dependency:go-offline  # Tải trước dependencies và cache lại layer này
@@ -448,7 +448,7 @@ graph TD
 
 ```dockerfile
 # Stage 1: Build application
-FROM maven:3.8.4-openjdk-17-slim AS builder
+FROM maven:3.9.6-eclipse-temurin-17-alpine AS builder
 WORKDIR /app
 COPY pom.xml .
 RUN mvn dependency:go-offline
@@ -456,7 +456,7 @@ COPY src ./src
 RUN mvn package -DskipTests
 
 # Stage 2: Minimal runtime image
-FROM openjdk:17-jdk-slim
+FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
 COPY --from=builder /app/target/*.jar app.jar
 EXPOSE 8080

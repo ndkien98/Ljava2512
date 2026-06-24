@@ -36,7 +36,7 @@ services:
 
   # 3. Ứng dụng Spring Boot Monolithic
   uniqlo-service:
-    image: openjdk:17-jdk-alpine
+    image: eclipse-temurin:17-jre-alpine
     container_name: uniqlo-service-mono
     working_dir: /app
     volumes:

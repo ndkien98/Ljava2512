@@ -36,15 +36,15 @@ Demo này hướng dẫn cách chạy web server Nginx, cấu hình port mapping
    docker stop my-nginx
    docker rm my-nginx
    ```
-   Chạy container mới và mount thư mục `html` từ máy host:
-   - Trên **cmd/powershell** (ở thư mục `02_nginx_custom`):
-     ```bash
-     docker run -d -p 8080:80 --name my-nginx-custom -v "%CD%/html:/usr/share/nginx/html" -v "%CD%/nginx.conf:/etc/nginx/conf.d/default.conf" nginx:alpine
-     ```
-   - Trên **git bash / Linux / macOS**:
-     ```bash
-     docker run -d -p 8080:80 --name my-nginx-custom -v "$(pwd)/html:/usr/share/nginx/html" -v "$(pwd)/nginx.conf:/etc/nginx/conf.d/default.conf" nginx:alpine
-     ```
+    Chạy container mới và mount thư mục `html` cùng cấu hình `nginx.conf`. Do Docker CLI yêu cầu đường dẫn tuyệt đối khi mount volume, ta sử dụng biến môi trường đại diện cho thư mục hiện tại (`$PWD` hoặc `%CD%`) để hoạt động như đường dẫn tương đối:
+    - **Trong PowerShell hoặc Git Bash / Linux / macOS**:
+      ```bash
+      docker run -d -p 8080:80 --name my-nginx-custom -v ${PWD}/html:/usr/share/nginx/html -v ${PWD}/nginx.conf:/etc/nginx/conf.d/default.conf nginx:alpine
+      ```
+    - **Trong Command Prompt (cmd) của Windows**:
+      ```bash
+      docker run -d -p 8080:80 --name my-nginx-custom -v "%CD%/html:/usr/share/nginx/html" -v "%CD%/nginx.conf:/etc/nginx/conf.d/default.conf" nginx:alpine
+      ```
    
    Truy cập `http://localhost:8080` trên trình duyệt để kiểm tra kết quả!
 

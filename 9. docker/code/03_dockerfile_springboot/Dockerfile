@@ -1,5 +1,5 @@
-# Sử dụng JDK 17 Alpine siêu gọn làm nền
-FROM openjdk:17-jdk-alpine
+# Sử dụng JRE 17 Alpine siêu gọn làm nền
+FROM eclipse-temurin:17-jre-alpine
 
 # Thông tin tác giả
 LABEL maintainer="t3h-java2512"
