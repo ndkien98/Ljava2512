@@ -1,0 +1,24 @@
+# --- GIAI ĐOẠN 1: Biên dịch ứng dụng (Build Stage) ---
+FROM maven:3.9.6-eclipse-temurin-17-alpine AS builder
+WORKDIR /app
+
+# Sao chép file pom.xml để tải trước các dependencies (tận dụng Docker caching layer)
+COPY pom.xml .
+RUN mvn dependency:go-offline -B
+
+# Sao chép thư mục mã nguồn và thực hiện build đóng gói file JAR
+COPY src ./src
+RUN mvn package -DskipTests
+
+# --- GIAI ĐOẠN 2: Khởi chạy môi trường sản xuất rút gọn (Runtime Stage) ---
+FROM eclipse-temurin:17-jre-alpine
+WORKDIR /app
+
+# Sao chép tệp JAR thành phẩm từ Giai đoạn 1 sang Giai đoạn 2
+COPY --from=builder /app/target/*.jar app.jar
+
+# Khai báo cổng
+EXPOSE 8080
+
+# Chạy ứng dụng Spring Boot bằng JRE siêu gọn nhẹ
+ENTRYPOINT ["java", "-jar", "app.jar"]

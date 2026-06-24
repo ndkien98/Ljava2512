@@ -11,6 +11,7 @@ services:
       MYSQL_DATABASE: uniqlo_education
     volumes:
       - mysql_data:/var/lib/mysql
+      - ../source_monolithic/uniqlo-service-v1/src/main/resources/db/database.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - uniqlo-network
     healthcheck:

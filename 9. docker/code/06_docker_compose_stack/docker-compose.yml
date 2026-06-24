@@ -1,0 +1,78 @@
+version: '3.8'
+
+services:
+  # 1. Cơ sở dữ liệu MySQL
+  mysql-db:
+    image: mysql:8.0
+    container_name: mysql-db-mono
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: uniqlo_education
+    volumes:
+      - mysql_data:/var/lib/mysql
+      # Tự động import cơ sở dữ liệu khi container MySQL được tạo lần đầu
+      - ../../../8. microservice/source_monolithic/uniqlo-service-v1/src/main/resources/db/database.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - mono-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # 2. Redis Cache
+  redis-cache:
+    image: redis:7-alpine
+    container_name: redis-cache-mono
+    volumes:
+      - redis_data:/data
+    networks:
+      - mono-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # 3. Ứng dụng Spring Boot Monolithic
+  uniqlo-service:
+    image: openjdk:17-jdk-alpine
+    container_name: uniqlo-service-mono
+    working_dir: /app
+    volumes:
+      # Gắn tệp jar đã build trực tiếp để chạy, tránh mất thời gian rebuild image trong lúc dev
+      - ../../../8. microservice/source_monolithic/uniqlo-service-v1/target/uniqlo-service-0.0.1-SNAPSHOT.jar:/app/app.jar
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/uniqlo_education?useUnicode=true&characterEncoding=UTF-8
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      JAVA_OPTS: "-Xms128m -Xmx256m"
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+      redis-cache:
+        condition: service_healthy
+    networks:
+      - mono-network
+    entrypoint: ["sh", "-c", "java $$JAVA_OPTS -jar app.jar"]
+
+  # 4. Nginx Reverse Proxy làm cổng đón request
+  nginx-proxy:
+    image: nginx:alpine
+    container_name: nginx-proxy-mono
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - uniqlo-service
+    networks:
+      - mono-network
+
+volumes:
+  mysql_data:
+  redis_data:
+
+networks:
+  mono-network:
+    driver: bridge
