@@ -1,0 +1,22 @@
+# --- STAGE 1: Build stage using Maven and JDK ---
+FROM maven:3.9.6-eclipse-temurin-17-alpine AS builder
+WORKDIR /app
+
+# Cache dependencies
+COPY pom.xml .
+RUN mvn dependency:go-offline -B
+
+# Copy src and build jar package
+COPY src ./src
+RUN mvn package -DskipTests
+
+# --- STAGE 2: Lightweight runtime stage ---
+FROM eclipse-temurin:17-jre-alpine
+WORKDIR /app
+
+# Copy built JAR from builder stage
+COPY --from=builder /app/target/*.jar app.jar
+
+EXPOSE 8080
+
+ENTRYPOINT ["java", "-jar", "app.jar"]

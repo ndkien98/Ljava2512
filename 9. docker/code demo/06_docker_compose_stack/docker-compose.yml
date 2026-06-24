@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  # 1. Cơ sở dữ liệu MySQL
+  mysql-db:
+    image: mysql:8.0
+    container_name: mysql-db-compose
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: my_app_db
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # 2. Redis Cache
+  redis-cache:
+    image: redis:7-alpine
+    container_name: redis-cache-compose
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - app-network
+
+  # 3. Spring Boot Backend API (Mock build)
+  backend-api:
+    image: openjdk:17-jdk-alpine
+    container_name: backend-api-compose
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/my_app_db?useUnicode=true&characterEncoding=UTF-8
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      SPRING_REDIS_HOST: redis-cache
+      SPRING_REDIS_PORT: 6379
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  # 4. React Frontend (Serve qua Nginx)
+  frontend-web:
+    image: nginx:1.25-alpine
+    container_name: frontend-web-compose
+    ports:
+      - "3000:80"
+    networks:
+      - app-network
+
+volumes:
+  mysql_data:
+  redis_data:
+
+networks:
+  app-network:
+    driver: bridge

@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer-dashboard
+    restart: always
+    ports:
+      - "9000:9000"
+      - "9443:9443"
+    volumes:
+      # Ánh xạ socket Docker của máy host vào container
+      # Giúp Portainer có thể giao tiếp và điều khiển Docker Engine trên host
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+
+volumes:
+  portainer_data:

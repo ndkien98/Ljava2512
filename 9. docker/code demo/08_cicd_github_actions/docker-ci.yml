@@ -1,0 +1,52 @@
+name: Docker Build & Push CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main # Kích hoạt khi có code mới push lên branch main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-push:
+    name: Build & Push Service Image
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout mã nguồn từ GitHub
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 2. Thiết lập môi trường JDK 17 (để build Java)
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      # 3. Đăng nhập vào tài khoản Docker Hub
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # 4. Build và Push Image Spring Boot
+      - name: Build and Push Spring Boot Image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./8. microservice/source_microservice/user-service
+          file: ./8. microservice/source_microservice/user-service/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/uniqlo-user-service:latest
+
+      # 5. Build và Push Image React Frontend
+      - name: Build and Push React Frontend Image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./8. microservice/source_microservice/frontend
+          file: ./8. microservice/source_microservice/frontend/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/uniqlo-frontend:latest

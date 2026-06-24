@@ -1,0 +1,162 @@
+KHÓA HỌC: DOCKER TỪ ZERO ĐẾN HERO
+🎯 MỤC TIÊU KHÓA HỌC
+Hiểu rõ bản chất của Containerization và tại sao Docker lại thống trị ngành công nghiệp phần mềm.
+Thành thạo các lệnh Docker CLI để quản lý Image, Container, Network, Volume.
+Tự viết Dockerfile tối ưu, bảo mật.
+Sử dụng Docker Compose để triển khai hệ thống Multi-container.
+Hiểu về CI/CD với Docker và kiến thức nền tảng để tiến tới Kubernetes.
+🟢 MODULE 1: TỔNG QUAN VỀ DOCKER & CONTAINERIZATION
+Mục tiêu: Hiểu "Tại sao cần Docker?" và kiến trúc hệ thống.
+1.1. Vấn đề của việc triển khai phần mềm truyền thống
+Hội chứng "It works on my machine!" (Chạy trên máy dev nhưng lỗi trên server).
+Sự cồng kềnh của Virtual Machines (VMware, VirtualBox): Tốn tài nguyên, khởi động chậm.
+1.2. Containerization là gì?
+So sánh Virtual Machine (VM) vs Container.
+VM: Có Guest OS, nặng (GB), khởi động tính bằng phút.
+Container: Chia sẻ Host OS Kernel, nhẹ (MB), khởi động tính bằng mili-giây.
+1.3. Kiến trúc Docker (Docker Architecture)
+Docker Daemon: Server chạy ngầm, quản lý containers.
+Docker Client: CLI (docker command) giao tiếp với Daemon qua REST API.
+Docker Registry (Docker Hub): Nơi lưu trữ Images.
+Image: Bản thiết kế chỉ đọc (Read-only template).
+Container: Instance đang chạy của Image.
+🛠 Thực hành Module 1:
+Cài đặt Docker Desktop / Docker Engine trên Ubuntu/Windows.
+Chạy lệnh: docker run hello-world -> Phân tích output để hiểu luồng hoạt động.
+🟢 MODULE 2: LÀM VIỆC VỚI IMAGES & CONTAINERS
+Mục tiêu: Thao tác thành thạo vòng đời của Container.
+2.1. Quản lý Images
+docker pull: Tải image từ Registry.
+docker images: Liệt kê images.
+docker rmi: Xóa image.
+docker image prune: Dọn dẹp images dangling (không có tag).
+2.2. Vòng đời Container (Container Lifecycle)
+docker run: Tạo và chạy container.
+Các flag quan trọng: -d (detach), -p (port mapping), --name, -e (environment).
+docker ps / docker ps -a: Xem container đang chạy / tất cả.
+docker stop / docker start / docker restart.
+docker rm: Xóa container (phải stop trước).
+docker exec -it <name> /bin/sh: Truy cập vào terminal bên trong container.
+docker logs <name>: Xem log ứng dụng.
+🛠 Thực hành Module 2:
+Chạy một web server Nginx: docker run -d -p 8080:80 --name my-web nginx
+Truy cập localhost:8080.
+Exec vào trong container, sửa file /usr/share/nginx/html/index.html.
+Xem log, stop, xóa container.
+🟢 MODULE 3: DOCKERFILE - ĐÓNG GÓI ỨNG DỤNG
+Mục tiêu: Tự tạo Image cho ứng dụng của riêng mình (Node.js, Python, Java...).
+3.1. Dockerfile là gì?
+Là file text chứa các chỉ thị (instructions) để tự động build Image.
+3.2. Các Instruction cốt lõi
+FROM: Chọn base image (VD: node:18-alpine). Luôn phải có.
+WORKDIR: Set thư mục làm việc bên trong container.
+COPY vs ADD: Copy file từ máy host vào container. (Khuyên dùng COPY).
+RUN: Chạy lệnh shell khi build image (VD: npm install).
+EXPOSE: Khai báo port (chỉ mang tính chất tài liệu, không thực sự map port).
+CMD vs ENTRYPOINT: Lệnh chạy khi container khởi động.
+CMD: Có thể bị ghi đè.
+ENTRYPOINT: Khó bị ghi đè hơn, dùng cho entrypoint chính.
+3.3. Cơ chế Layer & Caching (Rất quan trọng)
+Mỗi instruction tạo ra một Layer.
+Docker cache các layer. Nếu file không đổi, Docker dùng lại layer cũ -> Build nhanh hơn.
+Mẹo: Copy file package.json trước, chạy npm install, sau đó mới copy source code -> Tận dụng cache.
+🛠 Thực hành Module 3:
+Viết Dockerfile cho một ứng dụng Node.js/Python cơ bản.
+Build image: docker build -t my-app:v1 .
+Chạy thử image vừa build.
+🟢 MODULE 4: LƯU TRỮ DỮ LIỆU (PERSISTENT STORAGE)
+Mục tiêu: Giải quyết vấn đề dữ liệu bị mất khi container bị xóa.
+4.1. Tại sao cần Volume?
+Container là ephemeral (tạm thời). Xóa container = Mất dữ liệu.
+4.2. Các cơ chế lưu trữ
+Volumes: Được Docker quản lý hoàn toàn (/var/lib/docker/volumes/). Khuyên dùng cho DB.
+Bind Mounts: Ánh xạ trực tiếp thư mục từ Host OS vào Container. Khuyên dùng cho Dev (Hot-reload code).
+tmpfs mount: Lưu trên RAM của Host, không ghi xuống disk.
+🛠 Thực hành Module 4:
+Bind Mount: Chạy Nginx, mount thư mục ./html từ máy thật vào container để sửa code web trực tiếp.
+Volume: Chạy MySQL container, tạo volume db_data, xóa container, tạo lại container mới gắn volume cũ -> Dữ liệu vẫn còn.
+🟢 MODULE 5: DOCKER NETWORKING
+Mục tiêu: Hiểu cách các container giao tiếp với nhau và với thế giới bên ngoài.
+5.1. Các Network Drivers
+Bridge (Mặc định): Các container trên cùng 1 bridge network có thể giao tiếp qua tên container (DNS resolution).
+Host: Container dùng chung network stack với Host (bỏ qua port mapping).
+None: Tắt hoàn toàn networking.
+Overlay: Dùng cho Docker Swarm (Multi-host).
+5.2. Custom Bridge Network
+Tại sao nên tạo network riêng thay vì dùng default bridge? (Tính bảo mật, DNS tự động).
+🛠 Thực hành Module 5:
+Tạo network: docker network create my-net
+Chạy 2 container (VD: 1 Ubuntu, 1 Alpine) gắn vào my-net.
+Exec vào container này và ping sang container kia bằng tên container.
+🟢 MODULE 6: DOCKER COMPOSE (MULTI-CONTAINER)
+Mục tiêu: Quản lý hệ thống phức tạp (Web + DB + Cache) chỉ bằng 1 lệnh.
+6.1. Giới thiệu Docker Compose
+File docker-compose.yml (YAML format).
+Định nghĩa Services, Networks, Volumes.
+6.2. Các lệnh cơ bản
+docker-compose up -d: Khởi chạy.
+docker-compose down: Tắt và xóa network.
+docker-compose logs -f: Xem log.
+docker-compose build: Build lại images.
+6.3. Environment Variables & .env
+Quản lý biến môi trường an toàn, không hardcode trong file YAML.
+🛠 Thực hành Module 6:
+Viết docker-compose.yml triển khai WordPress + MySQL.
+Cấu hình Volume cho MySQL để lưu dữ liệu.
+Cấu hình Network riêng cho 2 service.
+Chạy docker-compose up -d và truy cập web.
+🟢 MODULE 7: DOCKER NÂNG CAO & TỐI ƯU HÓA (ADVANCED)
+Mục tiêu: Viết Dockerfile chuẩn Production, bảo mật, tối ưu dung lượng.
+7.1. Multi-stage Builds
+Vấn đề: Image build từ source code thường rất nặng (chứa cả compiler, source code).
+Giải pháp: Dùng Stage 1 để build, Stage 2 chỉ copy binary/file cần thiết sang một Base image nhỏ (như Alpine/Distroless).
+Kết quả: Giảm image từ 800MB xuống còn 20MB.
+7.2. Bảo mật Container (Security Best Practices)
+Không chạy bằng root: Tạo user riêng trong Dockerfile (USER appuser).
+Read-only filesystem: Chạy container với --read-only.
+Scan vulnerabilities: Sử dụng docker scout hoặc trivy để quét lỗ hổng trong Image.
+Giới hạn tài nguyên: --memory, --cpus.
+7.3. Healthcheck
+Cấu hình HEALTHCHECK trong Dockerfile để Docker tự biết ứng dụng có đang sống khỏe hay không.
+🛠 Thực hành Module 7:
+Refactor Dockerfile ứng dụng Golang/React sử dụng Multi-stage build.
+Thêm HEALTHCHECK và chạy container với flag --read-only.
+🟢 MODULE 8: CI/CD VỚI DOCKER & REGISTRY
+Mục tiêu: Tự động hóa quy trình Build - Push - Deploy.
+8.1. Docker Registry
+Docker Hub, GitLab Container Registry, AWS ECR.
+Các lệnh: docker login, docker tag, docker push.
+8.2. Tích hợp CI/CD (GitHub Actions / GitLab CI)
+Tự động build image khi có code mới đẩy lên branch main.
+Tự động scan bảo mật.
+Tự động push image lên Registry.
+🛠 Thực hành Module 8:
+Viết file .github/workflows/docker.yml để build và push image lên Docker Hub mỗi khi push code.
+🟢 MODULE 9: HỆ SINH THÁI & BƯỚC TIẾP THEO
+Mục tiêu: Mở rộng tầm nhìn, hiểu vị trí của Docker trong bức tranh Cloud Native.
+9.1. Các công cụ hỗ trợ (Tooling)
+Portainer: Giao diện GUI quản lý Docker trực quan.
+Lazydocker: Terminal UI cực nhanh để quản lý Docker.
+9.2. Orchestration (Điều phối Container)
+Khi bạn có 100 containers chạy trên 10 server khác nhau, làm sao quản lý?
+Docker Swarm: Giải pháp native của Docker (Dễ dùng, ít tính năng).
+Kubernetes (K8s): Tiêu chuẩn ngành công nghiệp (Phức tạp, cực kỳ mạnh mẽ). Nhắc nhở học viên: Docker là nền tảng, K8s là người quản lý Docker ở quy mô lớn.
+🏆 MODULE 10: CAPSTONE PROJECT (DỰ ÁN TỔNG HỢP)
+Giáo viên giao đề bài, học viên tự làm và bảo vệ.
+Đề bài: Triển khai hệ thống Microservices E-commerce
+Frontend: ReactJS (Nginx làm reverse proxy).
+Backend: Node.js API (Kết nối DB).
+Database: PostgreSQL.
+Cache: Redis.
+Yêu cầu:
+Viết Dockerfile cho Frontend (dùng Multi-stage).
+Viết Dockerfile cho Backend.
+Viết docker-compose.yml orchestrate toàn bộ hệ thống.
+Cấu hình Volume cho Postgres và Redis.
+Cấu hình Custom Network để Backend giao tiếp với DB/Cache (Frontend không thể ping trực tiếp vào DB).
+Sử dụng file .env để quản lý password DB.
+💡 LỜI KHUYÊN CHO GIẢNG VIÊN (TEACHING TIPS)
+Trực quan hóa (Visualize): Luôn vẽ sơ đồ kiến trúc (Host OS -> Docker Daemon -> Container -> Image Layers) lên bảng hoặc dùng slide ảnh trước khi cho chạy lệnh.
+Nhấn mạnh sự khác biệt: Học viên hay nhầm lẫn giữa COPY và ADD, CMD và ENTRYPOINT, Volume và Bind Mount. Hãy tạo các bài lab so sánh trực tiếp.
+Sửa lỗi (Troubleshooting): Đừng chỉ dạy lệnh chạy thành công. Hãy cố tình làm sai (VD: sai port, thiếu biến môi trường, ứng dụng crash) và dạy họ cách dùng docker logs và docker inspect để debug.
+Tư duy "Immutable Infrastructure": Dạy học viên thói quen không SSH vào container để sửa code, mà hãy sửa code -> Build lại Image -> Deploy Image mới.
