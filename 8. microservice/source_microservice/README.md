@@ -1,145 +1,95 @@
-# Uniqlo Microservice – Hướng dẫn chạy
+# Uniqlo Microservice and ELK Stack Manager
 
-## Cấu trúc dự án
+Tài liệu hướng dẫn quản lý và chạy toàn bộ hệ thống Uniqlo Microservices cùng với bộ công cụ thu thập log tập trung ELK Stack (Elasticsearch, Logstash, Kibana).
 
+---
+
+## Quản lý hệ thống bằng 1-Click
+
+Hệ thống cung cấp sẵn script quản lý tự động cho cả hai môi trường Windows và Linux/macOS. Khi chạy, script sẽ tự động kiểm tra và tạo đầy đủ các thư mục dữ liệu và logs nếu thiếu, giúp bạn chạy dự án ở bất kỳ máy tính mới nào một cách nhanh chóng.
+
+### Trên Windows
+Chạy file manage.bat ở thư mục gốc bằng cách nhấn đúp chuột hoặc chạy qua Command Prompt:
+```bash
+manage.bat
+```
+
+### Trên Linux / macOS
+Mở Terminal tại thư mục gốc, cấp quyền thực thi và chạy file manage.sh:
+```bash
+chmod +x manage.sh
+./manage.sh
+```
+
+Giao diện quản lý hiển thị các lựa chọn:
+- **1. Start All Services**: Tự động kiểm tra, tạo cấu trúc thư mục dữ liệu/logs nếu thiếu và chạy toàn bộ 13 containers lên.
+- **2. Stop All Services**: Dừng toàn bộ các container của dự án để giải phóng tài nguyên CPU/RAM, đồng thời bảo toàn dữ liệu database/log.
+- **3. Build and Start**: Rebuild lại code Java Spring Boot và khởi chạy lại các container tương ứng.
+- **4. Clean Reset and Fresh Start**: Xóa toàn bộ dữ liệu MySQL, Redis, Elasticsearch indices, logs và khởi động lại sạch sẽ như ban đầu.
+- **5. Check System Status**: Kiểm tra danh sách container nào đang chạy và cổng hoạt động.
+- **6. View Container Logs**: Xem log trực tiếp (real-time stream) của một container bất kỳ (ví dụ: user-service, logstash, v.v.)
+
+---
+
+## Cấu trúc thư mục dữ liệu (Persistent Data)
+
+Hệ thống đã được thiết lập để tách biệt hoàn toàn dữ liệu và logs ra các thư mục riêng của từng container:
 ```
 source_microservice/
-├── eureka-gateway/         ← Eureka Server + API Gateway  (port 8080)
-├── user-service/           ← User, Auth, JWT              (port 8081)
-├── product-service/        ← Product, SKU, Images         (port 8082)
-├── master-data-service/    ← Category, Color, Size        (port 8083)
-├── order-service/          ← Cart, Orders                 (port 8084)
-└── frontend/               ← React App                    (port 3000)
+│
+├── manage.bat                  - Công cụ quản lý trên Windows (Tự động tạo folder)
+├── manage.sh                   - Công cụ quản lý trên Linux/macOS (Tự động tạo folder)
+├── .gitignore                  - File cấu hình bỏ qua thư mục data và log khi commit lên Git
+├── docker-compose.yml          - File cấu hình toàn bộ hệ thống
+│
+├── data/                       - Dữ liệu lưu trữ persistent (Tự sinh)
+│   ├── mysql/                  - Dữ liệu cơ sở dữ liệu MySQL
+│   ├── redis/                  - Dữ liệu đệm Redis
+│   ├── elasticsearch/          - Các chỉ mục tìm kiếm và logs lưu trữ của ES
+│   ├── kibana/                 - Các thiết lập cấu hình của Kibana
+│   └── logstash/               - Vị trí ghi nhớ của Logstash (sincedb)
+│
+└── log/                        - Logs dạng JSON của các Service (Tự sinh)
+    ├── user-service/           - logs của user-service
+    ├── product-service/        - logs của product-service
+    ├── master-data-service/    - logs của master-data-service
+    ├── order-service/          - logs của order-service
+    ├── config-server/          - logs của config-server
+    ├── eureka-server/          - logs của eureka-server
+    └── eureka-gateway/         - logs của eureka-gateway
 ```
 
-## Yêu cầu
+---
 
-- Java 17+
-- Maven 3.8+
-- Node.js 18+
-- MySQL 8 đang chạy với database `uniqlo_education`
-  (import file: `../source_monolithic/uniqlo-service-v1/src/main/resources/db/database.sql`)
+## Xem Logs trên Kibana
 
-## Thứ tự khởi động
+### Bước 1: Mở trình duyệt
+Truy cập: http://localhost:5601
 
-### Bước 1: Chạy Eureka Gateway (PHẢI chạy đầu tiên)
+### Bước 2: Tạo Data View (Chỉ cần làm 1 lần duy nhất)
+1. Bấm vào biểu tượng Menu ở góc trên bên trái -> Chọn Stack Management (dưới cùng).
+2. Chọn Data Views -> Click nút Create data view.
+3. Cấu hình như sau:
+   - **Name**: Microservice Logs
+   - **Index pattern**: microservice-logs-*
+   - **Timestamp field**: @timestamp
+4. Click Save data view to Kibana.
 
-```bash
-cd eureka-gateway
-mvn spring-boot:run
-```
+### Bước 3: Đọc log tập trung
+- Click Menu -> Chọn Discover.
+- Bạn có thể lọc log theo từng service bằng cách thêm filter service_name : "user-service" hoặc tìm kiếm theo từ khóa ở ô Search bar.
 
-Kiểm tra: http://localhost:8080 → thấy Eureka Dashboard
+---
 
-### Bước 2: Chạy các Backend Services (có thể chạy song song)
+## Các cổng kết nối của hệ thống
 
-**Terminal 1 – User Service:**
-```bash
-cd user-service
-mvn spring-boot:run
-```
-
-**Terminal 2 – Product Service:**
-```bash
-cd product-service
-mvn spring-boot:run
-```
-
-**Terminal 3 – Master Data Service:**
-```bash
-cd master-data-service
-mvn spring-boot:run
-```
-
-**Terminal 4 – Order Service:**
-```bash
-cd order-service
-mvn spring-boot:run
-```
-
-### Bước 3: Chạy React Frontend
-
-```bash
-cd frontend
-npm install
-npm start
-```
-
-Truy cập: http://localhost:3000
-
-## Kiểm tra hoạt động
-
-### Xem services đã đăng ký với Eureka:
-http://localhost:8080
-
-Bạn sẽ thấy:
-- USER-SERVICE (8081) – UP
-- PRODUCT-SERVICE (8082) – UP
-- MASTER-DATA-SERVICE (8083) – UP
-- ORDER-SERVICE (8084) – UP
-
-### Test API qua Gateway:
-
-```bash
-# 1. Đăng nhập – qua Gateway → user-service
-curl -X POST http://localhost:8080/api/v1/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"email":"admin@uniqlo.com","password":"admin123"}'
-
-# 2. Copy access_token từ response, rồi test các API khác:
-
-# Lấy products – qua Gateway → product-service
-curl http://localhost:8080/api/products \
-  -H "Authorization: Bearer <ACCESS_TOKEN>"
-
-# Lấy colors – qua Gateway → master-data-service
-curl http://localhost:8080/api/colors \
-  -H "Authorization: Bearer <ACCESS_TOKEN>"
-
-# Lấy sizes – qua Gateway → master-data-service
-curl http://localhost:8080/api/sizes \
-  -H "Authorization: Bearer <ACCESS_TOKEN>"
-
-# Lấy users – qua Gateway → user-service
-curl http://localhost:8080/api/users \
-  -H "Authorization: Bearer <ACCESS_TOKEN>"
-```
-
-## Điểm học quan trọng
-
-### 1. Eureka Service Discovery
-- Gateway khởi động → @EnableEurekaServer → Eureka Server sẵn sàng
-- Mỗi service khởi động → @EnableDiscoveryClient → tự đăng ký với Eureka
-- Gateway dùng `lb://SERVICE-NAME` để route đến đúng service
-
-### 2. @LoadBalanced RestTemplate
-```java
-// Trong product-service, gọi sang master-data-service:
-restTemplate.getForObject("http://MASTER-DATA-SERVICE/api/colors", List.class)
-// → Spring Cloud hỏi Eureka → lấy IP:Port của master-data-service → gọi đến đó
-```
-
-### 3. API Gateway Routing
-```yaml
-routes:
-  - id: product-service
-    uri: lb://PRODUCT-SERVICE   # lb = load balanced
-    predicates:
-      - Path=/api/products/**   # request có path /api/products/** → chuyển đến PRODUCT-SERVICE
-```
-
-### 4. JWT được validate tại Gateway
-- JwtAuthenticationFilter chạy tại Gateway trước khi request đến service
-- Các service phía sau không cần validate JWT nữa (tùy chọn thêm để bảo mật cao hơn)
-
-## Sơ đồ kiến trúc
-
-```
-React (3000) → Gateway (8080) → user-service    (8081) ─┐
-                                → product-service  (8082) ─┤
-                                → master-data-svc  (8083) ─┤→ MySQL
-                                → order-service    (8084) ─┘
-                    │
-                    Eureka Server (cũng ở 8080)
-                    ← tất cả service đăng ký vào đây
-```
+| Tên Dịch Vụ | Port | URL / Địa chỉ truy cập |
+| :--- | :--- | :--- |
+| Kibana UI | 5601 | http://localhost:5601 (Xem log) |
+| Frontend UI | 3000 | http://localhost:3000 (Ứng dụng chính) |
+| API Gateway | 8080 | http://localhost:8080 |
+| Eureka Server | 19089 | http://localhost:19089 (Quản lý đăng ký dịch vụ) |
+| Config Server | 19088 | http://localhost:19088 |
+| Elasticsearch API | 9200 | http://localhost:9200 |
+| MySQL Database | 3307 | localhost:3307 (User: root / Pass: root) |
+| Redis Database | 6379 | localhost:6379 |

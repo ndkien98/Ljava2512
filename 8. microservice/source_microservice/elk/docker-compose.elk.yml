@@ -1,0 +1,8 @@
+# DEPRECATED
+# File docker-compose.elk.yml này đã được tích hợp vào docker-compose.yml chính.
+# Vui lòng sử dụng file docker-compose.yml ở thư mục gốc:
+#
+#   cd ..
+#   docker-compose up -d
+#
+# Xem README.md để biết thêm chi tiết.

@@ -1,6 +1,16 @@
-version: '3.8'
+
+# ============================================================
+#  UNIQLO MICROSERVICE STACK
+#  Bao gồm: MySQL, Redis, Config Server, Eureka, Gateway,
+#           User, Product, Master-Data, Order services, Frontend
+#           + ELK Stack tích hợp (Elasticsearch, Logstash, Kibana)
+# ============================================================
 
 services:
+
+  # ─────────────────────────────────────────────
+  #  DATABASE LAYER
+  # ─────────────────────────────────────────────
   mysql-db:
     image: mysql:8.0
     container_name: mysql-db
@@ -10,7 +20,7 @@ services:
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
       MYSQL_DATABASE: uniqlo_education
     volumes:
-      - mysql_data:/var/lib/mysql
+      - ./data/mysql:/var/lib/mysql
       - ../source_monolithic/uniqlo-service-v1/src/main/resources/db/database.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - uniqlo-network
@@ -18,7 +28,9 @@ services:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 10
+      start_period: 60s
+    restart: unless-stopped
 
   redis-db:
     image: redis:7-alpine
@@ -26,7 +38,7 @@ services:
     ports:
       - "6379:6379"
     volumes:
-      - redis_data:/data
+      - ./data/redis:/data
     networks:
       - uniqlo-network
     healthcheck:
@@ -34,7 +46,82 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    restart: unless-stopped
 
+  # ─────────────────────────────────────────────
+  #  ELK STACK (Centralized Logging)
+  # ─────────────────────────────────────────────
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.13.0
+    container_name: elasticsearch
+    environment:
+      - node.name=elasticsearch
+      - discovery.type=single-node
+      - cluster.name=uniqlo-cluster
+      - bootstrap.memory_lock=true
+      - xpack.security.enabled=false
+      - xpack.security.http.ssl.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ./data/elasticsearch:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    networks:
+      - uniqlo-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=5s || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 90s
+    restart: unless-stopped
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.13.0
+    container_name: logstash
+    volumes:
+      - ./elk/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
+      - ./elk/logstash/pipeline:/usr/share/logstash/pipeline:ro
+      - ./log:/log:ro
+      - ./data/logstash:/usr/share/logstash/data
+    ports:
+      - "5044:5044"
+      - "9600:9600"
+    environment:
+      - "LS_JAVA_OPTS=-Xms256m -Xmx256m"
+    networks:
+      - uniqlo-network
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    restart: unless-stopped
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.13.0
+    container_name: kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - XPACK_SECURITY_ENABLED=false
+      - XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY=a7a6311933d3503b89bc2dbc36572c33a6c10925682e591bffcab6911c06786d
+    volumes:
+      - ./data/kibana:/usr/share/kibana/data
+    ports:
+      - "5601:5601"
+    networks:
+      - uniqlo-network
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # ─────────────────────────────────────────────
+  #  INFRASTRUCTURE SERVICES
+  # ─────────────────────────────────────────────
   config-server:
     build:
       context: ./config-server
@@ -45,15 +132,19 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: native
       SPRING_CLOUD_CONFIG_SERVER_NATIVE_SEARCH_LOCATIONS: file:/config-repo
+      LOG_PATH: /app/log/config-server
     volumes:
       - ../config-repo:/config-repo
+      - ./log/config-server:/app/log/config-server
     networks:
       - uniqlo-network
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:19088/actuator/health | grep UP || exit 1"]
+      test: ["CMD-SHELL", "wget -qO- http://localhost:19088/actuator/health | grep -q UP || exit 1"]
       interval: 15s
-      timeout: 5s
-      retries: 5
+      timeout: 10s
+      retries: 10
+      start_period: 90s
+    restart: unless-stopped
 
   eureka-server:
     build:
@@ -66,13 +157,18 @@ services:
       EUREKA_CLIENT_REGISTER_WITH_EUREKA: "false"
       EUREKA_CLIENT_FETCH_REGISTRY: "false"
       EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://eureka-server:19089/eureka/
+      LOG_PATH: /app/log/eureka-server
+    volumes:
+      - ./log/eureka-server:/app/log/eureka-server
     networks:
       - uniqlo-network
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:19089 || exit 1"]
+      test: ["CMD-SHELL", "wget -qO- http://localhost:19089/actuator/health | grep -q UP || exit 1"]
       interval: 15s
-      timeout: 5s
-      retries: 5
+      timeout: 10s
+      retries: 10
+      start_period: 120s
+    restart: unless-stopped
 
   eureka-gateway:
     build:
@@ -84,12 +180,19 @@ services:
     environment:
       EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://eureka-server:19089/eureka/
       JWT_SECRET: ${JWT_SECRET_KEY}
+      LOG_PATH: /app/log/eureka-gateway
+    volumes:
+      - ./log/eureka-gateway:/app/log/eureka-gateway
     depends_on:
       eureka-server:
         condition: service_healthy
     networks:
       - uniqlo-network
+    restart: unless-stopped
 
+  # ─────────────────────────────────────────────
+  #  BUSINESS SERVICES
+  # ─────────────────────────────────────────────
   user-service:
     build:
       context: ./user-service
@@ -103,13 +206,17 @@ services:
       SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
       EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://eureka-server:19089/eureka/
       JWT_SECRET: ${JWT_SECRET_KEY}
+      LOG_PATH: /app/log/user-service
+    volumes:
+      - ./log/user-service:/app/log/user-service
     depends_on:
       mysql-db:
         condition: service_healthy
       eureka-server:
-        condition: service_healthy
+        condition: service_started
     networks:
       - uniqlo-network
+    restart: unless-stopped
 
   product-service:
     build:
@@ -123,13 +230,17 @@ services:
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
       EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://eureka-server:19089/eureka/
+      LOG_PATH: /app/log/product-service
+    volumes:
+      - ./log/product-service:/app/log/product-service
     depends_on:
       mysql-db:
         condition: service_healthy
       eureka-server:
-        condition: service_healthy
+        condition: service_started
     networks:
       - uniqlo-network
+    restart: unless-stopped
 
   master-data-service:
     build:
@@ -143,13 +254,17 @@ services:
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
       EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://eureka-server:19089/eureka/
+      LOG_PATH: /app/log/master-data-service
+    volumes:
+      - ./log/master-data-service:/app/log/master-data-service
     depends_on:
       mysql-db:
         condition: service_healthy
       eureka-server:
-        condition: service_healthy
+        condition: service_started
     networks:
       - uniqlo-network
+    restart: unless-stopped
 
   order-service:
     build:
@@ -163,14 +278,21 @@ services:
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
       EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://eureka-server:19089/eureka/
+      LOG_PATH: /app/log/order-service
+    volumes:
+      - ./log/order-service:/app/log/order-service
     depends_on:
       mysql-db:
         condition: service_healthy
       eureka-server:
-        condition: service_healthy
+        condition: service_started
     networks:
       - uniqlo-network
+    restart: unless-stopped
 
+  # ─────────────────────────────────────────────
+  #  FRONTEND
+  # ─────────────────────────────────────────────
   frontend:
     build:
       context: ./frontend
@@ -182,10 +304,7 @@ services:
       - eureka-gateway
     networks:
       - uniqlo-network
-
-volumes:
-  mysql_data:
-  redis_data:
+    restart: unless-stopped
 
 networks:
   uniqlo-network:

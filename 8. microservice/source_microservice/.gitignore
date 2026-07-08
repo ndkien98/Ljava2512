@@ -1,0 +1,17 @@
+# Log directories
+/log/
+
+# Data directories
+/data/
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+
+# OS files
+Thumbs.db
+Desktop.ini
+
+# Target build directories (Maven)
+**/target/
