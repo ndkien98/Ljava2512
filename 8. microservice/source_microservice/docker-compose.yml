@@ -108,6 +108,7 @@ services:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
       - XPACK_SECURITY_ENABLED=false
       - XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY=a7a6311933d3503b89bc2dbc36572c33a6c10925682e591bffcab6911c06786d
+      - INTERACTIVESETUP_ENABLED=false
     volumes:
       - ./data/kibana:/usr/share/kibana/data
     ports:
